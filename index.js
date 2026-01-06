@@ -7,6 +7,8 @@ app.set('view engine','ejs')
 app.use(express.urlencoded())
 const port = process.env.PORT||5000;
 
+const adminRouter=require('./routes/adminRoutes')
+app.use('/admin',adminRouter)
 
 app.listen(port, async () => {
     console.log(`App started on ${port}`);
