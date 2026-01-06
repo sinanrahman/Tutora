@@ -86,25 +86,32 @@
 <body>
 
     <form action="/login" method="POST">
-    <div class="login-card">
-        <div class="login-title">Admin Login</div>
+        <div class="login-card">
+            <div class="login-title">Admin Login</div>
 
-        <input type="hidden" name="role" value="admin" />
+            <input type="hidden" name="role" value="admin" />
 
-        <div class="input-group">
-            <label>Email</label>
-            <input type="email" name="email" required>
+            <!-- Username -->
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" name="username" required>
+            </div>
+
+            <!-- Email -->
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" name="email" required>
+            </div>
+
+            <!-- Password -->
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <button class="login-btn" type="submit">Login</button>
         </div>
-
-        <div class="input-group">
-            <label>Password</label>
-            <input type="password" name="password" required>
-        </div>
-
-        <button class="login-btn" type="submit">Login</button>
-    </div>
-</form>
-
+    </form>
 
 </body>
 

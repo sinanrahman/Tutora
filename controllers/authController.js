@@ -22,7 +22,7 @@ exports.coordinatorLoginPage = (req, res) => {
 
 
 exports.login = async (req, res) => {
-	const { email, password, role } = req.body
+	const {username, email, password, role } = req.body
 
 	let user
 	let userRole
