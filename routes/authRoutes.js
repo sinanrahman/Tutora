@@ -1,11 +1,15 @@
 const express = require('express')
 const router = express.Router()
 
-const { loginPage, adminLoginPage, teacherLoginPage, coordinatorLoginPage } = require('../controllers/authController')
+const { loginPage, adminLoginPage, teacherLoginPage, coordinatorLoginPage ,login} = require('../controllers/authController')
 
 router
     .route('/')
     .get(loginPage)
+    
+router
+    .route('/login')
+    .post(login)
 
 router
     .route('/adminlogin')

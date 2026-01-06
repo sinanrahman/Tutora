@@ -85,21 +85,26 @@
 
 <body>
 
+    <form action="/login" method="POST">
     <div class="login-card">
-        <div class="login-title">Co-ordinator Login</div>
+        <div class="login-title">Coordinator Login</div>
+
+        <input type="hidden" name="role" value="coordinator" />
 
         <div class="input-group">
-            <label>Username</label>
-            <input type="text" placeholder="Enter username">
+            <label>Email</label>
+            <input type="email" name="email" required>
         </div>
 
         <div class="input-group">
             <label>Password</label>
-            <input type="password" placeholder="Enter password">
+            <input type="password" name="password" required>
         </div>
 
-        <button class="login-btn">Login</button>
+        <button class="login-btn" type="submit">Login</button>
     </div>
+</form>
+
 
 </body>
 
