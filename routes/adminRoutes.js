@@ -1,9 +1,12 @@
-const express = require("express");
-const router = express.Router();
-const { protect, isAdmin } = require("../middlewares/authMiddleware");
+const express = require('express')
+const router = express.Router()
 
-router.get("/dashboard", protect, isAdmin, (req, res) => {
-  res.render("admin/dashboard", { user: req.user });
-});
+const { protect } = require('../middlewares/authMiddleware')
+const { authorize } = require('../middlewares/roleMiddleware')
+const {adminDashboard}=require('../controllers/adminController')
 
-module.exports = router;
+router
+     .get('/dashboard',protect,authorize('ADMIN'),adminDashboard)
+
+
+module.exports = router
