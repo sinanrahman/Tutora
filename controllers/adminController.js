@@ -1,6 +1,6 @@
-const student=require('../models/StudentModel')
-const Admin=require('../models/AdminModel')
-const coordinator=require('../models/CoordinatorModel')
+const student=require('../models/Student')
+const Admin=require('../models/Admin')
+const coordinator=require('../models/Coordinator')
 
 
 exports.AdminDashboardController = async (req, res) => {
@@ -185,3 +185,6 @@ exports.AdminUpdateCoordinatorController = async (req, res) => {
   }
 }
 
+exports.adminDashboard = (req, res) => {
+	res.render('admin/dashboard')
+}

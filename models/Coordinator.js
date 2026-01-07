@@ -1,6 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs')
-
 
 const coordinatorSchema = new mongoose.Schema(
 	{
@@ -40,21 +39,13 @@ const coordinatorSchema = new mongoose.Schema(
 			type: Boolean,
 			default: true,
 		},
-		createdBy: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Admin',
-			required: true,
-		},
 	},
 	{ timestamps: true }
 );
-coordinatorSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next()
-  const salt = await bcrypt.genSalt(10)
-  this.password = await bcrypt.hash(this.password, salt)
-//   next();
+
+coordinatorSchema.pre('save', async function () {
+	if (!this.isModified('password')) return
+	this.password = await bcrypt.hash(this.password, 10)
 })
 
-
-
-module.exports = mongoose.model('Coordinator', coordinatorSchema)
+module.exports = mongoose.model('Coordinator', coordinatorSchema);

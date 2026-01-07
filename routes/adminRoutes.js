@@ -1,5 +1,9 @@
 const express = require('express')
 const { AdminDashboardController, AdminAddStudentsController, AdminViewStudentsController, AdminPostAddStudentController, AdminAddCoordinatorsController, AdminViewCoordinatorController, AdminPostAddCoordinatorController, AdminDeleteCoordinatorController, AdminEditCoordinatorPageController, AdminUpdateCoordinatorController, AdminDeleteStudentController, AdminEditStudentPageController, AdminUpdateStudentController } = require('../controllers/adminController')
+
+const { protect } = require('../middlewares/authMiddleware')
+const { authorize } = require('../middlewares/roleMiddleware')
+const {adminDashboard}=require('../controllers/adminController')
 const router = express.Router()
 
 router
@@ -47,5 +51,9 @@ router
 router
   .route('/coordinators/update/:id')
   .post(AdminUpdateCoordinatorController)
+
+router
+     .get('/dashboard',protect,authorize('ADMIN'),adminDashboard)
+
 
 module.exports = router
