@@ -1,13 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sidebar</title>
-</head>
-<body>
-    
+<nav id="sidebar" class="bg-dark text-white position-fixed vh-100 p-3">
+  <h3 class="text-center mb-4">Admin Panel</h3>
+  <ul class="nav flex-column">
+    <li class="nav-item mb-2">
+      <a href="/admin" class="nav-link text-white">
+        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+      </a>
+    </li>
+    <li class="nav-item mb-2">
+      <a href="/admin/viewstudents" class="nav-link text-white">
+        <i class="bi bi-people-fill me-2"></i> Students
+      </a>
+    </li>
+    <li class="nav-item mb-2">
+      <a href="/admin/viewcoordinators" class="nav-link text-white">
+        <i class="bi bi-person-badge-fill me-2"></i> Coordinators
+      </a>
+    </li>
+    <li class="nav-item mb-2">
+      <a href="/admin/viewteachers" class="nav-link text-white">
+        <i class="bi bi-person-workspace me-2"></i> Teachers
+      </a>
+    </li>
+  </ul>
+</nav>
 
+<style>
+  /* Sidebar styling */
+  #sidebar {
+    width: 220px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background-color: #343a40;
+    padding-top: 20px;
+    overflow-y: auto; /* scroll if content is long */
+    z-index: 1000;
+  }
 
-</body>
-</html>
+  #sidebar h3 {
+    font-size: 1.3rem;
+  }
+
+  #sidebar .nav-link {
+    color: white;
+    padding: 10px 20px;
+    display: block;
+    text-decoration: none;
+  }
+
+  #sidebar .nav-link:hover,
+  #sidebar .nav-link.active {
+    background-color: #495057;
+    border-radius: 5px;
+  }
+
+  /* Main content spacing */
+  .main-content {
+    margin-left: 220px; /* same as sidebar width */
+    padding: 20px;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+  }
+</style>
