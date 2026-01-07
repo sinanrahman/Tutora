@@ -71,6 +71,9 @@ const teacherSchema = new mongoose.Schema(
 			required: true,
 		},
 
+		resetPasswordToken: String,
+resetPasswordExpires: Date,
+
 		status: {
 			type: String,
 			enum: ['active', 'inactive'],
