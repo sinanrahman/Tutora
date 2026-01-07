@@ -184,6 +184,4 @@ exports.AdminUpdateCoordinatorController = async (req, res) => {
   }
 }
 
-exports.adminDashboard = (req, res) => {
-	res.render('admin/dashboard')
-}
+

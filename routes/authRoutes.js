@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const { loginPage, adminLoginPage, teacherLoginPage, coordinatorLoginPage,login } = require('../controllers/authController')
+const { loginPage, adminLoginPage, teacherLoginPage, coordinatorLoginPage,login ,logout} = require('../controllers/authController')
 
 router
     .route('/')
@@ -20,5 +20,8 @@ router
     .get(coordinatorLoginPage)
 
 router.post('/login', login)
+
+
+router.get('/admin/logout', logout);
 
 module.exports = router
