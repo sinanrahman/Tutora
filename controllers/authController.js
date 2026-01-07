@@ -9,15 +9,28 @@ exports.loginPage = (req, res) => {
 }
 
 exports.adminLoginPage = (req, res) => {
-    return res.render('auth/adminLogin')
+    return res.render('auth/adminLogin',{msg:''})
 }
 
 exports.teacherLoginPage = (req, res) => {
-    return res.render('auth/teacherLogin')
+    return res.render('auth/teacherLogin',{msg:''})
 }
 
 exports.coordinatorLoginPage = (req, res) => {
-    return res.render('auth/coordinatorLogin')
+    return res.render('auth/coordinatorLogin',{msg:''})
+}
+
+const renderLoginWithMsg = (res, role, msg) => {
+	if (role === 'admin') {
+		return res.render('auth/adminLogin', { msg })
+	}
+	if (role === 'teacher') {
+		return res.render('auth/teacherLogin', { msg })
+	}
+	if (role === 'coordinator') {
+		return res.render('auth/coordinatorLogin', { msg })
+	}
+	return res.render('auth/login', { msg })
 }
 
 
@@ -30,7 +43,7 @@ exports.login = async (req, res) => {
 	if (role === 'admin') {
 		user = await Admin.findOne({ email }).select('+password')
 		if (!user || user.status !== 'active') {
-			return res.status(401).send('Admin not active')
+			return renderLoginWithMsg(res, role, 'Incorrect email or password')
 		}
 		userRole = 'ADMIN'
 	}
@@ -38,7 +51,7 @@ exports.login = async (req, res) => {
 	if (role === 'teacher') {
 		user = await Teacher.findOne({ email })
 		if (!user || user.status !== 'active') {
-			return res.status(401).send('Teacher not active')
+			return renderLoginWithMsg(res, role, 'Incorrect email or password')
 		}
 		userRole = 'TEACHER'
 	}
@@ -46,18 +59,18 @@ exports.login = async (req, res) => {
 	if (role === 'coordinator') {
 		user = await Coordinator.findOne({ email })
 		if (!user || !user.isActive) {
-			return res.status(401).send('Coordinator not active')
+			return renderLoginWithMsg(res, role, 'Incorrect email or password')
 		}
 		userRole = 'COORDINATOR'
 	}
 
 	if (!user) {
-		return res.status(401).send('Invalid credentials')
+		return renderLoginWithMsg(res, role, 'User not found')
 	}
 
 	const isMatch = await bcrypt.compare(password, user.password)
-	if (!isMatch) {
-		return res.status(401).send('Invalid credentials')
+		if (!isMatch) {
+		return renderLoginWithMsg(res, role, 'Invalid credentials')
 	}
 
 	const token = jwt.sign(
