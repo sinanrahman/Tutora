@@ -80,6 +80,12 @@
         .login-btn:hover {
             background: #1e40af;
         }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -102,6 +108,7 @@
         </div>
 
         <button class="login-btn" type="submit">Login</button>
+        <p class="error-message"><%=msg%></p>
     </div>
 </form>
 
