@@ -6,6 +6,8 @@ const coordinator=require('../models/CoordinatorModel')
 exports.AdminDashboardController=(req,res)=>{
     return res.render('admin/dashboard')
 }
+
+//students
 exports.AdminAddStudentsController = async (req, res) => {
   try {
     const coordinators = await coordinator.find().select("_id fullName")
@@ -40,6 +42,55 @@ exports.AdminViewStudentsController = async (req, res) => {
     res.send("Error loading students")
   }
 }
+
+exports.AdminEditStudentPageController = async (req, res) => {
+  try {
+    const id = req.params.id
+    const stud = await student.findById(id)
+    const coordinators = await coordinator.find().select("_id fullName")
+
+    if (!stud) return res.send("Student not found")
+    res.render("admin/editstudent", { student: stud, coordinators })
+  } catch (err) {
+    console.log(err)
+    res.send("Error loading edit page")
+  }
+}
+
+exports.AdminUpdateStudentController = async (req, res) => {
+  try {
+    const id = req.params.id
+     const{fullname,email,phone,country,Class,gender,coordinator}=req.body
+    await student.findByIdAndUpdate(id, {
+        fullName:fullname,
+        email:email,
+        phone:phone,
+        country:country,
+        class:Class,
+        gender:gender,
+        coordinator:coordinator
+    })
+    res.redirect("/admin/viewstudents")
+
+  } catch (err) {
+    console.log(err)
+    res.send("Error updating student")
+  }
+}
+
+
+
+exports.AdminDeleteStudentController = async (req, res) => {
+  try {
+    const id = req.params.id
+    await student.findByIdAndDelete(id)
+    res.redirect('/admin/viewstudents')
+  } catch (err) {
+    console.log(err)
+    res.send("Error deleting student")
+  }
+}
+
 
 
 //co-ordinators
@@ -84,7 +135,6 @@ exports.AdminDeleteCoordinatorController = async (req, res) => {
     res.send("Error deleting coordinator")
   }
 }
-
 
 exports.AdminEditCoordinatorPageController = async (req, res) => {
   try {

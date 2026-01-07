@@ -1,5 +1,5 @@
 const express = require('express')
-const { AdminDashboardController, AdminAddStudentsController, AdminViewStudentsController, AdminPostAddStudentController, AdminAddCoordinatorsController, AdminViewCoordinatorController, AdminPostAddCoordinatorController, AdminDeleteCoordinatorController, AdminEditCoordinatorPageController, AdminUpdateCoordinatorController } = require('../controllers/adminController')
+const { AdminDashboardController, AdminAddStudentsController, AdminViewStudentsController, AdminPostAddStudentController, AdminAddCoordinatorsController, AdminViewCoordinatorController, AdminPostAddCoordinatorController, AdminDeleteCoordinatorController, AdminEditCoordinatorPageController, AdminUpdateCoordinatorController, AdminDeleteStudentController, AdminEditStudentPageController, AdminUpdateStudentController } = require('../controllers/adminController')
 const router = express.Router()
 
 router
@@ -13,6 +13,18 @@ router
 router
   .route('/viewstudents')
   .get(AdminViewStudentsController)
+
+router
+  .route('/students/delete/:id')
+  .get(AdminDeleteStudentController)
+
+router
+  .route('/students/edit/:id')
+  .get(AdminEditStudentPageController)
+
+router
+  .route('/students/update/:id')
+  .post(AdminUpdateStudentController)
 
 
 router
