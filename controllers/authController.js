@@ -1,9 +1,9 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const Admin = require('../models/AdminModel')
-const Teacher = require('../models/TeacherModel')
-const Coordinator = require('../models/CoordinatorModel')
+const Admin = require('../models/Admin')
+const Teacher = require('../models/Teacher')
+const Coordinator = require('../models/Coordinator')
 exports.loginPage = (req, res) => {
     return res.render('auth/login')
 }
