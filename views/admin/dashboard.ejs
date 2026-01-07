@@ -12,6 +12,11 @@
       margin-left:220px;padding:20px;min-height:100vh;background:#f8f9fa;
     }
     .card{border-radius:12px}
+    a{
+      text-decoration: none;
+      color:#343a40;
+    }
+    
   </style>
 </head>
 
@@ -25,51 +30,49 @@
 
       <div class="col-md-3">
         <div class="card shadow-sm border-0">
-          <div class="card-body">
+          <a href="/admin/viewstudents"><div class="card-body">
             <h6 class="text-muted">Total Students</h6>
             <h3 class="fw-bold"><%= totalStudents %></h3>
-          </div>
+          </div></a>
         </div>
       </div>
 
-      <div class="col-md-3">
+      <!-- <div class="col-md-3">
         <div class="card shadow-sm border-0">
           <div class="card-body">
             <h6 class="text-muted">Active Students</h6>
             <h3 class="fw-bold text-success"><%= totalActiveStudents %></h3>
           </div>
         </div>
-      </div>
+      </div> -->
 
-      <div class="col-md-3">
+      <!-- <div class="col-md-3">
         <div class="card shadow-sm border-0">
           <div class="card-body">
             <h6 class="text-muted">Inactive Students</h6>
             <h3 class="fw-bold text-danger"><%= totalInactiveStudents %></h3>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div class="col-md-3">
         <div class="card shadow-sm border-0">
-          <div class="card-body">
+          <a href="/admin/viewcoordinators"><div class="card-body">
             <h6 class="text-muted">Coordinators</h6>
             <h3 class="fw-bold"><%= totalCoordinators %></h3>
-          </div>
+          </div></a>
         </div>
       </div>
 
-      <div class="col-md-3">
+      <!-- <div class="col-md-3">
         <div class="card shadow-sm border-0">
           <div class="card-body">
             <h6 class="text-muted">Active Coordinators</h6>
             <h3 class="fw-bold text-primary"><%= totalActiveCoordinators %></h3>
           </div>
         </div>
-      </div>
-
+      </div> -->
     </div>
-
   </div>
 </body>
 </html>
