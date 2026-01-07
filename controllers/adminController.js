@@ -9,7 +9,6 @@ exports.AdminDashboardController = async (req, res) => {
     const totalCoordinators = await coordinator.countDocuments()
     const totalActiveStudents = await student.countDocuments({ status: "active" })
     const totalInactiveStudents = await student.countDocuments({ status: "inactive" })
-
     const totalActiveCoordinators = await coordinator.countDocuments({ isActive: true })
 
     res.render("admin/dashboard", {
@@ -38,13 +37,13 @@ exports.AdminAddStudentsController = async (req, res) => {
 }
 
 exports.AdminPostAddStudentController=async (req,res)=>{
-    const{fullname,email,phone,country,Class,gender,coordinator}=req.body
+    const{fullname,email,phone,country,standard,gender,coordinator}=req.body
     await student.create({
         fullName:fullname,
         email:email,
         phone:phone,
         country:country,
-        class:Class,
+        standard:standard,
         gender:gender,
         coordinator:coordinator
     })
@@ -54,7 +53,7 @@ exports.AdminPostAddStudentController=async (req,res)=>{
 
 exports.AdminViewStudentsController = async (req, res) => {
   try {
-    const students = await student.find().populate('coordinator', 'fullName email')
+    const students = await student.find() .populate('coordinator', 'fullName email')
     res.render('admin/viewstudents', { students })
   } catch (err) {
     console.log(err)
@@ -79,13 +78,13 @@ exports.AdminEditStudentPageController = async (req, res) => {
 exports.AdminUpdateStudentController = async (req, res) => {
   try {
     const id = req.params.id
-     const{fullname,email,phone,country,Class,gender,coordinator}=req.body
+     const{fullname,email,phone,country,standard,gender,coordinator}=req.body
     await student.findByIdAndUpdate(id, {
         fullName:fullname,
         email:email,
         phone:phone,
         country:country,
-        class:Class,
+        standard:standard,
         gender:gender,
         coordinator:coordinator
     })
@@ -135,7 +134,7 @@ exports.AdminPostAddCoordinatorController=async(req,res)=>{
 
 exports.AdminViewCoordinatorController = async (req, res) => {
   try {
-    const coordinators = await coordinator.find().populate('createdBy', 'fullName email')
+    const coordinators = await coordinator.find()
    return res.render('admin/viewcoordinators', { coordinators })
 
   } catch (err) {

@@ -1,31 +1,46 @@
 <nav id="sidebar" class="bg-dark text-white position-fixed vh-100 p-3">
-  <h3 class="text-center mb-4">Admin Panel</h3>
+  <h3 class="text-center mb-4">Tutora</h3>
+
   <ul class="nav flex-column">
     <li class="nav-item mb-2">
       <a href="/admin" class="nav-link text-white">
         <i class="bi bi-speedometer2 me-2"></i> Dashboard
       </a>
     </li>
+
     <li class="nav-item mb-2">
       <a href="/admin/viewstudents" class="nav-link text-white">
         <i class="bi bi-people-fill me-2"></i> Students
       </a>
     </li>
+
     <li class="nav-item mb-2">
       <a href="/admin/viewcoordinators" class="nav-link text-white">
         <i class="bi bi-person-badge-fill me-2"></i> Coordinators
       </a>
     </li>
+
     <li class="nav-item mb-2">
       <a href="/admin/viewteachers" class="nav-link text-white">
         <i class="bi bi-person-workspace me-2"></i> Teachers
       </a>
     </li>
   </ul>
+
+  <hr class="text-secondary mt-4">
+
+
+<!-- show admin -->
+  <div class="mt-auto">
+    <a href="/admin/logout"
+       class="btn btn-outline-light w-100"
+       onclick="return confirm('Are you sure you want to logout?')">
+      <i class="bi bi-box-arrow-right me-2"></i> Logout
+    </a>
+  </div>
 </nav>
 
 <style>
-  /* Sidebar styling */
   #sidebar {
     width: 220px;
     position: fixed;
@@ -34,19 +49,17 @@
     height: 100vh;
     background-color: #343a40;
     padding-top: 20px;
-    overflow-y: auto; /* scroll if content is long */
+    overflow-y: auto;
     z-index: 1000;
-  }
 
-  #sidebar h3 {
-    font-size: 1.3rem;
+    /* makes logout stick to bottom */
+    display: flex;
+    flex-direction: column;
   }
 
   #sidebar .nav-link {
     color: white;
     padding: 10px 20px;
-    display: block;
-    text-decoration: none;
   }
 
   #sidebar .nav-link:hover,
@@ -55,11 +68,10 @@
     border-radius: 5px;
   }
 
-  /* Main content spacing */
   .main-content {
-    margin-left: 220px; /* same as sidebar width */
+    margin-left: 220px;
     padding: 20px;
     min-height: 100vh;
-    background-color: #f8f9fa;
+    background: #f8f9fa;
   }
 </style>
