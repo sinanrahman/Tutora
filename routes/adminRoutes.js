@@ -3,7 +3,6 @@ const { AdminDashboardController, AdminAddStudentsController, AdminViewStudentsC
 
 const { protect } = require('../middlewares/authMiddleware')
 const { authorize } = require('../middlewares/roleMiddleware')
-const {adminDashboard}=require('../controllers/adminController')
 const router = express.Router()
 
 router
@@ -53,7 +52,8 @@ router
   .post(AdminUpdateCoordinatorController)
 
 router
-     .get('/dashboard',protect,authorize('ADMIN'),adminDashboard)
+     .get('/dashboard', protect, authorize('ADMIN'), AdminDashboardController)
+
 
 
 module.exports = router
