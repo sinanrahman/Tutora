@@ -3,9 +3,28 @@ const Admin=require('../models/AdminModel')
 const coordinator=require('../models/CoordinatorModel')
 
 
-exports.AdminDashboardController=(req,res)=>{
-    return res.render('admin/dashboard')
+exports.AdminDashboardController = async (req, res) => {
+  try {
+    const totalStudents = await student.countDocuments()
+    const totalCoordinators = await coordinator.countDocuments()
+    const totalActiveStudents = await student.countDocuments({ status: "active" })
+    const totalInactiveStudents = await student.countDocuments({ status: "inactive" })
+
+    const totalActiveCoordinators = await coordinator.countDocuments({ isActive: true })
+
+    res.render("admin/dashboard", {
+      totalStudents,
+      totalCoordinators,
+      totalActiveStudents,
+      totalInactiveStudents,
+      totalActiveCoordinators
+    })
+  } catch (err) {
+    console.log(err)
+    res.send("Error loading dashboard")
+  }
 }
+
 
 //students
 exports.AdminAddStudentsController = async (req, res) => {
