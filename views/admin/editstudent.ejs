@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Student</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    #sidebar {
+      width: 220px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      background-color: #343a40;
+      padding-top: 20px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    .main-content {
+      margin-left: 220px;
+      padding: 20px;
+      min-height: 100vh;
+      background: #f8f9fa;
+    }
+    .card { border-radius: 10px; }
+  </style>
+</head>
+
+<body class="bg-light">
+  <%- include('partials/sidebar') %>
+
+  <div class="main-content">
+    <h3 class="fw-bold mb-3">Edit Student</h3>
+
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <form action="/admin/students/update/<%= student._id %>" method="post">
+
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" name="fullname" class="form-control"
+                   value="<%= student.fullName %>" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control"
+                   value="<%= student.email %>" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input type="text" name="phone" class="form-control"
+                   value="<%= student.phone %>" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Gender</label>
+            <select name="gender" class="form-select">
+              <option value="male"   <%= student.gender === 'male' ? 'selected' : '' %>>Male</option>
+              <option value="female" <%= student.gender === 'female' ? 'selected' : '' %>>Female</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Country</label>
+            <input type="text" name="country" class="form-control"
+                   value="<%= student.country %>" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Class</label>
+            <input type="text" name="standard" class="form-control"
+                   value="<%= student.standard %>" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Assign Coordinator</label>
+            <select name="coordinator" class="form-select" required>
+              <option disabled>Select Coordinator</option>
+              <% coordinators.forEach(c => { %>
+                <option value="<%= c._id %>"
+                  <%= student.coordinator?.toString() === c._id.toString() ? 'selected' : '' %>>
+                  <%= c.fullName %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="d-flex justify-content-end gap-2">
+            <a href="/admin/viewstudents" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Update Student</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

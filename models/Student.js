@@ -42,6 +42,10 @@ const studentSchema = new mongoose.Schema(
 			default: 120,
 			required: true,
 		},
+		standard:{
+         type:String,
+		 required:true
+		},
 		status: {
 			type: String,
 			enum: ['active', 'inactive'],
@@ -49,9 +53,9 @@ const studentSchema = new mongoose.Schema(
 		},
 		coordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'Coordinator' },
 	},
+
 	{
 		timestamps: true,
 	}
-);
-
+)
 module.exports = mongoose.model('Student', studentSchema);
