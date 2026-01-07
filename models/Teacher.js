@@ -60,11 +60,7 @@ const teacherSchema = new mongoose.Schema(
 					type: String,
 					required: true,
 					trim: true,
-				},
-				level: {
-					type: String,
-					trim: true,
-				},
+				}
 			},
 		],
 
