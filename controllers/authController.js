@@ -84,7 +84,8 @@ exports.login = async (req, res) => {
 
 	res.cookie('token', token, {
 		httpOnly: true,
-		sameSite: 'strict',
+		sameSite: 'none',
+		secure:'true'
 	})
 
 	if (userRole === 'ADMIN') return res.redirect('/admin/dashboard')
