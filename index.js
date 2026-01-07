@@ -23,6 +23,8 @@ const adminRoutes = require('./routes/adminRoutes')
 
 app.use('/admin', adminRoutes)
 
+const adminRouter=require('./routes/adminRoutes')
+app.use('/admin',adminRouter)
 
 // Server
 const port = process.env.PORT || 5000;

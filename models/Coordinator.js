@@ -21,7 +21,8 @@ const coordinatorSchema = new mongoose.Schema(
 		password: {
 			type: String,
 			required: true,
-		}, // set by Admin
+			select: false  
+		}, 
 		assignedStudents: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
