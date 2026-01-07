@@ -33,11 +33,6 @@ const adminSchema = new mongoose.Schema(
 			minlength: 8,
 			select: false,
 		},
-		role: {
-			type: String,
-			default: 'ADMIN',
-			immutable: true,
-		},
 		status: {
 			type: String,
 			enum: ['active', 'inactive'],

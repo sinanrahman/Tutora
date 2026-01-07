@@ -23,8 +23,8 @@ const studentSchema = new mongoose.Schema(
 		},
 		gender: {
 			type: String,
-			enum: ['male', 'female', 'other', 'prefer_not_to_say'],
-			default: 'prefer_not_to_say',
+			enum: ['male', 'female', 'other'],
+			default: 'male',
 		},
 
 		country: {
@@ -32,7 +32,16 @@ const studentSchema = new mongoose.Schema(
 			required: true,
 			trim: true,
 		},
-
+		prepaidHours: {
+			type: Number,
+			default: 120,
+			required: true,
+		},
+		remainingHours: {
+			type: Number,
+			default: 120,
+			required: true,
+		},
 		status: {
 			type: String,
 			enum: ['active', 'inactive'],
