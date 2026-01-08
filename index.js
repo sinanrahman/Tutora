@@ -29,6 +29,10 @@ const adminRoutes = require('./routes/adminRoutes')
 
 app.use('/admin', adminRoutes)
 
+app.use((req, res) => {
+  res.status(404).render('auth/pageNotFound');
+});
+
 const port = process.env.PORT || 5000;
 app.listen(port, async () => {
     await connectdb();

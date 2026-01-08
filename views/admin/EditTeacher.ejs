@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Edit Teacher</title>
@@ -13,162 +14,165 @@
 
   <%- include('./partials/sidebar') %>
 
-  <div class="main-content py-4">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-md-9 col-lg-8">
+    <div class="main-content py-4">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-9 col-lg-8">
 
-          <div class="card shadow">
-            <div class="card-header bg-dark text-white">
-              <h5 class="mb-0">Edit Teacher</h5>
+            <div class="card shadow">
+              <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Edit Teacher</h5>
+              </div>
+
+              <div class="card-body">
+                <form action="/admin/teachers/edit/<%= teacher._id %>" method="POST" enctype="multipart/form-data">
+
+                  <div class="mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="fullName" class="form-control" value="<%= teacher.fullName %>" required>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="<%= teacher.email %>" required>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Phone</label>
+                    <input type="text" name="phone" class="form-control" value="<%= teacher.phone || '' %>">
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Profile Picture</label>
+                    <% if (teacher.profilePic?.url) { %>
+                      <div class="mb-2">
+                        <img id="previewImage" src="<%= teacher.profilePic.url %>" width="80" height="80"
+                          class="rounded-circle" style="object-fit: cover;">
+                      </div>
+                      <% } %>
+                        <input type="file" name="profilePic" class="form-control" onchange="previewFile(event)">
+                        <small class="text-muted">Leave empty to keep existing image</small>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Experience (Years)</label>
+                    <input type="number" name="experienceYears" class="form-control" min="0"
+                      value="<%= teacher.experienceYears || 0 %>">
+                  </div>
+
+                  <hr>
+                  <h6 class="fw-bold">Qualification</h6>
+
+                  <div class="mb-3">
+                    <label class="form-label">Degree</label>
+                    <input type="text" name="degree" class="form-control" value="<%= teacher.qualification?.degree %>"
+                      required>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Field</label>
+                    <input type="text" name="field" class="form-control" value="<%= teacher.qualification?.field %>"
+                      required>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Institution</label>
+                    <input type="text" name="institution" class="form-control"
+                      value="<%= teacher.qualification?.institution || '' %>">
+                  </div>
+
+                  <hr>
+
+                  <div class="mb-3">
+                    <label class="form-label">Subjects</label>
+                    <input type="text" name="subjects" class="form-control"
+                      value="<%= (teacher.subjects || []).join(', ') %>" required>
+                  </div>
+
+
+                  <div class="mb-4">
+                    <label class="form-label">Hourly Rate (₹)</label>
+                    <input type="number" name="hourlyRate" class="form-control" value="<%= teacher.hourlyRate %>"
+                      required>
+                  </div>
+
+                  <div class="mb-4">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select" required>
+                      <option value="active" <%=teacher.status==='active' ? 'selected' : '' %>>
+                        Active
+                      </option>
+                      <option value="inactive" <%=teacher.status==='inactive' ? 'selected' : '' %>>
+                        Inactive
+                      </option>
+                    </select>
+                  </div>
+
+
+                  <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-warning w-100 fw-bold">
+                      Update Teacher
+                    </button>
+
+                    <button type="button" class="btn btn-outline-dark w-100 fw-bold" data-bs-toggle="modal"
+                      data-bs-target="#changePasswordModal">
+                      Change Password
+                    </button>
+
+                    <a href="/admin/viewteachers" class="btn btn-secondary w-100 fw-bold">
+                      Cancel
+                    </a>
+                  </div>
+
+                </form>
+              </div>
             </div>
 
-            <div class="card-body">
-              <form action="/admin/teachers/edit/<%= teacher._id %>" method="POST" enctype="multipart/form-data">
-
-                <div class="mb-3">
-                  <label class="form-label">Full Name</label>
-                  <input type="text" name="fullName" class="form-control"
-                    value="<%= teacher.fullName %>" required>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label">Email</label>
-                  <input type="email" name="email" class="form-control"
-                    value="<%= teacher.email %>" required>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label">Phone</label>
-                  <input type="text" name="phone" class="form-control"
-                    value="<%= teacher.phone || '' %>">
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label">Profile Picture</label>
-                  <% if (teacher.profilePic?.url) { %>
-                    <div class="mb-2">
-                      <img id="previewImage"
-                        src="<%= teacher.profilePic.url %>"
-                        width="80" height="80"
-                        class="rounded-circle"
-                        style="object-fit: cover;">
-                    </div>
-                  <% } %>
-                  <input type="file" name="profilePic" class="form-control"
-                    onchange="previewFile(event)">
-                  <small class="text-muted">Leave empty to keep existing image</small>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label">Experience (Years)</label>
-                  <input type="number" name="experienceYears" class="form-control"
-                    min="0" value="<%= teacher.experienceYears || 0 %>">
-                </div>
-
-                <hr>
-                <h6 class="fw-bold">Qualification</h6>
-
-                <div class="mb-3">
-                  <label class="form-label">Degree</label>
-                  <input type="text" name="degree" class="form-control"
-                    value="<%= teacher.qualification?.degree %>" required>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label">Field</label>
-                  <input type="text" name="field" class="form-control"
-                    value="<%= teacher.qualification?.field %>" required>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label">Institution</label>
-                  <input type="text" name="institution" class="form-control"
-                    value="<%= teacher.qualification?.institution || '' %>">
-                </div>
-
-                <hr>
-
-                <div class="mb-3">
-                  <label class="form-label">Subjects</label>
-                  <input type="text" name="subjects" class="form-control"
-                    value="<%= (teacher.subjects || []).join(', ') %>" required>
-                </div>
-
-                <div class="mb-4">
-                  <label class="form-label">Hourly Rate (₹)</label>
-                  <input type="number" name="hourlyRate" class="form-control"
-                    value="<%= teacher.hourlyRate %>" required>
-                </div>
-
-                
-                <div class="d-flex gap-2">
-                  <button type="submit" class="btn btn-warning w-100 fw-bold">
-                    Update Teacher
-                  </button>
-
-                  <button type="button"
-                          class="btn btn-outline-dark w-100 fw-bold"
-                          data-bs-toggle="modal"
-                          data-bs-target="#changePasswordModal">
-                    Change Password
-                  </button>
-
-                  <a href="/admin/viewteachers" class="btn btn-secondary w-100 fw-bold">
-                    Cancel
-                  </a>
-                </div>
-
-              </form>
-            </div>
           </div>
-
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="modal fade" id="changePasswordModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <form action="/admin/teachers/change-password/<%= teacher._id %>"
-            method="POST"
-            class="modal-content">
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <form action="/admin/teachers/change-password/<%= teacher._id %>" method="POST" class="modal-content">
 
-        <div class="modal-header">
-          <h5 class="modal-title">Change Password</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-
-        <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label">New Password</label>
-            <input type="password" name="password" class="form-control" required>
+          <div class="modal-header">
+            <h5 class="modal-title">Change Password</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
-        </div>
 
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-dark fw-bold">
-            Update Password
-          </button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancel
-          </button>
-        </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">New Password</label>
+              <input minlength="8" type="password" name="password" class="form-control" required>
+            </div>
+          </div>
 
-      </form>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-dark fw-bold">
+              Update Password
+            </button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+          </div>
+
+        </form>
+      </div>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <script>
-    function previewFile(event) {
-      const img = document.getElementById('previewImage');
-      if (event.target.files[0]) {
-        img.src = URL.createObjectURL(event.target.files[0]);
+    <script>
+      function previewFile(event) {
+        const img = document.getElementById('previewImage');
+        if (event.target.files[0]) {
+          img.src = URL.createObjectURL(event.target.files[0]);
+        }
       }
-    }
-  </script>
+    </script>
 
 </body>
+
 </html>
