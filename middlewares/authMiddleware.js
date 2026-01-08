@@ -13,3 +13,4 @@ exports.protect = (req, res, next) => {
 		return res.redirect('/')
 	}
 }
+

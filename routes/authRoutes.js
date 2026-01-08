@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+const authController = require('../controllers/authController')
+
 
 const { loginPage, adminLoginPage, teacherLoginPage, coordinatorLoginPage,login ,logout} = require('../controllers/authController')
 
@@ -22,6 +24,12 @@ router
 router.post('/login', login)
 
 
+router.get('/forgot-password', (req, res) => res.render('auth/forgotPassword', { msg: '' }))
+router.post('/forgot-password', authController.forgotPassword)
+
+// Reset Password
+router.get('/reset-password/:token', authController.renderResetPasswordPage)
+router.post('/reset-password/:token', authController.resetPassword)
 router.get('/admin/logout', logout);
 
 module.exports = router
