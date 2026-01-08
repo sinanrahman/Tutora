@@ -198,51 +198,76 @@ exports.logout = (req, res) => {
 // --- 1️⃣ Forgot Password ---
 exports.forgotPassword = async (req, res) => {
   try {
-    const { email } = req.body;
-    let user, role;
+    const { email } = req.body
 
-    if (user = await Admin.findOne({ email })) role = 'Admin';
-    else if (user = await Teacher.findOne({ email })) role = 'Teacher';
-    else if (user = await Coordinator.findOne({ email })) role = 'Coordinator';
-    else return res.render('auth/forgotPassword', { msg: 'Email not found' });
+    // ✅ Admin only
+    const admin = await Admin.findOne({ email })
+    if (!admin) {
+      return res.render('auth/forgotPassword', {
+        msg: 'Admin email not found'
+      })
+    }
 
     // Generate reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 min
-    await user.save();
+    const resetToken = crypto.randomBytes(32).toString('hex')
+    admin.resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex')
 
-    // Use dynamic port
-    const port = process.env.PORT || 3000;
-    const resetURL = `http://localhost:${port}/reset-password/${resetToken}`;
-    console.log('Reset URL:', resetURL); // ✅ debug
+    admin.resetPasswordExpires = Date.now() + 15 * 60 * 1000
+    await admin.save()
 
-    // Send email
+    const port = process.env.PORT || 3000
+    const resetURL = `http://localhost:${port}/reset-password/${resetToken}`
+
     await sendEmail({
-      to: user.email,
-      subject: 'Password Reset',
-      html: `<p>Hi ${role}, click <a href="${resetURL}">here</a> to reset your password. Link expires in 15 minutes.</p>`
-    });
+      to: admin.email,
+      subject: 'Admin Password Reset',
+      html: `
+        <p>Hello Admin,</p>
+        <p>Click the link below to reset your password:</p>
+        <a href="${resetURL}">${resetURL}</a>
+        <p>This link expires in 15 minutes.</p>
+      `
+    })
 
-    res.render('auth/forgotPassword', { msg: 'Reset link sent' });
+    res.render('auth/forgotPassword', {
+      msg: 'Password reset link sent to your email'
+    })
   } catch (err) {
-    console.error(err);
-    res.render('auth/forgotPassword', { msg: 'Error sending email' });
+    console.error(err)
+    res.render('auth/forgotPassword', {
+      msg: 'Error sending reset email'
+    })
   }
-};
+}
+
 
 
 // --- 2️⃣ Render Reset Password Page ---
-exports.renderResetPasswordPage = (req, res) => {
+exports.renderResetPasswordPage = async (req, res) => {
   try {
-    console.log('RESET TOKEN:', req.params.token)
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(req.params.token)
+      .digest('hex')
+
+    const admin = await Admin.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() }
+    })
+
+    if (!admin) {
+      return res.send('Reset link is invalid or expired')
+    }
 
     res.render('auth/resetPassword', {
       token: req.params.token,
       msg: ''
     })
   } catch (err) {
-    console.error('Render reset page error:', err)
+    console.error(err)
     res.send('Error loading reset page')
   }
 }
@@ -251,37 +276,46 @@ exports.renderResetPasswordPage = (req, res) => {
 // --- 3️⃣ Reset Password ---
 exports.resetPassword = async (req, res) => {
   try {
+    const { password } = req.body
+
+    if (password.length < 8) {
+      return res.render('auth/resetPassword', {
+        token: req.params.token,
+        msg: 'Password must be at least 8 characters long'
+      })
+    }
+
     const hashedToken = crypto
       .createHash('sha256')
       .update(req.params.token)
       .digest('hex')
 
-    let user =
-      (await Admin.findOne({
-        resetPasswordToken: hashedToken,
-        resetPasswordExpires: { $gt: Date.now() }
-      })) ||
-      (await Teacher.findOne({
-        resetPasswordToken: hashedToken,
-        resetPasswordExpires: { $gt: Date.now() }
-      })) ||
-      (await Coordinator.findOne({
-        resetPasswordToken: hashedToken,
-        resetPasswordExpires: { $gt: Date.now() }
-      }))
+    const admin = await Admin.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() }
+    })
 
-    if (!user) return res.send('Token invalid or expired')
+    if (!admin) {
+      return res.render('auth/resetPassword', {
+        token: req.params.token,
+        msg: 'Reset link is invalid or expired'
+      })
+    }
 
-    // ✅ DO NOT HASH HERE
-    user.password = req.body.password
-    user.resetPasswordToken = undefined
-    user.resetPasswordExpires = undefined
+    // ✅ Plain password → hashed by pre-save hook
+    admin.password = password
+    admin.resetPasswordToken = undefined
+    admin.resetPasswordExpires = undefined
 
-    await user.save() // pre-save hook hashes once
+    await admin.save()
+
     res.redirect('/')
   } catch (err) {
     console.error(err)
-    res.send('Error resetting password')
+    res.render('auth/resetPassword', {
+      token: req.params.token,
+      msg: 'Error resetting password'
+    })
   }
 }
 
