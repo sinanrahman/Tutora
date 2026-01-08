@@ -30,7 +30,6 @@
 
     .table th, .table td { vertical-align:middle; }
 
-    /* Make action buttons stay in one line */
     .action-group .btn {
       min-width: 90px;
     }
@@ -90,7 +89,7 @@
                       <div class="action-group">
                         <a href="/admin/coordinators/edit/<%= c._id %>" class="btn btn-sm btn-warning">Edit</a>
 
-                        <!-- Delete button triggers modal -->
+                       
                         <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="<%= c._id %>">
                           Delete
                         </button>
