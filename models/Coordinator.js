@@ -35,6 +35,7 @@ const coordinatorSchema = new mongoose.Schema(
 				ref: 'Teacher',
 			},
 		],
+
 		isActive: {
 			type: Boolean,
 			default: true,

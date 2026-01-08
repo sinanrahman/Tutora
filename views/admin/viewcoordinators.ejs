@@ -92,9 +92,18 @@
                        
                         <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="<%= c._id %>">
                           Delete
-                        </button>
+                        </a>
 
-                        <a href="/admin/assignstudents/<%= c._id %>" class="btn btn-sm btn-primary">Assign</a>
+                        <a href="/admin/assign/assign-students/<%= c._id %>"
+                           class="btn btn-sm btn-primary">
+                          Assign
+                        </a>
+
+                        <a href="/forgot-password"
+                           class="btn btn-sm btn-secondary"
+                           onclick="return confirm('Reset this coordinator?')">
+                          Reset
+                        </a>
                       </div>
                     </td>
                   </tr>

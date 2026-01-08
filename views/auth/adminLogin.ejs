@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Login</title>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <style>
         * {
             box-sizing: border-box;
@@ -97,11 +98,6 @@
 
             <input type="hidden" name="role" value="admin" />
 
-            <!-- Username -->
-            <div class="input-group">
-                <label>Username</label>
-                <input type="text" name="username" required>
-            </div>
 
             <!-- Email -->
             <div class="input-group">
@@ -109,18 +105,67 @@
                 <input type="email" name="email" required>
             </div>
 
-            <!-- Password -->
             <div class="input-group">
                 <label>Password</label>
                 <input type="password" name="password" required>
             </div>
 
-            <button class="login-btn" type="submit">Login</button>
-            <p class="error-message">
-                <%=msg%>
-            </p>
+            <button id="loginBtn" class="login-btn" type="submit">Login</button>
+
+            <% if (msg) { %>
+                <div class="alert alert-danger text-center mt-2">
+                    <%= msg %>
+                </div>
+                <% } %>
+
+                    <% if (typeof attemptsLeft !=='undefined' && attemptsLeft !==null) { %>
+                        <button class="btn btn-outline-danger btn-sm w-100 mt-2" disabled>
+                            <%= attemptsLeft %> attempts left
+                        </button>
+                        <% } %>
+
+                            <% if (typeof remainingTime !=='undefined' && remainingTime> 0) { %>
+                                <p id="timer" class="fw-bold text-center"></p>
+                                <a href="/forgot-password"
+                                    style="font-size: 14px; color: #2563eb; text-decoration: none;">
+                                    Forgot password?
+                                </a>
+                                <% } %>
+
+
+
         </div>
     </form>
+    <script>
+        const remainingTime = <%= remainingTime %>;
+
+        if (remainingTime > 0) {
+            let timeLeft = remainingTime;
+
+            const timerEl = document.getElementById("timer");
+            const loginBtn = document.getElementById("loginBtn");
+
+            if (loginBtn) loginBtn.disabled = true;
+
+            const interval = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+
+                if (timerEl) {
+                    timerEl.textContent =
+                        `Try again in ${minutes} min ${seconds.toString().padStart(2, "0")} sec`;
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    if (timerEl) timerEl.textContent = "You can try logging in now.";
+                    if (loginBtn) loginBtn.disabled = false;
+                }
+
+                timeLeft--;
+            }, 1000);
+        }
+    </script>
 
 </body>
 

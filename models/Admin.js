@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
+const crypto = require('crypto')
 
 const adminSchema = new mongoose.Schema(
 	{
@@ -33,10 +34,22 @@ const adminSchema = new mongoose.Schema(
 			minlength: 8,
 			select: false,
 		},
+		resetPasswordToken: String,
+resetPasswordExpires: Date,
+
 		status: {
 			type: String,
 			enum: ['active', 'inactive'],
 			default: 'active',
+		},
+		loginAttempts: {
+			type: Number,
+			default: 0,
+		},
+
+		lockUntil: {
+			type: Date,
+			default: null,
 		},
 
 		lastLogin: { type: Date },
