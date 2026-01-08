@@ -80,10 +80,20 @@
         .login-btn:hover {
             background: #1e40af;
         }
-         .error-message {
+
+        .error-message {
             color: red;
             margin-top: 10px;
             text-align: center;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #2563eb;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -91,25 +101,28 @@
 <body>
 
     <form action="/login" method="POST">
-    <div class="login-card">
-        <div class="login-title">Coordinator Login</div>
+        <div class="login-card">
+            <div class="login-title">Coordinator Login</div>
 
-        <input type="hidden" name="role" value="coordinator" />
+            <input type="hidden" name="role" value="coordinator" />
 
-        <div class="input-group">
-            <label>Email</label>
-            <input type="email" name="email" required>
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" name="email" required>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <button class="login-btn" type="submit">Login</button>
+            <p class="error-message">
+                <%=msg%>
+            </p>
+            <a href="/" class="back-link">Back to home</a>
         </div>
-
-        <div class="input-group">
-            <label>Password</label>
-            <input type="password" name="password" required>
-        </div>
-
-        <button class="login-btn" type="submit">Login</button>
-        <p class="error-message"><%=msg%></p>
-    </div>
-</form>
+    </form>
 
 
 </body>
