@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const connectCloudinary=require('./config/cloudinary')
+const fileUpload = require('express-fileupload')
 
 const app = express();
 const connectdb = require('./config/db');
@@ -14,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(fileUpload({useTempFiles: true,tempFileDir: '/tmp/'}))
 
 // Routes
 const auth = require('./routes/authRoutes');
