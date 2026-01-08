@@ -1,12 +1,15 @@
 const student=require('../models/Student')
 const Admin=require('../models/Admin')
 const coordinator=require('../models/Coordinator')
+const Teacher =require('../models/Teacher')
+const cloudinary =require('../config/cloudinary')
 
 
 exports.AdminDashboardController = async (req, res) => {
   try {
     const totalStudents = await student.countDocuments()
     const totalCoordinators = await coordinator.countDocuments()
+    const totalTeachers = await Teacher.countDocuments() 
     const totalActiveStudents = await student.countDocuments({ status: "active" })
     const totalInactiveStudents = await student.countDocuments({ status: "inactive" })
     const totalActiveCoordinators = await coordinator.countDocuments({ isActive: true })
@@ -14,6 +17,7 @@ exports.AdminDashboardController = async (req, res) => {
     res.render("admin/dashboard", {
       totalStudents,
       totalCoordinators,
+      totalTeachers,
       totalActiveStudents,
       totalInactiveStudents,
       totalActiveCoordinators
@@ -184,4 +188,278 @@ exports.AdminUpdateCoordinatorController = async (req, res) => {
   }
 }
 
+// teacher
 
+exports.AddTeacher =(req,res)=>{
+  res.render('admin/addTeachers')
+}
+
+exports.createTeacher = async (req, res) => {
+  try {const {fullName,email,password,phone,experienceYears,hourlyRate,subjects,degree,field,institution,} = req.body
+
+    if (!fullName || !email || !password || !subjects || !hourlyRate || !degree || !field) {
+      return res.status(400).send('Required fields missing')
+    }
+
+    const existingTeacher = await Teacher.findOne({ email })
+    if (existingTeacher) {
+      return res.status(400).send('Teacher already exists')
+    }
+
+    let profilePic = {}
+
+    if (req.files && req.files.profilePic) {
+      const result = await cloudinary.uploader.upload(
+        req.files.profilePic.tempFilePath,
+        { folder: 'teachers' }
+      )
+      profilePic = {
+        url: result.secure_url,
+        public_id: result.public_id,
+      }
+    }
+
+    const formattedSubjects = subjects.split(',').map(s => s.trim().toLowerCase())
+
+    const teacher = new Teacher({
+      fullName,
+      email,
+      password,
+      phone,
+      experienceYears,
+      hourlyRate,
+      profilePic,
+      qualification: {
+        degree,
+        field,
+        institution,
+      },
+      subjects: formattedSubjects,
+    })
+    await teacher.save()
+    res.redirect('/admin/viewteachers')
+  } catch (error) {
+    console.error('Create Teacher Error:', error)
+    res.status(500).send(error.message)
+  }
+}
+
+exports.getAllTeachers = async (req, res) => {
+  try {
+    const teachers = await Teacher.find()
+      .sort({ createdAt: -1 })
+
+    res.render('admin/viewTeachers', {
+      teachers,
+    })
+  } catch (error) {
+    console.error('Get Teachers Error:', error)
+    res.status(500).send('Server Error')
+  }
+}
+
+exports.getEditTeacher = async (req, res) => {
+  try {
+    const teacher = await Teacher.findById(req.params.id)
+    if (!teacher) {
+      return res.status(404).send('Teacher not found')
+    }
+    res.render('admin/editTeacher', {
+      teacher
+    })
+  } catch (error) {
+    console.error('Get Edit Teacher Error:', error)
+    res.status(500).send('Server Error')
+  }
+}
+
+exports.updateTeacher = async (req, res) => {
+  try {
+    const teacher = await Teacher.findById(req.params.id)
+
+    if (!teacher) {
+      return res.status(404).send('Teacher not found')
+    }
+
+    const {fullName,email,phone,experienceYears,hourlyRate,subjects,degree,field,institution} = req.body
+
+    teacher.fullName = fullName
+    teacher.email = email
+    teacher.phone = phone
+    teacher.experienceYears = experienceYears
+    teacher.hourlyRate = hourlyRate
+    teacher.qualification = {
+      degree,
+      field,
+      institution
+    }
+    teacher.subjects = subjects.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
+    if (req.files && req.files.profilePic) {
+      if (teacher.profilePic?.public_id) {
+        await cloudinary.uploader.destroy(teacher.profilePic.public_id)
+      }
+      const result = await cloudinary.uploader.upload(
+        req.files.profilePic.tempFilePath,
+        { folder: 'teachers' }
+      )
+      teacher.profilePic = {
+        url: result.secure_url,
+        public_id: result.public_id
+      }
+    }
+    await teacher.save()
+    res.redirect('/admin/viewteachers')
+  } catch (error) {
+    console.error('Update Teacher Error:', error)
+    res.status(500).send('Server Error')
+  }
+}
+
+exports.deleteTeacher = async (req, res) => {
+  try {
+    const teacher = await Teacher.findById(req.params.id)
+    if (!teacher) {
+      return res.status(404).send('Teacher not found')
+    }
+    if (teacher.profilePic?.public_id) {
+      await cloudinary.uploader.destroy(teacher.profilePic.public_id)
+    }
+    await teacher.deleteOne()
+    res.redirect('/admin/viewteachers')
+  } catch (error) {
+    console.error('Delete Teacher Error:', error)
+    res.status(500).send('Server Error')
+  }
+}
+
+
+
+
+
+
+
+
+//assigninggg
+exports.AdminAssignStudentsPageController = async (req, res) => {
+  try {
+    const coordinatorId = req.params.id;
+
+    const coord = await coordinator
+      .findById(coordinatorId)
+      .populate("assignedStudents", "fullName email");
+
+    const students = await student.find();
+
+    if (!coord) {
+      return res.send("Coordinator not found");
+    }
+
+    res.render("admin/assignstudents", { coord, students });
+
+  } catch (err) {
+    console.log(err);
+    res.send("Error loading assign page");
+  }
+};
+
+
+exports.AdminAssignStudentsPage = async (req, res) => {
+  try {
+    const coordinatorId = req.params.id;
+
+    const coord = await coordinator
+      .findById(coordinatorId)
+      .populate("assignedStudents");
+
+    if (!coord) {
+      return res.send("Coordinator not found");
+    }
+    const allStudents = await student.find();
+    const studentsToShow = [];
+    for (const s of allStudents) {
+      if (!s.coordinator) {
+        studentsToShow.push(s);
+      } 
+      else if (s.coordinator.toString() === coordinatorId.toString()) {
+        studentsToShow.push(s);
+      }
+    }
+
+    res.render("admin/assignstudents", {
+      coord,
+      students: studentsToShow
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.send("Error loading assign page");
+  }
+};
+
+
+exports.AdminAssignStudentsController = async (req, res) => {
+  try {
+    const coordinatorId = req.params.id;
+    let selectedStudents = req.body.students;
+    if (!selectedStudents) {
+      return res.redirect(`/admin/assignstudents/${coordinatorId}`);
+    }
+    if (!Array.isArray(selectedStudents)) {
+      selectedStudents = [selectedStudents];
+    }
+    const currentlyAssigned = await student.find({ coordinator: coordinatorId });
+
+    for (const s of currentlyAssigned) {
+      s.coordinator = null;
+      await s.save();
+    }
+    const assignedIds = [];
+
+    for (const id of selectedStudents) {
+      const s = await student.findById(id);
+
+      if (!s) continue;
+      if (s.coordinator &&
+          s.coordinator.toString() !== coordinatorId.toString()) {
+        continue;
+      }
+
+      s.coordinator = coordinatorId;
+      await s.save();
+
+      assignedIds.push(s._id);
+    }
+    const coord = await coordinator.findById(coordinatorId);
+    coord.assignedStudents = assignedIds;
+    await coord.save();
+
+    res.redirect(`/admin/assignstudents/${coordinatorId}`);
+
+  } catch (err) {
+    console.log(err);
+    res.send("Error assigning students");
+  }
+};
+
+
+
+
+exports.removeAssignedStudent = async (req, res) => {
+  try {
+    const { coordId, studentId } = req.params;
+    const coord = await coordinator.findById(coordId);
+    coord.assignedStudents = coord.assignedStudents.filter(
+      id => id.toString() !== studentId
+    );
+    await coord.save();
+    const stu = await student.findById(studentId);
+    stu.coordinator = null;
+    await stu.save();
+
+    res.redirect(`/admin/assignstudents/${coordId}`);
+
+  } catch (err) {
+    console.log(err);
+    res.send("Error removing student");
+  }
+};

@@ -1,6 +1,5 @@
 const express = require('express')
-const { AdminDashboardController, AdminAddStudentsController, AdminViewStudentsController, AdminPostAddStudentController, AdminAddCoordinatorsController, AdminViewCoordinatorController, AdminPostAddCoordinatorController, AdminDeleteCoordinatorController, AdminEditCoordinatorPageController, AdminUpdateCoordinatorController, AdminDeleteStudentController, AdminEditStudentPageController, AdminUpdateStudentController } = require('../controllers/adminController')
-
+const { AdminDashboardController, AdminAddStudentsController, AdminViewStudentsController, AdminPostAddStudentController, AdminAddCoordinatorsController, AdminViewCoordinatorController, AdminPostAddCoordinatorController, AdminDeleteCoordinatorController, AdminEditCoordinatorPageController, AdminUpdateCoordinatorController, AdminDeleteStudentController, AdminEditStudentPageController, AdminUpdateStudentController, AdminAssignStudentsPageController, AdminAssignStudentsController, removeAssignedStudent, AdminAssignStudentsPage,AddTeacher, createTeacher, getAllTeachers, getEditTeacher, updateTeacher, deleteTeacher  } = require('../controllers/adminController')
 const { protect } = require('../middlewares/authMiddleware')
 const { authorize } = require('../middlewares/roleMiddleware')
 const router = express.Router()
@@ -47,9 +46,35 @@ router
   .route('/coordinators/update/:id')
   .post(protect, authorize('ADMIN'),AdminUpdateCoordinatorController)
 
+  
 router
-     .get('/dashboard', protect, authorize('ADMIN'), AdminDashboardController)
+  .get('/dashboard', protect, authorize('ADMIN'), AdminDashboardController)
 
+router
+  .route("/assignstudents/:id")
+  .get(AdminAssignStudentsPage)      
+  .post(AdminAssignStudentsController) 
 
+router
+  .route('/addteachers')
+  .get(AddTeacher)
+  .post(createTeacher)
 
-module.exports = router
+router
+  .route('/viewteachers')
+  .get(getAllTeachers)
+
+router
+  .route('/teachers/edit/:id')
+  .get(getEditTeacher)
+  .post(updateTeacher)
+
+router
+  .route('/teachers/delete/:id')
+  .post(deleteTeacher)
+
+  router
+  .route( '/assignstudents/:coordId/:studentId')
+  .post(removeAssignedStudent)
+
+  module.exports = router

@@ -29,8 +29,8 @@ const teacherSchema = new mongoose.Schema(
 		},
 
 		profilePic: {
-			type: String,
-			default: null,
+			url:String,
+			public_id:String
 		},
 
 		experienceYears: {
@@ -43,29 +43,23 @@ const teacherSchema = new mongoose.Schema(
 			degree: {
 				type: String,
 				required: true,
-				trim: true, // e.g., B.Sc, M.Sc, PhD
+				trim: true, 
 			},
 			field: {
 				type: String,
 				required: true,
-				trim: true, // e.g., Mathematics, Physics
+				trim: true,
 			},
 			institution: {
 				type: String,
 				trim: true,
 			},
 		},
-
-		subjects: [
-			{
-				name: {
-					type: String,
-					required: true,
-					trim: true,
-				}
-			},
-		],
-
+		subjects: {
+			type: [String],
+			required: true,
+			trim: true
+		},
 		hourlyRate: {
 			type: Number,
 			required: true,
@@ -77,8 +71,7 @@ const teacherSchema = new mongoose.Schema(
 		},
 	},
 	{ timestamps: true }
-);
-
+)
 
 teacherSchema.pre('save', async function () {
 	if (!this.isModified('password')) return
