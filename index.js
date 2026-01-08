@@ -15,6 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload({useTempFiles: true,tempFileDir: '/tmp/'}))
+app.use(express.static('static'));
 
 app.use((req, res, next) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
@@ -29,6 +30,9 @@ app.use('/admin', adminRoutes)
 
 const coordinator = require('./routes/coordinatorRoutes')
 app.use('/coordinator', coordinator)
+app.use((req, res) => {
+  res.status(404).render('auth/pageNotFound');
+});
 
 const port = process.env.PORT || 5000;
 app.listen(port, async () => {
