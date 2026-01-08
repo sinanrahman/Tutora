@@ -40,18 +40,19 @@ exports.AdminAddStudentsController = async (req, res) => {
   }
 }
 
-exports.AdminPostAddStudentController = async (req, res) => {
-  const { fullname, email, phone, country, standard, gender, coordinator } = req.body
-  await student.create({
-    fullName: fullname,
-    email: email,
-    phone: phone,
-    country: country,
-    standard: standard,
-    gender: gender,
-    coordinator: coordinator
-  })
-  res.redirect('/admin/viewstudents')
+exports.AdminPostAddStudentController=async (req,res)=>{
+    const{fullname,email,phone,country,standard,gender,coordinator,status}=req.body
+    await student.create({
+        fullName:fullname,
+        email:email,
+        phone:phone,
+        country:country,
+        standard:standard,
+        gender:gender,
+        status:status,
+        coordinator:coordinator
+    })
+    res.redirect('/admin/viewstudents')
 }
 
 

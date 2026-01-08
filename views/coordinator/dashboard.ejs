@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>My Assigned Students</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css">
+
+  <style>
+    .main-content {
+      /* margin-left:220px; */
+      padding: 20px;
+      min-height: 100vh;
+      background: #f8f9fa;
+    }
+
+    .card {
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <div class="main-content">
+
+    <h4 class="fw-bold mb-2">My Assigned Students</h4>
+    <p class="text-muted">
+      Coordinator: <strong><%= coord.fullName %></strong>
+    </p>
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+
+        <% if (!students || students.length === 0) { %>
+        <p class="text-muted mb-0">No students assigned to you yet.</p>
+        <% } else { %>
+
+        <div class="table-responsive">
+          <table class="table table-hover table-striped align-middle" id="studentsTable">
+            <thead class="table-dark">
+              <tr>
+                <th>Sl No</th>
+                <th>Student Name</th>
+                <th>Email</th>
+                <th>Class</th>
+                <th>Phone</th>
+                <th>Country</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% students.forEach((s, i) => { %>
+              <tr>
+                <td><%= i + 1 %></td>
+                <td><%= s.fullName %></td>
+                <td><%= s.email %></td>
+                <td><%= s.standard %></td>
+                <td><%= s.phone %></td>
+                <td><%= s.country %></td>
+                <td>
+                  <button class="btn btn-sm btn-primary assign-btn" data-student='<%= JSON.stringify(s) %>'>
+                    Assign
+                  </button>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+
+        <% } %>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="assignModal" tabindex="-1" aria-labelledby="assignModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <form id="assignForm" method="POST">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Assign Teachers to <span id="modalStudentName"></span></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row" id="teacherCheckboxes">
+              <!-- Teachers will be dynamically injected here -->
+              <% teachers.forEach(teacher => { %>
+              <div class="col-md-4 col-sm-6 mb-2">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="teachers" value="<%= teacher._id %>" id="teacher-<%= teacher._id %>">
+                  <label class="form-check-label" for="teacher-<%= teacher._id %>">
+                    <strong><%= teacher.fullName %></strong><br>
+                    <% if (Array.isArray(teacher.subjects)) { %>
+                    <% teacher.subjects.forEach(sub => { %>
+                    <span class="badge  text-dark"><%= sub %></span>
+                    <% }) %>
+                    <% } else { %>
+                    <small class="text-muted">No subjects</small>
+                    <% } %>
+                  </label>
+                </div>
+              </div>
+              <% }) %>
+
+
+
+            </div>
+            <p class="text-muted mt-2">Select exactly 4 teachers.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Save Teachers</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      new DataTable('#studentsTable');
+
+      let selectedStudentId = null;
+      const assignModal = new bootstrap.Modal(document.getElementById('assignModal'));
+
+      // Open modal on Assign button click
+      $('.assign-btn').on('click', function() {
+        const student = $(this).data('student');
+        selectedStudentId = student._id;
+        $('#modalStudentName').text(student.fullName);
+
+        // Reset all checkboxes
+        $('#assignForm input[type="checkbox"]').prop('checked', false);
+
+        // Pre-check already assigned teachers
+        if (student.assignedTeachers && student.assignedTeachers.length > 0) {
+          student.assignedTeachers.forEach(t => {
+            $('#teacher-' + t._id).prop('checked', true);
+          });
+        }
+
+        assignModal.show();
+      });
+
+      // Limit to 4 selections
+      $('#assignForm input[type="checkbox"]').on('change', function() {
+        const checked = $('#assignForm input[type="checkbox"]:checked');
+        if (checked.length > 4) {
+          alert('You can select only 4 teachers');
+          $(this).prop('checked', false);
+        }
+      });
+
+      // Handle form submission
+      $('#assignForm').on('submit', function(e) {
+        e.preventDefault();
+        const selectedTeachers = $('#assignForm input[type="checkbox"]:checked').map(function() {
+          return $(this).val();
+        }).get();
+
+        if (selectedTeachers.length !== 4) {
+          alert('Please select exactly 4 teachers');
+          return;
+        }
+
+        $.post(`/coordinator/assign-teachers/${selectedStudentId}`, {
+            teachers: selectedTeachers
+          })
+          .done(() => location.reload())
+          .fail(err => alert('Error assigning teachers'));
+      });
+
+    });
+  </script>
+
+</body>
+
+</html>

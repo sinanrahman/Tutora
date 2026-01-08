@@ -26,9 +26,10 @@ const auth = require('./routes/authRoutes');
 app.use('/', auth);
 
 const adminRoutes = require('./routes/adminRoutes')
-
 app.use('/admin', adminRoutes)
 
+const coordinator = require('./routes/coordinatorRoutes')
+app.use('/coordinator', coordinator)
 app.use((req, res) => {
   res.status(404).render('auth/pageNotFound');
 });
