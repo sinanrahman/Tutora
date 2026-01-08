@@ -1,0 +1,38 @@
+	#sidebar {
+				width: 220px;
+				position: fixed;
+				top: 0;
+				left: 0;
+				height: 100vh;
+				background: #343a40;
+				padding-top: 20px;
+				overflow-y: auto;
+				z-index: 1000;
+			}
+
+			.main-content {
+				margin-left: 220px;
+				padding: 20px;
+				min-height: 100vh;
+				background: #f8f9fa;
+			}
+
+			.card {
+				border-radius: 10px;
+			}
+
+			.table th,
+			.table td {
+				vertical-align: middle;
+			}
+
+			.action-group .btn {
+				min-width: 90px;
+			}
+
+			.action-group {
+				display: inline-flex;
+				gap: 0.4rem;
+				flex-wrap: nowrap;
+				white-space: nowrap;
+			}
