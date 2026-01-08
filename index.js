@@ -25,8 +25,10 @@ const auth = require('./routes/authRoutes');
 app.use('/', auth);
 
 const adminRoutes = require('./routes/adminRoutes')
-
 app.use('/admin', adminRoutes)
+
+const coordinator = require('./routes/coordinatorRoutes')
+app.use('/coordinator', coordinator)
 
 const port = process.env.PORT || 5000;
 app.listen(port, async () => {

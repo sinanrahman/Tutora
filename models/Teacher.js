@@ -57,8 +57,7 @@ const teacherSchema = new mongoose.Schema(
 		},
 		subjects: {
 			type: [String],
-			required: true,
-			trim: true
+			required: true
 		},
 		hourlyRate: {
 			type: Number,
