@@ -367,26 +367,40 @@ exports.deleteTeacher = async (req, res) => {
 		res.status(500).send('Server Error');
 	}
 };
-//assigningg
+
+//assigning
 exports.assignStudentsPage = async (req, res) => {
-	try {
-		const coordinatorId = req.params.id;
+  try {
+    const coordinatorId = req.params.id;
 
-		const coord = await coordinator
-			.findById(coordinatorId)
-			.populate('assignedStudents', 'fullName email');
+    const coord = await coordinator
+      .findById(coordinatorId)
+      .populate("assignedStudents");
 
-		const students = await student.find({ status: 'active' });
+    if (!coord) {
+      return res.send("Coordinator not found");
+    }
+    const allStudents = await student.find({ status: 'active' });
 
-		if (!coord) {
-			return res.send('Coordinator not found');
-		}
+    const studentsToShow = [];
+    for (const s of allStudents) {
+      if (!s.coordinator) {
+        studentsToShow.push(s);
+      } 
+      else if (s.coordinator.toString() === coordinatorId.toString()) {
+        studentsToShow.push(s);
+      }
+    }
 
-		res.render('admin/assignStudents', { coord, students });
-	} catch (err) {
-		console.log(err);
-		res.send('Error loading assign page');
-	}
+    res.render("admin/assignstudents", {
+      coord,
+      students: studentsToShow
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.send("Error loading assign page");
+  }
 };
 
 exports.assignStudents = async (req, res) => {
