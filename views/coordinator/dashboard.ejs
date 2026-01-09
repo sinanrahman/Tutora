@@ -92,23 +92,31 @@
           <div class="modal-body">
             <div class="row" id="teacherCheckboxes">
               <!-- Teachers will be dynamically injected here -->
-              <% teachers.forEach(teacher => { %>
+              <% teachers.forEach(teacher => { 
+              const used = usageMap[teacher._id.toString()] || 0;
+              const remaining = 4 - used;
+              %>
               <div class="col-md-4 col-sm-6 mb-2">
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" name="teachers" value="<%= teacher._id %>" id="teacher-<%= teacher._id %>">
+                  <input class="form-check-input" type="checkbox" name="teachers" value="<%= teacher._id %>" id="teacher-<%= teacher._id %>" <%= used >= 4 ? 'disabled' : '' %>>
+
                   <label class="form-check-label" for="teacher-<%= teacher._id %>">
                     <strong><%= teacher.fullName %></strong><br>
+
                     <% if (Array.isArray(teacher.subjects)) { %>
                     <% teacher.subjects.forEach(sub => { %>
-                    <span class="badge  text-dark"><%= sub %></span>
+                    <span class="badge bg-light text-dark"><%= sub %></span>
                     <% }) %>
-                    <% } else { %>
-                    <small class="text-muted">No subjects</small>
                     <% } %>
+
+                    <div class="text-muted small">
+                      <%= used >= 4 ? 'Daily limit reached' : `${remaining} slots left today` %>
+                    </div>
                   </label>
                 </div>
               </div>
               <% }) %>
+
 
 
 
@@ -124,6 +132,27 @@
     </div>
   </div>
 
+  <!-- Alert Modal -->
+  <div class="modal fade" id="alertModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header py-2">
+          <h6 class="modal-title">Notice</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center" id="alertModalMessage">
+          <!-- message injected here -->
+        </div>
+        <div class="modal-footer py-2">
+          <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -131,6 +160,13 @@
   <script>
     $(document).ready(function() {
       new DataTable('#studentsTable');
+
+      const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+
+      function showAlertModal(message) {
+        $('#alertModalMessage').text(message);
+        alertModal.show();
+      }
 
       let selectedStudentId = null;
       const assignModal = new bootstrap.Modal(document.getElementById('assignModal'));
@@ -158,7 +194,7 @@
       $('#assignForm input[type="checkbox"]').on('change', function() {
         const checked = $('#assignForm input[type="checkbox"]:checked');
         if (checked.length > 4) {
-          alert('You can select only 4 teachers');
+          showAlertModal('You can select only 4 teachers');
           $(this).prop('checked', false);
         }
       });
@@ -171,7 +207,7 @@
         }).get();
 
         if (selectedTeachers.length !== 4) {
-          alert('Please select exactly 4 teachers');
+          showAlertModal('Please select exactly 4 teachers');
           return;
         }
 
@@ -179,7 +215,10 @@
             teachers: selectedTeachers
           })
           .done(() => location.reload())
-          .fail(err => alert('Error assigning teachers'));
+          .fail(err => {
+            const msg = err.responseText || 'Error assigning teachers';
+            showAlertModal(msg);
+          });
       });
 
     });
