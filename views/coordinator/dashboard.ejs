@@ -12,7 +12,6 @@
 
   <style>
     .main-content {
-      /* margin-left:220px; */
       padding: 20px;
       min-height: 100vh;
       background: #f8f9fa;
@@ -25,7 +24,6 @@
 </head>
 
 <body>
-
 
   <div class="main-content">
 
@@ -80,25 +78,25 @@
 
   </div>
 
-  <!-- Modal -->
-  <div class="modal fade" id="assignModal" tabindex="-1" aria-labelledby="assignModalLabel" aria-hidden="true">
+  <!-- Assign Teachers Modal -->
+  <div class="modal fade" id="assignModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-      <form id="assignForm" method="POST">
+      <form id="assignForm">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Assign Teachers to <span id="modalStudentName"></span></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title">
+              Assign Teachers to <span id="modalStudentName"></span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
+
           <div class="modal-body">
-            <div class="row" id="teacherCheckboxes">
-              <!-- Teachers will be dynamically injected here -->
-              <% teachers.forEach(teacher => { 
-              const used = usageMap[teacher._id.toString()] || 0;
-              const remaining = 4 - used;
-              %>
+            <div class="row">
+
+              <% teachers.forEach(teacher => { %>
               <div class="col-md-4 col-sm-6 mb-2">
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" name="teachers" value="<%= teacher._id %>" id="teacher-<%= teacher._id %>" <%= used >= 4 ? 'disabled' : '' %>>
+                  <input class="form-check-input" type="checkbox" name="teachers" value="<%= teacher._id %>" id="teacher-<%= teacher._id %>">
 
                   <label class="form-check-label" for="teacher-<%= teacher._id %>">
                     <strong><%= teacher.fullName %></strong><br>
@@ -108,24 +106,21 @@
                     <span class="badge bg-light text-dark"><%= sub %></span>
                     <% }) %>
                     <% } %>
-
-                    <div class="text-muted small">
-                      <%= used >= 4 ? 'Daily limit reached' : `${remaining} slots left today` %>
-                    </div>
                   </label>
                 </div>
               </div>
               <% }) %>
 
-
-
-
             </div>
+
             <p class="text-muted mt-2">Select exactly 4 teachers.</p>
           </div>
+
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Save Teachers</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
           </div>
         </div>
       </form>
@@ -133,16 +128,31 @@
   </div>
 
   <!-- Alert Modal -->
-  <div class="modal fade" id="alertModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="alertModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content">
         <div class="modal-header py-2">
           <h6 class="modal-title">Notice</h6>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body text-center" id="alertModalMessage">
-          <!-- message injected here -->
+        <div class="modal-body text-center" id="alertModalMessage"></div>
+        <div class="modal-footer py-2">
+          <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">
+            OK
+          </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="alertModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header py-2">
+          <h6 class="modal-title">Notice</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center" id="alertModalMessage"></div>
         <div class="modal-footer py-2">
           <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">
             OK
@@ -159,29 +169,31 @@
 
   <script>
     $(document).ready(function() {
+
       new DataTable('#studentsTable');
 
-      const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+      const alertModal = new bootstrap.Modal(
+        document.getElementById('alertModal')
+      );
 
-      function showAlertModal(message) {
+      function showAlert(message) {
         $('#alertModalMessage').text(message);
         alertModal.show();
       }
 
       let selectedStudentId = null;
-      const assignModal = new bootstrap.Modal(document.getElementById('assignModal'));
+      const assignModal = new bootstrap.Modal(
+        document.getElementById('assignModal')
+      );
 
-      // Open modal on Assign button click
       $('.assign-btn').on('click', function() {
         const student = $(this).data('student');
         selectedStudentId = student._id;
         $('#modalStudentName').text(student.fullName);
 
-        // Reset all checkboxes
         $('#assignForm input[type="checkbox"]').prop('checked', false);
 
-        // Pre-check already assigned teachers
-        if (student.assignedTeachers && student.assignedTeachers.length > 0) {
+        if (student.assignedTeachers) {
           student.assignedTeachers.forEach(t => {
             $('#teacher-' + t._id).prop('checked', true);
           });
@@ -190,35 +202,40 @@
         assignModal.show();
       });
 
-      // Limit to 4 selections
       $('#assignForm input[type="checkbox"]').on('change', function() {
         const checked = $('#assignForm input[type="checkbox"]:checked');
         if (checked.length > 4) {
-          showAlertModal('You can select only 4 teachers');
+          showAlert('You can select only 4 teachers');
           $(this).prop('checked', false);
         }
       });
 
-      // Handle form submission
       $('#assignForm').on('submit', function(e) {
         e.preventDefault();
-        const selectedTeachers = $('#assignForm input[type="checkbox"]:checked').map(function() {
-          return $(this).val();
-        }).get();
 
-        if (selectedTeachers.length !== 4) {
-          showAlertModal('Please select exactly 4 teachers');
+        const teachers = $('#assignForm input[type="checkbox"]:checked')
+          .map(function() {
+            return $(this).val();
+          }).get();
+
+        if (teachers.length !== 4) {
+          showAlert('Please select exactly 4 teachers');
           return;
         }
 
         $.post(`/coordinator/assign-teachers/${selectedStudentId}`, {
-            teachers: selectedTeachers
+            teachers
           })
           .done(() => location.reload())
           .fail(err => {
-            const msg = err.responseText || 'Error assigning teachers';
-            showAlertModal(msg);
+            const message =
+              err.responseText ||
+              err.responseJSON?.message ||
+              "One or more teachers already reached today's teaching limit";
+
+            showAlert(message);
           });
+
       });
 
     });

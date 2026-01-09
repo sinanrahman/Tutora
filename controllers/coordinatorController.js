@@ -39,39 +39,34 @@ exports.coordinatorDashboard = async (req, res) => {
         const { start, end } = getTodayRange();
 
         const teacherUsage = await Session.aggregate([
-  {
-    $match: {
-      date: { $gte: start, $lte: end },
-      status: "APPROVED"   // optional but recommended
-    }
-  },
-  {
-    $group: {
-      _id: {
-        teacher: "$teacher",
-        student: "$student"
-      }
-    }
-  },
-  {
-    $group: {
-      _id: "$_id.teacher",
-      count: { $sum: 1 }
-    }
-  }
-]);
+            {
+                $match: {
+                    date: { $gte: start, $lte: end },
+                    status: "APPROVED"   // optional but recommended
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        teacher: "$teacher",
+                        student: "$student"
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: "$_id.teacher",
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
 
 
-        const usageMap = {};
-        teacherUsage.forEach(t => {
-            usageMap[t._id.toString()] = t.count;
-        });
-
+      
         res.render("coordinator/dashboard", {
             coord,
             students,
-            teachers,
-            usageMap
+            teachers
         });
 
     } catch (err) {
@@ -149,29 +144,33 @@ exports.assignTeachers = async (req, res) => {
             return res.status(400).send("Exactly 4 teachers required");
         }
 
-        const student = await Student.findById(studentId);
-        if (!student) return res.status(404).send("Student not found");
-
         const { start, end } = getTodayRange();
 
-       for (const teacherId of teachers) {
-  const uniqueStudentsToday = await Session.distinct("student", {
-    teacher: teacherId,
-    date: { $gte: start, $lte: end },
-    status: "APPROVED" // if you use approval
-  });
+        // Enforce daily teacher limit
+        for (const teacherId of teachers) {
+            const uniqueStudentsToday = await Session.distinct("student", {
+                teacher: teacherId,
+                date: { $gte: start, $lte: end },
+                status: "APPROVED"
+            });
 
-  if (uniqueStudentsToday.length >= 4) {
-    return res.status(400).send(
-      "One or more teachers already reached today's teaching limit"
-    );
-  }
-}
+            if (uniqueStudentsToday.length >= 4) {
+                return res.status(400).send(
+                    "One or more teachers already reached today's teaching limit"
+                );
+            }
+        }
 
+        // ✅ Atomic update (NO VersionError)
+        const updatedStudent = await Student.findByIdAndUpdate(
+            studentId,
+            { assignedTeachers: teachers },
+            { new: true }
+        );
 
-
-        student.assignedTeachers = teachers;
-        await student.save();
+        if (!updatedStudent) {
+            return res.status(404).send("Student not found");
+        }
 
         res.redirect("/coordinator/assigned-students");
 
