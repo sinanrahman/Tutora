@@ -13,16 +13,3 @@ exports.protect = (req, res, next) => {
 		return res.redirect('/');
 	}
 };
-
-exports.isTeacher = (req, res, next) => {
-	if (req.user && req.user.role === 'TEACHER') {
-		return next();
-	}
-	return res.status(403).render('auth/pageNotFound');
-};
-exports.isCoordinator = (req, res, next) => {
-	if (req.user.role !== 'coordinator') {
-		return res.redirect('/');
-	}
-	next();
-};
