@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs')
-
+const bcrypt = require('bcryptjs');
 
 const teacherSchema = new mongoose.Schema(
 	{
@@ -21,7 +20,7 @@ const teacherSchema = new mongoose.Schema(
 		password: {
 			type: String,
 			required: true,
-			select:false
+			select: false,
 		},
 
 		phone: {
@@ -30,8 +29,8 @@ const teacherSchema = new mongoose.Schema(
 		},
 
 		profilePic: {
-			url:String,
-			public_id:String
+			url: String,
+			public_id: String,
 		},
 
 		experienceYears: {
@@ -44,7 +43,7 @@ const teacherSchema = new mongoose.Schema(
 			degree: {
 				type: String,
 				required: true,
-				trim: true, 
+				trim: true,
 			},
 			field: {
 				type: String,
@@ -58,12 +57,19 @@ const teacherSchema = new mongoose.Schema(
 		},
 		subjects: {
 			type: [String],
-			required: true
+			required: true,
 		},
 		hourlyRate: {
 			type: Number,
 			required: true,
 		},
+		dailyStudents: {
+			type: Number,
+			default: 4,
+			min: 1,
+			max: 12,
+		},
+
 		status: {
 			type: String,
 			enum: ['active', 'inactive'],
@@ -71,11 +77,11 @@ const teacherSchema = new mongoose.Schema(
 		},
 	},
 	{ timestamps: true }
-)
+);
 
 teacherSchema.pre('save', async function () {
-	if (!this.isModified('password')) return
-	this.password = await bcrypt.hash(this.password, 10)
-})
+	if (!this.isModified('password')) return;
+	this.password = await bcrypt.hash(this.password, 10);
+});
 
 module.exports = mongoose.model('Teacher', teacherSchema);
