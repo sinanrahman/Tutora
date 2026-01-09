@@ -1,71 +1,71 @@
 const express = require('express')
-const { AdminDashboardController, AdminAddStudentsController, AdminViewStudentsController, AdminPostAddStudentController, AdminAddCoordinatorsController, AdminViewCoordinatorController, AdminPostAddCoordinatorController, AdminDeleteCoordinatorController, AdminEditCoordinatorPageController, AdminUpdateCoordinatorController, AdminDeleteStudentController, AdminEditStudentPageController, AdminUpdateStudentController, AdminAssignStudentsPageController, AdminAssignStudentsController, removeAssignedStudent, AdminAssignStudentsPage, AddTeacher, createTeacher, getAllTeachers, getEditTeacher, updateTeacher, deleteTeacher, changeCoordinatorPassword, changeTeacherPassword } = require('../controllers/adminController')
 const { protect } = require('../middlewares/authMiddleware')
 const { authorize } = require('../middlewares/roleMiddleware')
+const { addStudents, postAddStudent, viewStudents, deleteStudent, editStudentPage, updateStudent, addCoordinators, postAddCoordinator, viewCoordinator, deleteCoordinator, editCoordinatorPage, updateCoordinator, changeCoordinatorPassword, assignStudentsPage, assignStudents, addTeacher, createTeacher, getTeachers, getEditTeacher, updateTeacher, deleteTeacher, removeAssignedStudent, changeTeacherPassword, dashboard } = require('../controllers/adminController')
 const router = express.Router()
 
 router
   .route('/addstudents')
-  .get(protect, authorize('ADMIN'), AdminAddStudentsController)
-  .post(protect, authorize('ADMIN'), AdminPostAddStudentController)
+  .get(protect, authorize('ADMIN'), addStudents)
+  .post(protect, authorize('ADMIN'), postAddStudent)
 router
   .route('/viewstudents')
-  .get(protect, authorize('ADMIN'), AdminViewStudentsController)
+  .get(protect, authorize('ADMIN'), viewStudents)
 
 router
   .route('/students/delete/:id')
-  .get(protect, authorize('ADMIN'), AdminDeleteStudentController)
+  .get(protect, authorize('ADMIN'), deleteStudent)
 
 router
   .route('/students/edit/:id')
-  .get(protect, authorize('ADMIN'), AdminEditStudentPageController)
+  .get(protect, authorize('ADMIN'), editStudentPage)
 
 router
   .route('/students/update/:id')
-  .post(protect, authorize('ADMIN'), AdminUpdateStudentController)
+  .post(protect, authorize('ADMIN'), updateStudent)
 
 
 router
   .route('/addcoordinators')
-  .get(protect, authorize('ADMIN'), AdminAddCoordinatorsController)
-  .post(protect, authorize('ADMIN'), AdminPostAddCoordinatorController)
+  .get(protect, authorize('ADMIN'), addCoordinators)
+  .post(protect, authorize('ADMIN'), postAddCoordinator)
 router
   .route('/viewcoordinators')
-  .get(protect, authorize('ADMIN'), AdminViewCoordinatorController)
+  .get(protect, authorize('ADMIN'), viewCoordinator)
 
 router
   .route('/coordinators/delete/:id')
-  .get(protect, authorize('ADMIN'), AdminDeleteCoordinatorController)
+  .get(protect, authorize('ADMIN'), deleteCoordinator)
 
 
 router
   .route('/coordinators/edit/:id')
-  .get(protect, authorize('ADMIN'), AdminEditCoordinatorPageController)
+  .get(protect, authorize('ADMIN'), editCoordinatorPage)
 
 router
   .route('/coordinators/update/:id')
-  .post(protect, authorize('ADMIN'), AdminUpdateCoordinatorController)
+  .post(protect, authorize('ADMIN'), updateCoordinator)
 
 router
   .route('/coordinators/change-password/:id')
   .post(protect, authorize('ADMIN'),changeCoordinatorPassword)
 
 router
-  .get('/dashboard', protect, authorize('ADMIN'), AdminDashboardController)
+  .get('/dashboard', protect, authorize('ADMIN'), dashboard)
 
 router
   .route("/assignstudents/:id")
-  .get(protect, authorize('ADMIN'),AdminAssignStudentsPage)
-  .post(protect, authorize('ADMIN'),AdminAssignStudentsController)
+  .get(protect, authorize('ADMIN'),assignStudentsPage)
+  .post(protect, authorize('ADMIN'),assignStudents)
 
 router
   .route('/addteachers')
-  .get(protect, authorize('ADMIN'),AddTeacher)
+  .get(protect, authorize('ADMIN'),addTeacher)
   .post(protect, authorize('ADMIN'),createTeacher)
 
 router
   .route('/viewteachers')
-  .get(protect, authorize('ADMIN'),getAllTeachers)
+  .get(protect, authorize('ADMIN'),getTeachers)
 
 router
   .route('/teachers/edit/:id')

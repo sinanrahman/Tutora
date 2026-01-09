@@ -165,12 +165,10 @@ exports.logout = (req, res) => {
 	res.redirect('/');
 };
 
-// --- 1️⃣ Forgot Password ---
 exports.forgotPassword = async (req, res) => {
 	try {
 		const { email } = req.body;
 
-		// ✅ Admin only
 		const admin = await Admin.findOne({ email });
 		if (!admin) {
 			return res.render('auth/forgotPassword', {
@@ -210,7 +208,7 @@ exports.forgotPassword = async (req, res) => {
 	}
 };
 
-// --- 2️⃣ Render Reset Password Page ---
+
 exports.renderResetPasswordPage = async (req, res) => {
 	try {
 		const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
@@ -234,7 +232,7 @@ exports.renderResetPasswordPage = async (req, res) => {
 	}
 };
 
-// --- 3️⃣ Reset Password ---
+
 exports.resetPassword = async (req, res) => {
 	try {
 		const { password } = req.body;
@@ -260,7 +258,7 @@ exports.resetPassword = async (req, res) => {
 			});
 		}
 
-		// ✅ Plain password → hashed by pre-save hook
+
 		admin.password = password;
 		admin.resetPasswordToken = undefined;
 		admin.resetPasswordExpires = undefined;
