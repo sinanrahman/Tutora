@@ -53,7 +53,6 @@ const studentSchema = new mongoose.Schema(
 		},
 		coordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'Coordinator' },
 	},
-
 	{
 		timestamps: true,
 	}
