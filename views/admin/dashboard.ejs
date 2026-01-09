@@ -1,78 +1,62 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Admin Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <style>
-    #sidebar{
-      width:220px;position:fixed;top:0;left:0;height:100vh;
-      background:#343a40;padding-top:20px;color:#fff;
-    }
-    .main-content{
-      margin-left:220px;padding:20px;min-height:100vh;background:#f8f9fa;
-    }
-    .card{border-radius:12px}
-    a{
-      text-decoration: none;
-      color:#343a40;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/admin/dashboard.css">
 </head>
 
 <body class="bg-light">
   <%- include('partials/sidebar') %>
 
-  <div class="main-content">
-    <h3 class="fw-bold mb-4">Admin Dashboard</h3>
+    <div class="main-content">
+      <h3 class="fw-bold mb-4">Admin Dashboard</h3>
 
-    <div class="row g-3">
+      <div class="row g-3">
 
-      <div class="col-md-3">
-        <div class="card shadow-sm border-0">
-          <a href="/admin/viewstudents"><div class="card-body">
-            <h6 class="text-muted">Total Students</h6>
-            <h3 class="fw-bold"><%= totalStudents %></h3>
-          </div></a>
+        <div class="col-md-3">
+          <div class="card shadow-sm border-0">
+            <a href="/admin/viewstudents">
+              <div class="card-body">
+                <h6 class="text-muted">Total Students</h6>
+                <h3 class="fw-bold">
+                  <%= totalStudents %>
+                </h3>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card shadow-sm border-0">
+            <a href="/admin/viewcoordinators">
+              <div class="card-body">
+                <h6 class="text-muted">Coordinators</h6>
+                <h3 class="fw-bold">
+                  <%= totalCoordinators %>
+                </h3>
+              </div>
+            </a>
+          </div>
+        </div>
+
+
+        <div class="col-md-3">
+          <div class="card shadow-sm border-0">
+            <a href="/admin/viewteachers">
+              <div class="card-body">
+                <h6 class="text-muted">Teachers</h6>
+                <h3 class="fw-bold">
+                  <%= totalTeachers %>
+                </h3>
+              </div>
+            </a>
+          </div>
         </div>
       </div>
-
-      <!-- <div class="col-md-3">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h6 class="text-muted">Active Students</h6>
-            <h3 class="fw-bold text-success"><%= totalActiveStudents %></h3>
-          </div>
-        </div>
-      </div> -->
-
-      <!-- <div class="col-md-3">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h6 class="text-muted">Inactive Students</h6>
-            <h3 class="fw-bold text-danger"><%= totalInactiveStudents %></h3>
-          </div>
-        </div>
-      </div> -->
-
-      <div class="col-md-3">
-        <div class="card shadow-sm border-0">
-          <a href="/admin/viewcoordinators"><div class="card-body">
-            <h6 class="text-muted">Coordinators</h6>
-            <h3 class="fw-bold"><%= totalCoordinators %></h3>
-          </div></a>
-        </div>
-      </div>
-
-      <!-- <div class="col-md-3">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h6 class="text-muted">Active Coordinators</h6>
-            <h3 class="fw-bold text-primary"><%= totalActiveCoordinators %></h3>
-          </div>
-        </div>
-      </div> -->
     </div>
-  </div>
 </body>
+
 </html>

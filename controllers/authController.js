@@ -81,8 +81,11 @@ exports.login = async (req, res) => {
 					(user.lockUntil - Date.now()) / 1000
 				)
 
-				return renderLoginWithMsg(res,role,
-					'Too many attempts. Please wait.',0,
+				return renderLoginWithMsg(
+					res,
+					role,
+					'Too many attempts. Please wait.',
+					0,
 					remainingTime
 				)
 			}
@@ -174,7 +177,7 @@ exports.login = async (req, res) => {
 		res.cookie('token', token, {
 			httpOnly: true,
 			sameSite: 'strict',
-			secure: true,
+			secure: process.env.NODE_ENV === 'production'
 		})
 
 		if (userRole === 'ADMIN') return res.redirect('/admin/dashboard')
@@ -212,7 +215,7 @@ exports.forgotPassword = async (req, res) => {
     // Use dynamic port
     const port = process.env.PORT || 3000;
     const resetURL = `http://localhost:${port}/reset-password/${resetToken}`;
-    console.log('Reset URL:', resetURL); //  debug
+    console.log('Reset URL:', resetURL); // ✅ debug
 
     // Send email
     await sendEmail({
@@ -229,7 +232,7 @@ exports.forgotPassword = async (req, res) => {
 };
 
 
-// --- Render Reset Password Page ---
+// --- 2️⃣ Render Reset Password Page ---
 exports.renderResetPasswordPage = (req, res) => {
   try {
     console.log('RESET TOKEN:', req.params.token)
@@ -245,6 +248,7 @@ exports.renderResetPasswordPage = (req, res) => {
 }
 
 
+// --- 3️⃣ Reset Password ---
 exports.resetPassword = async (req, res) => {
   try {
     const hashedToken = crypto
@@ -268,7 +272,7 @@ exports.resetPassword = async (req, res) => {
 
     if (!user) return res.send('Token invalid or expired')
 
-    //  DO NOT HASH HERE
+    // ✅ DO NOT HASH HERE
     user.password = req.body.password
     user.resetPasswordToken = undefined
     user.resetPasswordExpires = undefined

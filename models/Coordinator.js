@@ -35,12 +35,10 @@ const coordinatorSchema = new mongoose.Schema(
 				ref: 'Teacher',
 			},
 		],
-		resetPasswordToken: String,
-resetPasswordExpires: Date,
-
-		isActive: {
-			type: Boolean,
-			default: true,
+		status: {
+			type: String,
+			enum: ['active', 'inactive'],
+			default: 'active',
 		},
 	},
 	{ timestamps: true }

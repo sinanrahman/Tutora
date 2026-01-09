@@ -42,9 +42,9 @@ const studentSchema = new mongoose.Schema(
 			default: 120,
 			required: true,
 		},
-		standard:{
-         type:String,
-		 required:true
+		standard: {
+			type: String,
+			required: true
 		},
 		status: {
 			type: String,
@@ -52,8 +52,13 @@ const studentSchema = new mongoose.Schema(
 			default: 'active',
 		},
 		coordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'Coordinator' },
+		assignedTeachers: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Teacher'
+			}
+		]
 	},
-
 	{
 		timestamps: true,
 	}
