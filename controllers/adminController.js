@@ -1,9 +1,8 @@
-const student = require('../models/Student')
-const Admin = require('../models/Admin')
-const coordinator = require('../models/Coordinator')
-const Teacher = require('../models/Teacher')
-const cloudinary = require('../config/cloudinary')
-
+const student = require('../models/Student');
+const Admin = require('../models/Admin');
+const coordinator = require('../models/Coordinator');
+const Teacher = require('../models/Teacher');
+const cloudinary = require('../config/cloudinary');
 
 exports.dashboard= async (req, res) => {
   try {
@@ -55,6 +54,20 @@ exports.postAddStudent=async (req,res)=>{
     res.redirect('/admin/viewstudents')
 }
 
+exports.AdminPostAddStudentController = async (req, res) => {
+	const { fullname, email, phone, country, standard, gender, coordinator, status } = req.body;
+	await student.create({
+		fullName: fullname,
+		email: email,
+		phone: phone,
+		country: country,
+		standard: standard,
+		gender: gender,
+		status: status,
+		coordinator: coordinator,
+	});
+	res.redirect('/admin/viewstudents');
+};
 
 exports.viewStudents= async (req, res) => {
   try {
@@ -144,11 +157,15 @@ exports.viewCoordinator = async (req, res) => {
     const coordinators = await coordinator.find()
     return res.render('admin/viewCoordinators', { coordinators })
 
-  } catch (err) {
-    console.log(err)
-    res.send("Error loading coordinators")
-  }
-}
+exports.AdminViewCoordinatorController = async (req, res) => {
+	try {
+		const coordinators = await coordinator.find();
+		return res.render('admin/viewcoordinators', { coordinators });
+	} catch (err) {
+		console.log(err);
+		res.send('Error loading coordinators');
+	}
+};
 
 exports.deleteCoordinator= async (req, res) => {
   try {
@@ -199,56 +216,69 @@ exports.addTeacher = (req, res) => {
 }
 
 exports.createTeacher = async (req, res) => {
-  try {
-    const { fullName, email, password, phone, experienceYears, hourlyRate, subjects, degree, field, institution, status } = req.body
+	try {
+		const {
+			fullName,
+			email,
+			password,
+			phone,
+			experienceYears,
+			hourlyRate,
+			dailyStudents,
+			subjects,
+			degree,
+			field,
+			institution,
+			status,
+		} = req.body;
 
-    if (!fullName || !email || !password || !subjects || !hourlyRate || !degree || !field) {
-      return res.status(400).send('Required fields missing')
-    }
+		if (!fullName || !email || !password || !subjects || !hourlyRate || !degree || !field) {
+			return res.status(400).send('Required fields missing');
+		}
 
-    const existingTeacher = await Teacher.findOne({ email })
-    if (existingTeacher) {
-      return res.status(400).send('Teacher already exists')
-    }
+		const existingTeacher = await Teacher.findOne({ email });
+		if (existingTeacher) {
+			return res.status(400).send('Teacher already exists');
+		}
 
-    let profilePic = {}
+		let profilePic = {};
 
-    if (req.files && req.files.profilePic) {
-      const result = await cloudinary.uploader.upload(
-        req.files.profilePic.tempFilePath,
-        { folder: 'teachers' }
-      )
-      profilePic = {
-        url: result.secure_url,
-        public_id: result.public_id,
-      }
-    }
+		if (req.files && req.files.profilePic) {
+			const result = await cloudinary.uploader.upload(req.files.profilePic.tempFilePath, {
+				folder: 'teachers',
+			});
+			profilePic = {
+				url: result.secure_url,
+				public_id: result.public_id,
+			};
+		}
 
-    const formattedSubjects = subjects.split(',').map(s => s.trim().toLowerCase())
+		const formattedSubjects = subjects.split(',').map((s) => s.trim().toLowerCase());
 
-    const teacher = new Teacher({
-      fullName,
-      email,
-      password,
-      phone,
-      experienceYears,
-      hourlyRate,
-      profilePic,
-      status: status || 'active',
-      qualification: {
-        degree,
-        field,
-        institution,
-      },
-      subjects: formattedSubjects,
-    })
-    await teacher.save()
-    res.redirect('/admin/viewteachers')
-  } catch (error) {
-    console.error('Create Teacher Error:', error)
-    res.status(500).send(error.message)
-  }
-}
+		const teacher = new Teacher({
+			fullName,
+			email,
+			password,
+			phone,
+			experienceYears,
+			hourlyRate,
+			dailyStudents,
+			profilePic,
+			status: status || 'active',
+			qualification: {
+				degree,
+				field,
+				institution,
+			},
+			subjects: formattedSubjects,
+		});
+		await teacher.save();
+		res.redirect('/admin/viewteachers');
+	} catch (error) {
+		console.error('Create Teacher Error:', error);
+		res.status(500).send(error.message);
+	}
+};
 
 exports.getTeachers = async (req, res) => {
   try {
@@ -265,80 +295,93 @@ exports.getTeachers = async (req, res) => {
 }
 
 exports.getEditTeacher = async (req, res) => {
-  try {
-    const teacher = await Teacher.findById(req.params.id)
-    if (!teacher) {
-      return res.status(404).send('Teacher not found')
-    }
-    res.render('admin/editTeacher', {
-      teacher
-    })
-  } catch (error) {
-    console.error('Get Edit Teacher Error:', error)
-    res.status(500).send('Server Error')
-  }
-}
+	try {
+		const teacher = await Teacher.findById(req.params.id);
+		if (!teacher) {
+			return res.status(404).send('Teacher not found');
+		}
+		res.render('admin/editTeacher', {
+			teacher,
+		});
+	} catch (error) {
+		console.error('Get Edit Teacher Error:', error);
+		res.status(500).send('Server Error');
+	}
+};
 
 exports.updateTeacher = async (req, res) => {
-  try {
-    const teacher = await Teacher.findById(req.params.id)
+	try {
+		const teacher = await Teacher.findById(req.params.id);
 
-    if (!teacher) {
-      return res.status(404).send('Teacher not found')
-    }
+		if (!teacher) {
+			return res.status(404).send('Teacher not found');
+		}
 
-    const { fullName, email, phone, experienceYears, hourlyRate, subjects, degree, field, institution ,status} = req.body
+		const {
+			fullName,
+			email,
+			phone,
+			experienceYears,
+			hourlyRate,
+			dailyStudents,
+			subjects,
+			degree,
+			field,
+			institution,
+			status,
+		} = req.body;
 
-    teacher.fullName = fullName
-    teacher.email = email
-    teacher.phone = phone
-    teacher.experienceYears = experienceYears
-    teacher.hourlyRate = hourlyRate
-    teacher.status = status
-    teacher.qualification = {
-      degree,
-      field,
-      institution
-    }
-    teacher.subjects = subjects.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
-    if (req.files && req.files.profilePic) {
-      if (teacher.profilePic?.public_id) {
-        await cloudinary.uploader.destroy(teacher.profilePic.public_id)
-      }
-      const result = await cloudinary.uploader.upload(
-        req.files.profilePic.tempFilePath,
-        { folder: 'teachers' }
-      )
-      teacher.profilePic = {
-        url: result.secure_url,
-        public_id: result.public_id
-      }
-    }
-    await teacher.save()
-    res.redirect('/admin/viewteachers')
-  } catch (error) {
-    console.error('Update Teacher Error:', error)
-    res.status(500).send('Server Error')
-  }
-}
-
-exports.deleteTeacher = async (req, res) => {
-  try {
-    const teacher = await Teacher.findById(req.params.id)
-    if (!teacher) {
-      return res.status(404).send('Teacher not found')
-    }
-    if (teacher.profilePic?.public_id) {
-      await cloudinary.uploader.destroy(teacher.profilePic.public_id)
-    }
-    await teacher.deleteOne()
-    res.redirect('/admin/viewteachers')
-  } catch (error) {
-    console.error('Delete Teacher Error:', error)
-    res.status(500).send('Server Error')
-  }
-}
-
+		teacher.fullName = fullName;
+		teacher.email = email;
+		teacher.phone = phone;
+		teacher.experienceYears = experienceYears;
+		teacher.hourlyRate = hourlyRate;
+		teacher.dailyStudents = dailyStudents;
+		teacher.status = status;
+		teacher.qualification = {
+			degree,
+			field,
+			institution,
+		};
+		teacher.subjects = subjects
+			.split(',')
+			.map((s) => s.trim().toLowerCase())
+			.filter(Boolean);
+		if (req.files && req.files.profilePic) {
+			if (teacher.profilePic?.public_id) {
+				await cloudinary.uploader.destroy(teacher.profilePic.public_id);
+			}
+			const result = await cloudinary.uploader.upload(req.files.profilePic.tempFilePath, {
+				folder: 'teachers',
+			});
+			teacher.profilePic = {
+				url: result.secure_url,
+				public_id: result.public_id,
+			};
+		}
+		await teacher.save();
+		res.redirect('/admin/viewteachers');
+	} catch (error) {
+		console.error('Update Teacher Error:', error);
+		res.status(500).send('Server Error');
+	}
+};
+    exports.deleteTeacher = async (req, res) => {
+	try {
+		const teacher = await Teacher.findById(req.params.id);
+		if (!teacher) {
+			return res.status(404).send('Teacher not found');
+		}
+		if (teacher.profilePic?.public_id) {
+			await cloudinary.uploader.destroy(teacher.profilePic.public_id);
+		}
+		await teacher.deleteOne();
+		res.redirect('/admin/viewteachers');
+	} catch (error) {
+		console.error('Delete Teacher Error:', error);
+		res.status(500).send('Server Error');
+	}
+};
 //assigningg
 exports.assignStudentsPage = async (req, res) => {
   try {
@@ -355,43 +398,6 @@ exports.assignStudentsPage = async (req, res) => {
     }
 
     res.render("admin/assignStudents", { coord, students });
-
-  } catch (err) {
-    console.log(err);
-    res.send("Error loading assign page");
-  }
-};
-
-
-exports.assignStudentsPage = async (req, res) => {
-  try {
-    const coordinatorId = req.params.id;
-
-    const coord = await coordinator
-      .findById(coordinatorId)
-      .populate("assignedStudents");
-
-    if (!coord) {
-      return res.send("Coordinator not found");
-    }
-
-    const allStudents = await student.find({ status: "active" });
-
-    const studentsToShow = [];
-
-    for (const s of allStudents) {
-      if (!s.coordinator) {
-        studentsToShow.push(s);
-      }
-      else if (s.coordinator.toString() === coordinatorId.toString()) {
-        studentsToShow.push(s);
-      }
-    }
-
-    res.render("admin/assignStudents", {
-      coord,
-      students: studentsToShow
-    });
 
   } catch (err) {
     console.log(err);
@@ -445,56 +451,53 @@ exports.assignStudents= async (req, res) => {
 };
 
 exports.removeAssignedStudent = async (req, res) => {
-  try {
-    const { coordId, studentId } = req.params;
-    const coord = await coordinator.findById(coordId);
-    coord.assignedStudents = coord.assignedStudents.filter(
-      id => id.toString() !== studentId
-    );
-    await coord.save();
-    const stu = await student.findById(studentId);
-    stu.coordinator = null;
-    await stu.save();
+	try {
+		const { coordId, studentId } = req.params;
+		const coord = await coordinator.findById(coordId);
+		coord.assignedStudents = coord.assignedStudents.filter((id) => id.toString() !== studentId);
+		await coord.save();
+		const stu = await student.findById(studentId);
+		stu.coordinator = null;
+		await stu.save();
 
-    res.redirect(`/admin/assignstudents/${coordId}`);
-
-  } catch (err) {
-    console.log(err);
-    res.send("Error removing student");
-  }
+		res.redirect(`/admin/assignstudents/${coordId}`);
+	} catch (err) {
+		console.log(err);
+		res.send('Error removing student');
+	}
 };
 
 exports.changeCoordinatorPassword = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { password } = req.body;
+	try {
+		const { id } = req.params;
+		const { password } = req.body;
 
-    if (!password || password.length < 6) {
-      return res.redirect('/admin/viewcoordinators');
-    }
+		if (!password || password.length < 8) {
+			return res.redirect('/admin/viewcoordinators');
+		}
 
-    const Coordinator = await coordinator.findById(id).select('+password');
+		const Coordinator = await coordinator.findById(id).select('+password');
 
-    if (!Coordinator) {
-      return res.redirect('/admin/viewcoordinators');
-    }
+		if (!Coordinator) {
+			return res.redirect('/admin/viewcoordinators');
+		}
 
-    Coordinator.password = password;
-    await Coordinator.save();
-    console.log('coordinator password changed')
+		Coordinator.password = password;
+		await Coordinator.save();
+		console.log('coordinator password changed');
 
-    res.redirect('/admin/viewcoordinators');
-  } catch (error) {
-    console.error('Change password error:', error);
-    res.redirect('/admin/viewcoordinators');
-  }
+		res.redirect('/admin/viewcoordinators');
+	} catch (error) {
+		console.error('Change password error:', error);
+		res.redirect('/admin/viewcoordinators');
+	}
 };
 
 exports.changeTeacherPassword = async (req, res) => {
   try {
     const { id } = req.params;
     const { password } = req.body;
-    if (!password || password.length < 6) {
+    if (!password || password.length < 8) {
       return res.redirect('/admin/viewteachers');
     }
 

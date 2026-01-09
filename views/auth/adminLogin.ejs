@@ -2,64 +2,62 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Admin Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/auth/adminlogin.css">
+  <meta charset="UTF-8">
+  <title>Admin Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/auth/adminlogin.css">
 </head>
 
 <body>
 
-    <form action="/login" method="POST">
-        <div class="login-card">
-            <div class="login-title">Admin Login</div>
+  <form action="/login" method="POST">
+    <div class="login-card">
+      <div class="login-title">Admin Login</div>
 
-            <input type="hidden" name="role" value="admin" />
+      <input type="hidden" name="role" value="admin" />
 
 
-            <!-- Email -->
-            <div class="input-group">
-                <label>Email</label>
-                <input type="email" name="email" required>
-            </div>
+      <!-- Email -->
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" name="email" required>
+      </div>
 
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" name="password" required>
-            </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" name="password" required>
+      </div>
 
-            <button id="loginBtn" class="login-btn" type="submit">Login</button>
+      <button id="loginBtn" class="login-btn" type="submit">Login</button>
 
-            <% if (msg) { %>
-                <div class="alert alert-danger text-center mt-2">
-                    <%= msg %>
-                </div>
-                <% } %>
+      <% if (msg) { %>
+      <div class="alert alert-danger text-center mt-2">
+        <%= msg %>
+      </div>
+      <% } %>
 
-                    <% if (typeof attemptsLeft !=='undefined' && attemptsLeft !==null) { %>
-                        <button class="btn btn-outline-danger btn-sm w-100 mt-2" disabled>
-                            <%= attemptsLeft %> attempts left
-                        </button>
-                        <% } %>
+      <% if (typeof attemptsLeft !=='undefined' && attemptsLeft !==null) { %>
+      <button class="btn btn-outline-danger btn-sm w-100 mt-2" disabled>
+        <%= attemptsLeft %> attempts left
+      </button>
+      <% } %>
 
-                            <% if (typeof remainingTime !=='undefined' && remainingTime> 0) { %>
-                                <p id="timer" class="fw-bold text-center"></p>
-                                <a href="/forgot-password"
-                                    style="font-size: 14px; color: #2563eb; text-decoration: none;">
-                                    Forgot password?
-                                </a>
-                                <% } %>
+      <% if (typeof remainingTime !=='undefined' && remainingTime> 0) { %>
+      <p id="timer" class="fw-bold text-center"></p>
+      <a href="/forgot-password" style="font-size: 14px; color: #2563eb; text-decoration: none;">
+        Forgot password?
+      </a>
+      <% } %>
 
-                                    <a href="/" class="back-link">Back to home</a>
+      <a href="/" class="back-link">Back to home</a>
 
-        </div>
-    </form>
-    <script>
-        const remainingTime = <%= remainingTime %>;
-    </script>
+    </div>
+  </form>
+  <script>
+    const remainingTime = <%= remainingTime %>;
+  </script>
 
-    <script src="/css/auth/js/adminlogin.js"></script>
+  <script src="/css/auth/js/adminlogin.js"></script>
 
 </body>
 
