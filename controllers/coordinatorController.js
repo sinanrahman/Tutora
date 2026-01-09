@@ -1,50 +1,85 @@
 const Coordinator = require('../models/Coordinator')
 const Teacher = require('../models/Teacher')
 const Student = require('../models/Student')
+const Session = require("../models/Session");
 
 /**
  * Coordinator Dashboard
  */
+
+const getTodayRange = () => {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
+
+    return { start, end };
+};
+
 exports.coordinatorDashboard = async (req, res) => {
     try {
-        // 🔹 Step 1: Check if req.user exists
         if (!req.user || !req.user.id) {
-            console.log("❌ req.user is missing or id is undefined:", req.user);
             return res.status(401).send("You must be logged in as a coordinator");
         }
 
         const coordinatorId = req.user.id;
-        console.log("🔹 Logged in coordinator ID:", coordinatorId);
 
-        // 🔹 Step 2: Find the coordinator in DB
         const coord = await Coordinator.findById(coordinatorId);
-        console.log("🔹 Coordinator fetched from DB:", coord);
-
         if (!coord) {
-            return res.status(404).send("Coordinator not found in database");
+            return res.status(404).send("Coordinator not found");
         }
 
-        // 🔹 Step 3: Fetch students assigned to this coordinator
         const students = await Student.find({ coordinator: coordinatorId })
             .populate("assignedTeachers", "fullName");
-        console.log(`🔹 ${students.length} students found for coordinator`);
 
-        // 🔹 Step 4: Fetch all teachers
         const teachers = await Teacher.find().select("_id fullName subjects");
-        console.log(`🔹 ${teachers.length} teachers found`);
 
-        // 🔹 Step 5: Render dashboard
+        // 🔹 DAILY USAGE LOGIC
+        const { start, end } = getTodayRange();
+
+        const teacherUsage = await Session.aggregate([
+  {
+    $match: {
+      date: { $gte: start, $lte: end },
+      status: "APPROVED"   // optional but recommended
+    }
+  },
+  {
+    $group: {
+      _id: {
+        teacher: "$teacher",
+        student: "$student"
+      }
+    }
+  },
+  {
+    $group: {
+      _id: "$_id.teacher",
+      count: { $sum: 1 }
+    }
+  }
+]);
+
+
+        const usageMap = {};
+        teacherUsage.forEach(t => {
+            usageMap[t._id.toString()] = t.count;
+        });
+
         res.render("coordinator/dashboard", {
             coord,
             students,
-            teachers
+            teachers,
+            usageMap
         });
 
     } catch (err) {
-        console.error("❌ Error loading coordinator dashboard:", err);
+        console.error(err);
         res.status(500).send("Server error while loading dashboard");
     }
 };
+
 
 
 /**
@@ -108,21 +143,40 @@ exports.getStudentProfile = async (req, res) => {
 exports.assignTeachers = async (req, res) => {
     try {
         const { studentId } = req.params;
-        const { teachers } = req.body; // array of teacher IDs
+        const { teachers } = req.body;
 
         if (!teachers || teachers.length !== 4) {
-            return res.status(400).send('Exactly 4 teachers required');
+            return res.status(400).send("Exactly 4 teachers required");
         }
 
         const student = await Student.findById(studentId);
-        if (!student) return res.status(404).send('Student not found');
+        if (!student) return res.status(404).send("Student not found");
 
-        student.assignedTeachers = [...new Set(teachers)];
+        const { start, end } = getTodayRange();
+
+       for (const teacherId of teachers) {
+  const uniqueStudentsToday = await Session.distinct("student", {
+    teacher: teacherId,
+    date: { $gte: start, $lte: end },
+    status: "APPROVED" // if you use approval
+  });
+
+  if (uniqueStudentsToday.length >= 4) {
+    return res.status(400).send(
+      "One or more teachers already reached today's teaching limit"
+    );
+  }
+}
+
+
+
+        student.assignedTeachers = teachers;
         await student.save();
 
-        res.redirect('/coordinator/assigned-students');
+        res.redirect("/coordinator/assigned-students");
+
     } catch (err) {
         console.error(err);
-        res.status(500).send('Error assigning teachers');
+        res.status(500).send("Error assigning teachers");
     }
 };
