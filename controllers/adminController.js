@@ -83,15 +83,16 @@ exports.AdminEditStudentPageController = async (req, res) => {
 exports.AdminUpdateStudentController = async (req, res) => {
   try {
     const id = req.params.id
-    const { fullname, email, phone, country, standard, gender, coordinator } = req.body
+     const{fullname,email,phone,country,standard,gender,coordinator,status}=req.body
     await student.findByIdAndUpdate(id, {
-      fullName: fullname,
-      email: email,
-      phone: phone,
-      country: country,
-      standard: standard,
-      gender: gender,
-      coordinator: coordinator
+        fullName:fullname,
+        email:email,
+        phone:phone,
+        country:country,
+        standard:standard,
+        status:status,
+        gender:gender,
+        coordinator:coordinator
     })
     res.redirect("/admin/viewstudents")
 
@@ -121,20 +122,21 @@ exports.AdminAddCoordinatorsController = (req, res) => {
   return res.render('admin/addcoordinators')
 }
 
-exports.AdminPostAddCoordinatorController = async (req, res) => {
-  const { fullName, email, phone, password } = req.body
-  const admin = await Admin.findOne()
-  if (!admin) {
-    return res.send('No admin found. Create an admin first.')
-  }
-  await coordinator.create({
-    fullName: fullName,
-    email: email,
-    phone: phone,
-    password: password,
-    createdBy: admin._id
-  })
-  return res.redirect('/admin/viewcoordinators')
+exports.AdminPostAddCoordinatorController=async(req,res)=>{
+    const{fullName,email,phone,password,status}=req.body
+    const admin = await Admin.findOne()
+		if (!admin) {
+			return res.send('No admin found. Create an admin first.')
+		}
+    await coordinator.create({
+        fullName:fullName,
+        email:email,
+        phone:phone,
+        password:password,
+        status:status,
+        createdBy: admin._id
+    })
+    return res.redirect('/admin/viewcoordinators')
 }
 
 exports.AdminViewCoordinatorController = async (req, res) => {
@@ -175,11 +177,12 @@ exports.AdminEditCoordinatorPageController = async (req, res) => {
 exports.AdminUpdateCoordinatorController = async (req, res) => {
   try {
     const id = req.params.id
-    const { fullName, email, phone } = req.body
+    const { fullName, email, phone,status } = req.body
     await coordinator.findByIdAndUpdate(id, {
       fullName,
       email,
-      phone
+      phone,
+      status
     })
     res.redirect("/admin/viewcoordinators")
 
@@ -352,7 +355,8 @@ exports.AdminAssignStudentsPageController = async (req, res) => {
       .findById(coordinatorId)
       .populate("assignedStudents", "fullName email");
 
-    const students = await student.find();
+    // ✅ ONLY ACTIVE STUDENTS
+    const students = await student.find({ status: "active" });
 
     if (!coord) {
       return res.send("Coordinator not found");
@@ -378,8 +382,12 @@ exports.AdminAssignStudentsPage = async (req, res) => {
     if (!coord) {
       return res.send("Coordinator not found");
     }
-    const allStudents = await student.find();
+
+    // ✅ ONLY ACTIVE STUDENTS
+    const allStudents = await student.find({ status: "active" });
+
     const studentsToShow = [];
+
     for (const s of allStudents) {
       if (!s.coordinator) {
         studentsToShow.push(s);

@@ -51,11 +51,17 @@
               <label class="form-label">Standard</label>
               <input type="text" name="standard" class="form-control" value="<%= student.standard %>" required>
             </div>
+
+
             <div class="mb-3">
               <label class="form-label">Status</label>
-              <select name="status" class="form-select" required>
-                <option value="active" selected>Active</option>
-                <option value="inactive">Inactive</option>
+              <select name="status" class="form-select">
+                <option value="active" <%=student.status==='active' ? 'selected' : '' %>>
+                  Active
+                </option>
+                <option value="inactive" <%=student.status==='inactive' ? 'selected' : '' %>>
+                  Inactive
+                </option>
               </select>
             </div>
 

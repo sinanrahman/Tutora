@@ -49,6 +49,19 @@
                      class="form-control"
                      required>
             </div>
+
+<div class="mb-3">
+              <label class="form-label">Status</label>
+              <select name="status" class="form-select">
+                <option value="active" <%=coord.status==='active' ? 'selected' : '' %>>
+                  Active
+                </option>
+                <option value="inactive" <%=coord.status==='inactive' ? 'selected' : '' %>>
+                  Inactive
+                </option>
+              </select>
+            </div>
+
             <div class="d-flex gap-2 justify-content-end">
               <a href="/admin/viewcoordinators" class="btn btn-secondary">
                 Cancel
@@ -94,6 +107,8 @@
                    required>
           </div>
         </div>
+
+
 
         <div class="modal-footer">
           <button type="submit" class="btn btn-dark fw-bold">

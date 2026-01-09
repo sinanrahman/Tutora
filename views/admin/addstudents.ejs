@@ -12,53 +12,52 @@
 
 <body class="bg-light">
   <%- include('partials/sidebar') %>
-    <div class="main-content">
-      <h3 class="fw-bold mb-3">Add Student</h3>
-      <div class="card shadow-sm border-0">
-        <div class="card-body">
-          <form action="/admin/addstudents" method="post">
-            <div class="mb-3">
-              <label class="form-label">Full Name</label>
-              <input type="text" class="form-control" name="fullname" placeholder="Enter full name" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Email</label>
-              <input type="email" name="email" class="form-control" placeholder="Enter email" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Phone</label>
-              <input type="text" name="phone" class="form-control" placeholder="Enter phone number" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Gender</label>
-              <select class="form-select" name="gender">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Country</label>
-              <input type="text" name="country" class="form-control" placeholder="Enter country" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Standard</label>
-              <input type="text" name="standard" class="form-control" placeholder="Enter class" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Status</label>
-              <select name="status" class="form-select" required>
-                <option value="active" selected>Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
+  <div class="main-content">
+    <h3 class="fw-bold mb-3">Add Student</h3>
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <form action="/admin/addstudents" method="post">
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" name="fullname" placeholder="Enter full name" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" placeholder="Enter email" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input type="text" name="phone" class="form-control" placeholder="Enter phone number" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Gender</label>
+            <select class="form-select" name="gender">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Country</label>
+            <input type="text" name="country" class="form-control" placeholder="Enter country" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Standard</label>
+            <input type="text" name="standard" class="form-control" placeholder="Enter class" required>
+          </div>
 
+          <div class="mb-3">
+  <label class="form-label">Status</label>
+  <select class="form-select" name="status">
+    <option value="active" selected>Active</option>
+    <option value="inactive">Inactive</option>
+  </select>
+</div>
 
-            <div class="d-flex justify-content-end gap-2">
-              <button type="reset" class="btn btn-outline-secondary">Cancel</button>
-              <button type="submit" class="btn btn-primary">Save Student</button>
-            </div>
-          </form>
-        </div>
+          <div class="d-flex justify-content-end gap-2">
+            <a href="/admin/viewstudents" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save Student</button>
+          </div>
+        </form>
       </div>
     </div>
 </body>

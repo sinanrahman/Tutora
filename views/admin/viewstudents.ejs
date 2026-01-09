@@ -52,7 +52,13 @@
                     <td><%= s.gender %></td>
                     <td><%= s.country %></td>
                     <td><%= s.standard %></td>
-                    <td><%= s.status%></td>
+
+<td>
+  <span class="badge <%= s.status === 'active' ? 'bg-success' : 'bg-danger' %>">
+    <%= s.status %>
+  </span>
+</td>
+
                     <td><%= s.coordinator ? s.coordinator.fullName : '—' %></td>
                     <td>
                       <div class="action-group">

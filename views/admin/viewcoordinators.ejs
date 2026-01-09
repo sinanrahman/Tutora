@@ -35,6 +35,7 @@
 									<th>Full Name</th>
 									<th>Email</th>
 									<th>Phone</th>
+									<th>status</th>
 									<th style="width: 320px" class="text-center">Actions</th>
 								</tr>
 							</thead>
@@ -50,6 +51,11 @@
 									<td><%= c.fullName %></td>
 									<td><%= c.email %></td>
 									<td><%= c.phone %></td>
+									<td>
+  <span class="badge <%= c.status === 'active' ? 'bg-success' : 'bg-danger' %>">
+    <%= c.status %>
+  </span>
+</td>
 
 									<td class="text-center">
 										<div class="action-group">
