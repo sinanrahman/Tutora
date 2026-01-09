@@ -1,9 +1,14 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { protect, isTeacher } = require("../middlewares/authMiddleware");
 
-router.get("/dashboard", protect, isTeacher, (req, res) => {
-  res.render("teacher/dashboard", { user: req.user });
-});
+const { protect, isTeacher } = require('../middlewares/authMiddleware');
+const {
+	teacherDashboard,
+	teacherSessionsPage,
+	addSessionPage,
+} = require('../controllers/teacherController');
 
+router.get('/dashboard', protect, isTeacher, teacherDashboard);
+router.get('/sessions', protect, isTeacher, teacherSessionsPage);
+router.get('/sessions/add', protect, isTeacher, addSessionPage);
 module.exports = router;

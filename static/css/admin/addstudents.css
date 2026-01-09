@@ -1,0 +1,41 @@
+ #sidebar {
+      width: 220px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      background-color: #343a40;
+      padding-top: 20px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    #sidebar h3 {
+      font-size: 1.3rem;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    #sidebar .nav-link {
+      color: white;
+      padding: 10px 20px;
+      display: block;
+      text-decoration: none;
+    }
+
+    #sidebar .nav-link:hover,
+    #sidebar .nav-link.active {
+      background-color: #495057;
+      border-radius: 5px;
+    }
+    .main-content {
+      margin-left: 220px; 
+      padding: 20px;
+      min-height: 100vh;
+      background-color: #f8f9fa;
+    }
+
+    .card {
+      border-radius: 10px;
+    }

@@ -1,0 +1,18 @@
+ #sidebar {
+      width: 220px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      background-color: #343a40;
+      padding-top: 20px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    .main-content {
+      margin-left: 220px;
+      padding: 20px;
+      min-height: 100vh;
+      background: #f8f9fa;
+    }
+    .card { border-radius: 10px; }
