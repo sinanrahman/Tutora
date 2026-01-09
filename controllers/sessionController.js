@@ -2,9 +2,6 @@ const Session = require('../models/Session');
 const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
 
-/**
- * TEACHER → Submit Session
- */
 exports.submitSession = async (req, res) => {
 	try {
 		const { student, type, date, durationInHours } = req.body;
@@ -24,9 +21,6 @@ exports.submitSession = async (req, res) => {
 	}
 };
 
-/**
- * COORDINATOR → Approve Session
- */
 exports.approveSession = async (req, res) => {
 	try {
 		const session = await Session.findById(req.params.id).populate('teacher').populate('student');
