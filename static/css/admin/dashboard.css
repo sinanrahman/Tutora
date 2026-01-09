@@ -1,26 +1,45 @@
- #sidebar {
-      width: 220px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      background: #343a40;
-      padding-top: 20px;
-      color: #fff;
-    }
+#sidebar {
+  width: 220px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background: #343a40;
+  padding-top: 20px;
+  color: #fff;
+}
 
-    .main-content {
-      margin-left: 220px;
-      padding: 20px;
-      min-height: 100vh;
-      background: #f8f9fa;
-    }
+.main-content {
+  margin-left: 220px;
+  padding: 40px 30px;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
 
-    .card {
-      border-radius: 12px
-    }
+/* Card base */
+.dashboard-card {
+  /* border-radius: 14px; */
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
 
-    a {
-      text-decoration: none;
-      color: #343a40;
-    }
+/* Hover effect */
+.dashboard-card:hover {
+  background-color: #90acd2; /* light professional blue */
+  transform: translateY(-6px);
+}
+
+.dashboard-card:hover h6,
+.dashboard-card:hover h3,
+.dashboard-card:hover i {
+  color: #ffffff !important;
+}
+
+/* Remove default link styles */
+.dashboard-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+
