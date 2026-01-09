@@ -149,7 +149,7 @@ exports.login = async (req, res) => {
 		if (role === 'coordinator') {
 			user = await Coordinator.findOne({ email }).select('+password')
 
-			if (!user || !user.isActive) {
+			if (!user || user.status !== 'active') {
 				return renderLoginWithMsg(res, role, 'Invalid credentials')
 			}
 
