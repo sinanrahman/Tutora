@@ -29,14 +29,18 @@
 
   <hr class="text-secondary mt-4">
 
+  <div class="text-center mb-3">
+    <i class="bi bi-person-circle fs-2"></i>
+    <h6 class="mt-2 mb-0">
+      <%= admin?.username %>
+    </h6>
+  </div>
+
 
   <div class="mt-auto">
-   <button
-  class="btn btn-outline-light w-100"
-  data-bs-toggle="modal"
-  data-bs-target="#logoutModal">
-  <i class="bi bi-box-arrow-right me-2"></i> Logout
-</button>
+    <button class="btn btn-outline-light w-100" data-bs-toggle="modal" data-bs-target="#logoutModal">
+      <i class="bi bi-box-arrow-right me-2"></i> Logout
+    </button>
 
   </div>
 </nav>
@@ -46,7 +50,7 @@
 <div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow">
-      
+
       <div class="modal-header bg-dark text-white">
         <h5 class="modal-title">Confirm Logout</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>

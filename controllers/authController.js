@@ -10,15 +10,23 @@ const MAX_ATTEMPTS = 3
 const LOCK_TIME = 1 * 60 * 1000
 
 exports.loginPage = (req, res) => {
-	res.render('auth/login')
+	try {
+		res.render('auth/login')
+	} catch (error) {
+		console.log(error)
+	}
 }
 
 exports.adminLoginPage = (req, res) => {
-	res.render('auth/adminLogin', {
-		msg: '',
-		attemptsLeft: null,
-		remainingTime: 0
-	})
+	try {
+		res.render('auth/adminLogin', {
+			msg: '',
+			attemptsLeft: null,
+			remainingTime: 0
+		})
+	} catch (error) {
+		console.log(error)
+	}
 }
 
 
@@ -30,13 +38,7 @@ exports.coordinatorLoginPage = (req, res) => {
 	res.render('auth/coordinatorLogin', { msg: '' })
 }
 
-const renderLoginWithMsg = (
-	res,
-	role,
-	msg,
-	attemptsLeft = MAX_ATTEMPTS,
-	remainingTime = 0
-) => {
+const renderLoginWithMsg = (res, role, msg, attemptsLeft = MAX_ATTEMPTS, remainingTime = 0) => {
 	if (role === 'admin') {
 		return res.render('auth/adminLogin', {
 			msg,
@@ -67,13 +69,7 @@ exports.login = async (req, res) => {
 			user = await Admin.findOne({ email }).select('+password')
 
 			if (!user) {
-				return renderLoginWithMsg(
-					res,
-					role,
-					'Invalid credentials',
-					MAX_ATTEMPTS,
-					0
-				)
+				return renderLoginWithMsg(res, role, 'Invalid credentials', MAX_ATTEMPTS, 0)
 			}
 
 			if (user.lockUntil && user.lockUntil > Date.now()) {
@@ -81,13 +77,7 @@ exports.login = async (req, res) => {
 					(user.lockUntil - Date.now()) / 1000
 				)
 
-				return renderLoginWithMsg(
-					res,
-					role,
-					'Too many attempts. Please wait.',
-					0,
-					remainingTime
-				)
+				return renderLoginWithMsg(res, role, 'Too many attempts. Please wait.', 0, remainingTime)
 			}
 			if (user.lockUntil && user.lockUntil <= Date.now()) {
 				user.loginAttempts = 0
@@ -106,14 +96,9 @@ exports.login = async (req, res) => {
 
 				await user.save()
 
-				const attemptsLeft = Math.max(
-					MAX_ATTEMPTS - user.loginAttempts,
-					0
-				)
+				const attemptsLeft = Math.max( MAX_ATTEMPTS - user.loginAttempts, 0 )
 
-				return renderLoginWithMsg(
-					res,
-					role,
+				return renderLoginWithMsg(res,role,
 					user.lockUntil
 						? 'Too many attempts. Please wait.'
 						: 'Wrong password',
@@ -195,93 +180,93 @@ exports.logout = (req, res) => {
 }
 
 
-// --- 1️⃣ Forgot Password ---
+// --- Forgot Password ---
 exports.forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-    let user, role;
+	try {
+		const { email } = req.body;
+		let user, role;
 
-    if (user = await Admin.findOne({ email })) role = 'Admin';
-    else if (user = await Teacher.findOne({ email })) role = 'Teacher';
-    else if (user = await Coordinator.findOne({ email })) role = 'Coordinator';
-    else return res.render('auth/forgotPassword', { msg: 'Email not found' });
+		if (user = await Admin.findOne({ email })) role = 'Admin';
+		else if (user = await Teacher.findOne({ email })) role = 'Teacher';
+		else if (user = await Coordinator.findOne({ email })) role = 'Coordinator';
+		else return res.render('auth/forgotPassword', { msg: 'Email not found' });
 
-    // Generate reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 min
-    await user.save();
+		// Generate reset token
+		const resetToken = crypto.randomBytes(32).toString('hex');
+		user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+		user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 min
+		await user.save();
 
-    // Use dynamic port
-    const port = process.env.PORT || 3000;
-    const resetURL = `http://localhost:${port}/reset-password/${resetToken}`;
-    console.log('Reset URL:', resetURL); // ✅ debug
+		// Use dynamic port
+		const port = process.env.PORT || 3000;
+		const resetURL = `http://localhost:${port}/reset-password/${resetToken}`;
+		console.log('Reset URL:', resetURL); //  debug
 
-    // Send email
-    await sendEmail({
-      to: user.email,
-      subject: 'Password Reset',
-      html: `<p>Hi ${role}, click <a href="${resetURL}">here</a> to reset your password. Link expires in 15 minutes.</p>`
-    });
+		// Send email
+		await sendEmail({
+			to: user.email,
+			subject: 'Password Reset',
+			html: `<p>Hi ${role}, click <a href="${resetURL}">here</a> to reset your password. Link expires in 15 minutes.</p>`
+		});
 
-    res.render('auth/forgotPassword', { msg: 'Reset link sent' });
-  } catch (err) {
-    console.error(err);
-    res.render('auth/forgotPassword', { msg: 'Error sending email' });
-  }
+		res.render('auth/forgotPassword', { msg: 'Reset link sent' });
+	} catch (err) {
+		console.error(err);
+		res.render('auth/forgotPassword', { msg: 'Error sending email' });
+	}
 };
 
 
-// --- 2️⃣ Render Reset Password Page ---
+// ---  Render Reset Password Page ---
 exports.renderResetPasswordPage = (req, res) => {
-  try {
-    console.log('RESET TOKEN:', req.params.token)
+	try {
+		console.log('RESET TOKEN:', req.params.token)
 
-    res.render('auth/resetPassword', {
-      token: req.params.token,
-      msg: ''
-    })
-  } catch (err) {
-    console.error('Render reset page error:', err)
-    res.send('Error loading reset page')
-  }
+		res.render('auth/resetPassword', {
+			token: req.params.token,
+			msg: ''
+		})
+	} catch (err) {
+		console.error('Render reset page error:', err)
+		res.send('Error loading reset page')
+	}
 }
 
 
-// --- 3️⃣ Reset Password ---
+// ---  Reset Password ---
 exports.resetPassword = async (req, res) => {
-  try {
-    const hashedToken = crypto
-      .createHash('sha256')
-      .update(req.params.token)
-      .digest('hex')
+	try {
+		const hashedToken = crypto
+			.createHash('sha256')
+			.update(req.params.token)
+			.digest('hex')
 
-    let user =
-      (await Admin.findOne({
-        resetPasswordToken: hashedToken,
-        resetPasswordExpires: { $gt: Date.now() }
-      })) ||
-      (await Teacher.findOne({
-        resetPasswordToken: hashedToken,
-        resetPasswordExpires: { $gt: Date.now() }
-      })) ||
-      (await Coordinator.findOne({
-        resetPasswordToken: hashedToken,
-        resetPasswordExpires: { $gt: Date.now() }
-      }))
+		let user =
+			(await Admin.findOne({
+				resetPasswordToken: hashedToken,
+				resetPasswordExpires: { $gt: Date.now() }
+			})) ||
+			(await Teacher.findOne({
+				resetPasswordToken: hashedToken,
+				resetPasswordExpires: { $gt: Date.now() }
+			})) ||
+			(await Coordinator.findOne({
+				resetPasswordToken: hashedToken,
+				resetPasswordExpires: { $gt: Date.now() }
+			}))
 
-    if (!user) return res.send('Token invalid or expired')
+		if (!user) return res.send('Token invalid or expired')
 
-    // ✅ DO NOT HASH HERE
-    user.password = req.body.password
-    user.resetPasswordToken = undefined
-    user.resetPasswordExpires = undefined
+		//  DO NOT HASH HERE
+		user.password = req.body.password
+		user.resetPasswordToken = undefined
+		user.resetPasswordExpires = undefined
 
-    await user.save() // pre-save hook hashes once
-    res.redirect('/')
-  } catch (err) {
-    console.error(err)
-    res.send('Error resetting password')
-  }
+		await user.save() // pre-save hook hashes once
+		res.redirect('/')
+	} catch (err) {
+		console.error(err)
+		res.send('Error resetting password')
+	}
 }
 
