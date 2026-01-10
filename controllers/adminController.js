@@ -4,7 +4,7 @@ const coordinator = require('../models/Coordinator');
 const Teacher = require('../models/Teacher');
 const cloudinary = require('../config/cloudinary');
 
-exports.AdminDashboardController = async (req, res) => {
+exports.dashboard = async (req, res) => {
 	try {
 		const totalStudents = await student.countDocuments();
 		const totalCoordinators = await coordinator.countDocuments();
@@ -28,7 +28,7 @@ exports.AdminDashboardController = async (req, res) => {
 };
 
 //students
-exports.AdminAddStudentsController = async (req, res) => {
+exports.addStudents = async (req, res) => {
 	try {
 		const coordinators = await coordinator.find().select('_id fullName');
 		return res.render('admin/addstudents', { coordinators });
@@ -36,6 +36,21 @@ exports.AdminAddStudentsController = async (req, res) => {
 		console.log(err);
 		res.send('Error loading coordinators');
 	}
+};
+
+exports.postAddStudent = async (req, res) => {
+	const { fullname, email, phone, country, standard, gender, coordinator, status } = req.body;
+	await student.create({
+		fullName: fullname,
+		email: email,
+		phone: phone,
+		country: country,
+		standard: standard,
+		gender: gender,
+		status: status,
+		coordinator: coordinator,
+	});
+	res.redirect('/admin/viewstudents');
 };
 
 exports.AdminPostAddStudentController = async (req, res) => {
@@ -53,31 +68,31 @@ exports.AdminPostAddStudentController = async (req, res) => {
 	res.redirect('/admin/viewstudents');
 };
 
-exports.AdminViewStudentsController = async (req, res) => {
+exports.viewStudents = async (req, res) => {
 	try {
 		const students = await student.find().populate('coordinator', 'fullName email');
-		res.render('admin/viewstudents', { students });
+		res.render('admin/viewStudents', { students });
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading students');
 	}
 };
 
-exports.AdminEditStudentPageController = async (req, res) => {
+exports.editStudentPage = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const stud = await student.findById(id);
 		const coordinators = await coordinator.find().select('_id fullName');
 
 		if (!stud) return res.send('Student not found');
-		res.render('admin/editstudent', { student: stud, coordinators });
+		res.render('admin/editStudent', { student: stud, coordinators });
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading edit page');
 	}
 };
 
-exports.AdminUpdateStudentController = async (req, res) => {
+exports.updateStudent = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const { fullname, email, phone, country, standard, gender, coordinator, status } = req.body;
@@ -98,7 +113,7 @@ exports.AdminUpdateStudentController = async (req, res) => {
 	}
 };
 
-exports.AdminDeleteStudentController = async (req, res) => {
+exports.deleteStudent = async (req, res) => {
 	try {
 		const id = req.params.id;
 		await student.findByIdAndDelete(id);
@@ -110,11 +125,11 @@ exports.AdminDeleteStudentController = async (req, res) => {
 };
 
 //co-ordinators
-exports.AdminAddCoordinatorsController = (req, res) => {
-	return res.render('admin/addcoordinators');
+exports.addCoordinators = (req, res) => {
+	return res.render('admin/addCoordinators');
 };
 
-exports.AdminPostAddCoordinatorController = async (req, res) => {
+exports.postAddCoordinator = async (req, res) => {
 	const { fullName, email, phone, password, status } = req.body;
 	const admin = await Admin.findOne();
 	if (!admin) {
@@ -131,17 +146,16 @@ exports.AdminPostAddCoordinatorController = async (req, res) => {
 	return res.redirect('/admin/viewcoordinators');
 };
 
-exports.AdminViewCoordinatorController = async (req, res) => {
+exports.viewCoordinator = async (req, res) => {
 	try {
 		const coordinators = await coordinator.find();
-		return res.render('admin/viewcoordinators', { coordinators });
+		return res.render('admin/viewCoordinators', { coordinators });
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading coordinators');
 	}
 };
-
-exports.AdminDeleteCoordinatorController = async (req, res) => {
+exports.deleteCoordinator = async (req, res) => {
 	try {
 		const id = req.params.id;
 		await coordinator.findByIdAndDelete(id);
@@ -152,19 +166,19 @@ exports.AdminDeleteCoordinatorController = async (req, res) => {
 	}
 };
 
-exports.AdminEditCoordinatorPageController = async (req, res) => {
+exports.editCoordinatorPage = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const coord = await coordinator.findById(id);
 		if (!coord) return res.send('Coordinator not found');
-		res.render('admin/editcoordinator', { coord });
+		res.render('admin/editCoordinator', { coord });
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading edit page');
 	}
 };
 
-exports.AdminUpdateCoordinatorController = async (req, res) => {
+exports.updateCoordinator = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const { fullName, email, phone, status } = req.body;
@@ -183,7 +197,7 @@ exports.AdminUpdateCoordinatorController = async (req, res) => {
 
 // teacher
 
-exports.AddTeacher = (req, res) => {
+exports.addTeacher = (req, res) => {
 	res.render('admin/addTeachers');
 };
 
@@ -252,7 +266,7 @@ exports.createTeacher = async (req, res) => {
 	}
 };
 
-exports.getAllTeachers = async (req, res) => {
+exports.getTeachers = async (req, res) => {
 	try {
 		const teachers = await Teacher.find().sort({ createdAt: -1 });
 
@@ -337,7 +351,6 @@ exports.updateTeacher = async (req, res) => {
 		res.status(500).send('Server Error');
 	}
 };
-
 exports.deleteTeacher = async (req, res) => {
 	try {
 		const teacher = await Teacher.findById(req.params.id);
@@ -355,63 +368,42 @@ exports.deleteTeacher = async (req, res) => {
 	}
 };
 
-//assigninggg
-exports.AdminAssignStudentsPageController = async (req, res) => {
-	try {
-		const coordinatorId = req.params.id;
+//assigning
+exports.assignStudentsPage = async (req, res) => {
+  try {
+    const coordinatorId = req.params.id;
 
-		const coord = await coordinator
-			.findById(coordinatorId)
-			.populate('assignedStudents', 'fullName email');
+    const coord = await coordinator
+      .findById(coordinatorId)
+      .populate("assignedStudents");
 
-		// ✅ ONLY ACTIVE STUDENTS
-		const students = await student.find({ status: 'active' });
+    if (!coord) {
+      return res.send("Coordinator not found");
+    }
+    const allStudents = await student.find({ status: 'active' });
 
-		if (!coord) {
-			return res.send('Coordinator not found');
-		}
+    const studentsToShow = [];
+    for (const s of allStudents) {
+      if (!s.coordinator) {
+        studentsToShow.push(s);
+      } 
+      else if (s.coordinator.toString() === coordinatorId.toString()) {
+        studentsToShow.push(s);
+      }
+    }
 
-		res.render('admin/assignstudents', { coord, students });
-	} catch (err) {
-		console.log(err);
-		res.send('Error loading assign page');
-	}
+    res.render("admin/assignstudents", {
+      coord,
+      students: studentsToShow
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.send("Error loading assign page");
+  }
 };
 
-exports.AdminAssignStudentsPage = async (req, res) => {
-	try {
-		const coordinatorId = req.params.id;
-
-		const coord = await coordinator.findById(coordinatorId).populate('assignedStudents');
-
-		if (!coord) {
-			return res.send('Coordinator not found');
-		}
-
-		// ✅ ONLY ACTIVE STUDENTS
-		const allStudents = await student.find({ status: 'active' });
-
-		const studentsToShow = [];
-
-		for (const s of allStudents) {
-			if (!s.coordinator) {
-				studentsToShow.push(s);
-			} else if (s.coordinator.toString() === coordinatorId.toString()) {
-				studentsToShow.push(s);
-			}
-		}
-
-		res.render('admin/assignstudents', {
-			coord,
-			students: studentsToShow,
-		});
-	} catch (err) {
-		console.log(err);
-		res.send('Error loading assign page');
-	}
-};
-
-exports.AdminAssignStudentsController = async (req, res) => {
+exports.assignStudents = async (req, res) => {
 	try {
 		const coordinatorId = req.params.id;
 		let selectedStudents = req.body.students;
@@ -475,7 +467,7 @@ exports.changeCoordinatorPassword = async (req, res) => {
 		const { id } = req.params;
 		const { password } = req.body;
 
-		if (!password || password.length < 6) {
+		if (!password || password.length < 8) {
 			return res.redirect('/admin/viewcoordinators');
 		}
 
@@ -500,9 +492,7 @@ exports.changeTeacherPassword = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { password } = req.body;
-
-		// basic validation
-		if (!password || password.length < 6) {
+		if (!password || password.length < 8) {
 			return res.redirect('/admin/viewteachers');
 		}
 
@@ -511,8 +501,6 @@ exports.changeTeacherPassword = async (req, res) => {
 		if (!teacher) {
 			return res.redirect('/admin/viewteachers');
 		}
-
-		// triggers bcrypt via pre('save')
 		teacher.password = password;
 		await teacher.save();
 
