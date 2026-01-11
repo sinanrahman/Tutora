@@ -31,11 +31,19 @@ exports.adminLoginPage = (req, res) => {
 
 
 exports.teacherLoginPage = (req, res) => {
-	res.render('auth/teacherLogin', { msg: '' })
+	try {
+		res.render('auth/teacherLogin', { msg: '' })
+	} catch (error) {
+		console.log(error)
+	}
 }
 
 exports.coordinatorLoginPage = (req, res) => {
-	res.render('auth/coordinatorLogin', { msg: '' })
+	try {
+		res.render('auth/coordinatorLogin', { msg: '' })
+	} catch (error) {
+		console.log(error)
+	}
 }
 
 const renderLoginWithMsg = (res, role, msg, attemptsLeft = MAX_ATTEMPTS, remainingTime = 0) => {
@@ -191,7 +199,6 @@ exports.forgotPassword = async (req, res) => {
 			});
 		}
 
-		// Generate reset token
 		const resetToken = crypto.randomBytes(32).toString('hex');
 		admin.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
@@ -205,11 +212,11 @@ exports.forgotPassword = async (req, res) => {
 			to: admin.email,
 			subject: 'Admin Password Reset',
 			html: `
-        <p>Hello Admin,</p>
-        <p>Click the link below to reset your password:</p>
-        <a href="${resetURL}">${resetURL}</a>
-        <p>This link expires in 15 minutes.</p>
-      `,
+			<p>Hello Admin,</p>
+			<p>Click the link below to reset your password:</p>
+			<a href="${resetURL}">${resetURL}</a>
+			<p>This link expires in 15 minutes.</p>
+		`,
 		});
 
 		res.render('auth/forgotPassword', {
