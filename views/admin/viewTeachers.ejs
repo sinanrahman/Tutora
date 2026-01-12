@@ -9,17 +9,19 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css">
   <link rel="stylesheet" href="/css/admin/viewTeachers.css">
 </head>
+<style>
+  .heading{
+    color: #870216;
+  }
+</style>
 
 <body class="bg-light">
   <%- include('./partials/sidebar') %>
     <div class="main-content py-4">
       <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <div>
-            <h4 class="fw-semibold mb-0">Teachers</h4>
-            <small class="text-muted">Teacher Directory</small>
-          </div>
-          <a href="/admin/addteachers" class="btn btn-dark btn-sm">
+        <div class="d-flex flex-column justify-content-center align-items-center mb-5">
+          <h4 class="fw-bold fs-2 mb-3 heading">TEACHERS</h4>
+          <a href="/admin/addteachers" class="btn btn-success btn-sm">
             <i class="bi bi-plus"></i> Add Teacher
           </a>
         </div>
@@ -34,9 +36,11 @@
                   <th>Subjects</th>
                   <th>Qualification</th>
                   <th class="text-center">Experience</th>
+                  <th class="text-center">Total Hours</th>
                   <th class="text-center">Rate (₹)</th>
                   <th class="text-center">Status</th>
                   <th class="text-center">Actions</th>
+
                 </tr>
               </thead>
               <tbody>
@@ -114,6 +118,10 @@
                         <td class="text-center">
                           <%= teacher.experienceYears || 0 %> yrs
                         </td>
+                        <td class="text-center fw-semibold">
+                          <%= teacher.totalHours || 0 %> hrs
+                        </td>
+
                         <td class="text-center">₹<%= teacher.hourlyRate %>
                         </td>
                         <td class="text-center">
@@ -124,12 +132,9 @@
 
                         <td class="text-center">
                           <div class="actions-buttons">
-                            <a href="/admin/teachers/edit/<%= teacher._id %>"
-                              class="btn btn-secondary btn-sm text-white">Edit</a>
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                              data-bs-target="#deleteModal" data-id="<%= teacher._id %>">
-                              Delete
-                            </button>
+                            <a href="/admin/teachers/profile/<%= teacher._id %>"
+                              class="btn btn-outline-primary btn-sm text-primary">View</a>
+
                           </div>
                         </td>
                       </tr>
@@ -141,37 +146,13 @@
         </div>
       </div>
     </div>
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            Are you sure you want to delete this teacher?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <form id="deleteForm" method="POST" action="">
-              <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+
     <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       new DataTable('#example')
-      const deleteModal = document.getElementById('deleteModal')
-      deleteModal.addEventListener('show.bs.modal', event => {
-        const button = event.relatedTarget
-        const teacherId = button.getAttribute('data-id')
-        const form = deleteModal.querySelector('#deleteForm')
-        form.action = `/admin/teachers/delete/${teacherId}`
-      })
     </script>
 </body>
+
 </html>

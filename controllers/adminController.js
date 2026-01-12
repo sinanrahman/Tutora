@@ -1,6 +1,6 @@
 const student = require('../models/Student');
 const Session = require('../models/Session');
-
+const fileUploadToCloudinary =require('../utils/cloudinaryUpload')
 const Admin = require('../models/Admin');
 const coordinator = require('../models/Coordinator');
 const Teacher = require('../models/Teacher');
@@ -22,6 +22,7 @@ exports.dashboard = async (req, res) => {
 			totalActiveStudents,
 			totalInactiveStudents,
 			totalActiveCoordinators,
+			activePage: 'dashboard'
 		});
 	} catch (err) {
 		console.log(err);
@@ -73,7 +74,7 @@ exports.viewStudents = async (req, res) => {
       student.totalSessionHours = hoursMap[student._id.toString()] || 0;
     });
 
-    res.render('admin/viewStudents', { students:Students });
+    res.render('admin/viewStudents', { students:Students,activePage: 'students' });
 
   } catch (err) {
     console.error(err);
@@ -181,7 +182,7 @@ exports.postAddCoordinator = async (req, res) => {
 exports.viewCoordinator = async (req, res) => {
 	try {
 		const coordinators = await coordinator.find();
-		return res.render('admin/viewCoordinators', { coordinators });
+		return res.render('admin/viewCoordinators', { coordinators,activePage: 'coordinators' });
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading coordinators');
@@ -287,13 +288,7 @@ exports.createTeacher = async (req, res) => {
 		let profilePic = {};
 
 		if (req.files && req.files.profilePic) {
-			const result = await cloudinary.uploader.upload(req.files.profilePic.tempFilePath, {
-				folder: 'teachers',
-			});
-			profilePic = {
-				url: result.secure_url,
-				public_id: result.public_id,
-			};
+			profilePic = await fileUploadToCloudinary(req.files.profilePic);
 		}
 
 		const formattedSubjects = subjects.split(',').map((s) => s.trim().toLowerCase());
@@ -324,11 +319,24 @@ exports.createTeacher = async (req, res) => {
 };
 
 exports.getTeachers = async (req, res) => {
-	try {
-		const teachers = await Teacher.find().sort({ createdAt: -1 });
+  try {
+    const teachers = await Teacher.find().sort({ createdAt: -1 });
+
+    for (let teacher of teachers) {
+      const sessions = await Session.find({
+        teacher: teacher._id,
+        status: 'APPROVED',
+      }).select('durationInHours');
+
+      teacher.totalHours = sessions.reduce(
+        (sum, s) => sum + s.durationInHours,
+        0
+      );
+    }
 
 		res.render('admin/viewTeachers', {
 			teachers,
+			activePage:'teachers'
 		});
 	} catch (error) {
 		console.error('Get Teachers Error:', error);
@@ -393,13 +401,7 @@ exports.updateTeacher = async (req, res) => {
 			if (teacher.profilePic?.public_id) {
 				await cloudinary.uploader.destroy(teacher.profilePic.public_id);
 			}
-			const result = await cloudinary.uploader.upload(req.files.profilePic.tempFilePath, {
-				folder: 'teachers',
-			});
-			teacher.profilePic = {
-				url: result.secure_url,
-				public_id: result.public_id,
-			};
+			teacher.profilePic = await fileUploadToCloudinary(req.files.profilePic);
 		}
 		await teacher.save();
 		res.redirect('/admin/viewteachers');
@@ -433,6 +435,8 @@ exports.assignStudentsPage = async (req, res) => {
     const coord = await coordinator
       .findById(coordinatorId)
       .populate("assignedStudents");
+
+	
 
     if (!coord) {
       return res.send("Coordinator not found");

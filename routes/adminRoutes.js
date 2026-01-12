@@ -1,7 +1,7 @@
 const express = require('express')
 const { protect } = require('../middlewares/authMiddleware')
 const { authorize } = require('../middlewares/roleMiddleware')
-const { addStudents, postAddStudent, viewStudents, deleteStudent, editStudentPage, updateStudent, addCoordinators, postAddCoordinator, viewCoordinator, deleteCoordinator, editCoordinatorPage, updateCoordinator, changeCoordinatorPassword, assignStudentsPage, assignStudents, addTeacher, createTeacher, getTeachers, getEditTeacher, updateTeacher, deleteTeacher, removeAssignedStudent, changeTeacherPassword, dashboard, viewStudentDetails, viewCoordinatorDetails } = require('../controllers/adminController')
+const { addStudents, postAddStudent, viewStudents, deleteStudent, editStudentPage, updateStudent, addCoordinators, postAddCoordinator, viewCoordinator, deleteCoordinator, editCoordinatorPage, updateCoordinator, changeCoordinatorPassword, assignStudentsPage, assignStudents, addTeacher, createTeacher, getTeachers, getEditTeacher, updateTeacher, deleteTeacher, removeAssignedStudent, changeTeacherPassword, dashboard, viewStudentDetails, viewCoordinatorDetails,viewTeacherProfile } = require('../controllers/adminController')
 const router = express.Router()
 
 router
@@ -73,6 +73,10 @@ router
 router
   .route('/viewteachers')
   .get(protect, authorize('ADMIN'),getTeachers)
+
+  router
+  .route('/teachers/profile/:id')
+  .get(protect, authorize('ADMIN'),viewTeacherProfile)
 
 router
   .route('/teachers/edit/:id')

@@ -9,17 +9,21 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/js/dataTables.js" defer>
   <link rel="stylesheet" href="/css/admin/viewstudents.css">
 </head>
+<style>
+  .heading{
+    color: #870216;
+  }
+</style>
 
 <body class="bg-light">
   <%- include('partials/sidebar') %>
     <div class="main-content">
-      <h3 class="fw-bold mb-3">Students</h3>
       <div class="card shadow-sm border-0">
         <div class="card-body">
-          <div class="d-flex justify-content-between mb-3">
-            <h5 class="mb-0">Student List</h5>
+          <div class="d-flex flex-column justify-content-center align-items-center mb-3">
+            <h3 class="fw-bold fs-2 mb-3 heading">STUDENTS</h3>
             <a href="/admin/addstudents">
-              <button class="btn btn-primary btn-sm">Add Student</button>
+              <button class="btn btn-success btn-sm">Add Student</button>
             </a>
           </div>
           <div class="table-responsive">
