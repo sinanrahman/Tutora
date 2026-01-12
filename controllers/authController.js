@@ -170,7 +170,6 @@ exports.login = async (req, res) => {
 		res.cookie('token', token, {
 			httpOnly: true,
 			sameSite: 'strict',
-			secure: process.env.NODE_ENV === 'production'
 		})
 
 		if (userRole === 'ADMIN') return res.redirect('/admin/dashboard')
