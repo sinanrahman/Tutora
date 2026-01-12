@@ -1,4 +1,6 @@
 const student = require('../models/Student');
+const Session = require('../models/Session');
+
 const Admin = require('../models/Admin');
 const coordinator = require('../models/Coordinator');
 const Teacher = require('../models/Teacher');
@@ -50,13 +52,36 @@ exports.postAddStudent = async (req, res) => {
 
 
 exports.viewStudents = async (req, res) => {
-	try {
-		const students = await student.find().populate('coordinator', 'fullName email');
-		res.render('admin/viewStudents', { students });
-	} catch (err) {
-		console.log(err);
-		res.send('Error loading students');
-	}
+  try {
+    const Students = await student.find()
+      .populate('coordinator', 'fullName email')
+      .lean(); 
+
+    const sessions = await Session.find({ status: 'APPROVED' })
+      .select('student durationInHours');
+
+    const hoursMap = {};
+
+    sessions.forEach(session => {
+      const studentId = session.student.toString();
+
+      if (!hoursMap[studentId]) {
+        hoursMap[studentId] = 0;
+      }
+
+      hoursMap[studentId] += session.durationInHours;
+    });
+
+    Students.forEach(student => {
+      student.totalSessionHours = hoursMap[student._id.toString()] || 0;
+    });
+
+    res.render('admin/viewStudents', { students:Students });
+
+  } catch (err) {
+    console.error(err);
+    res.send('Error loading students');
+  }
 };
 
 exports.editStudentPage = async (req, res) => {
