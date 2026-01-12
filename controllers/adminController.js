@@ -5,6 +5,7 @@ const Admin = require('../models/Admin');
 const coordinator = require('../models/Coordinator');
 const Teacher = require('../models/Teacher');
 const cloudinary = require('../config/cloudinary');
+const Student = require('../models/Student');
 
 exports.dashboard = async (req, res) => {
 	try {
@@ -585,6 +586,47 @@ exports.changeTeacherPassword = async (req, res) => {
 		res.redirect('/admin/viewteachers');
 	} catch (error) {
 		console.error('Teacher password change error:', error);
-		res.redirect('/admin/viewteachers');
+		return res.redirect('/admin/viewteachers');
 	}
 };
+
+exports.studentSessionHistory = async (req, res) => {
+    try {
+        const studentId = req.params.id;
+        const studentName = await Student.findById(req.params.id).select('fullName')
+        
+        const studentSessions = await Session.find({ 
+            student: studentId, 
+            status: "APPROVED" 
+        })
+        .populate('teacher', 'fullName') // _id is included by default
+        .sort({ createdAt: -1 })
+        // .lean(); // <--- Faster performance for read-only data
+
+        return res.render('admin/viewstudenthistory', { ssHistory: studentSessions,studentName });
+    } catch (error) {
+        console.error('Error fetching session history:', error);
+        // It is safer to render an error page or flash message than redirecting blindly
+        return res.redirect(`/admin/viewstudentdetails/${req.params.id}`);
+    }
+};
+exports.teacherSessionHistory = async (req, res) => {
+    try {
+        const teacherId = req.params.id;
+        const teacherName = await Teacher.findById(req.params.id).select('fullName')
+        const teacherSessions = await Session.find({ 
+            teacher: teacherId, 
+            status: "APPROVED" 
+        })
+        .populate('student', 'fullName') // _id is included by default
+        .sort({ createdAt: -1 })
+        // .lean(); // <--- Faster performance for read-only data
+
+        return res.render('admin/viewteacherhistory', { tsHistory: teacherSessions,teacherName });
+    } catch (error) {
+        console.error('Error fetching session history:', error);
+        // It is safer to render an error page or flash message than redirecting blindly
+        return res.redirect(`/admin/viewteacherdetails/${req.params.id}`);
+    }
+};
+

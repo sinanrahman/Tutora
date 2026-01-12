@@ -1,7 +1,7 @@
 const express = require('express')
 const { protect } = require('../middlewares/authMiddleware')
 const { authorize } = require('../middlewares/roleMiddleware')
-const { addStudents, postAddStudent, viewStudents, deleteStudent, editStudentPage, updateStudent, addCoordinators, postAddCoordinator, viewCoordinator, deleteCoordinator, editCoordinatorPage, updateCoordinator, changeCoordinatorPassword, assignStudentsPage, assignStudents, addTeacher, createTeacher, getTeachers, getEditTeacher, updateTeacher, deleteTeacher, removeAssignedStudent, changeTeacherPassword, dashboard, viewStudentDetails, viewCoordinatorDetails,viewTeacherProfile } = require('../controllers/adminController')
+const { addStudents, postAddStudent, viewStudents, deleteStudent, editStudentPage, updateStudent, addCoordinators, postAddCoordinator, viewCoordinator, deleteCoordinator, editCoordinatorPage, updateCoordinator, changeCoordinatorPassword, assignStudentsPage, assignStudents, addTeacher, createTeacher, getTeachers, getEditTeacher, updateTeacher, deleteTeacher, removeAssignedStudent, changeTeacherPassword, dashboard, viewStudentDetails, viewCoordinatorDetails,viewTeacherProfile, studentSessionHistory,teacherSessionHistory } = require('../controllers/adminController')
 const router = express.Router()
 
 router
@@ -26,7 +26,9 @@ router
 router
   .route('/students/update/:id')
   .post(protect, authorize('ADMIN'), updateStudent)
-
+router
+  .route('/students/history/:id')
+  .get(protect, authorize('ADMIN'), studentSessionHistory)
 
 router
   .route('/addcoordinators')
@@ -86,6 +88,9 @@ router
 router
   .route('/teachers/delete/:id')
   .post(protect, authorize('ADMIN'),deleteTeacher)
+router
+  .route('/teachers/history/:id')
+  .get(protect, authorize('ADMIN'), teacherSessionHistory)
 
 router
   .route('/assignstudents/:coordId/:studentId')
@@ -94,5 +99,6 @@ router
 router
   .route('/teachers/change-password/:id')
   .post(protect, authorize('ADMIN'),changeTeacherPassword)
+
 
 module.exports = router

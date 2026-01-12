@@ -144,6 +144,8 @@ exports.assignTeachers = async (req, res) => {
 	try {
 		const { studentId } = req.params;
 		const { teachers } = req.body;
+		
+		// console.log(teachers)
 
 		if (!teachers || teachers.length !== 4) {
 			return res.status(400).send('Exactly 4 teachers required');
@@ -155,7 +157,7 @@ exports.assignTeachers = async (req, res) => {
 
 		for (const teacherId of teachers) {
 			const teacher = await Teacher.findById(teacherId);
-
+			console.log(teacher)
 			const uniqueStudentsToday = await Session.distinct('student', {
 				teacher: teacherId,
 				date: { $gte: start, $lte: end },
@@ -165,6 +167,7 @@ exports.assignTeachers = async (req, res) => {
 			if (uniqueStudentsToday.length >= teacher.dailyHourLimit) {
 				return res.status(400).send(`${teacher.fullName} reached today's teaching limit`);
 			}
+
 		}
 
 		// Atomic update (NO VersionError)
