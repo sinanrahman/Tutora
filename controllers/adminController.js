@@ -22,6 +22,7 @@ exports.dashboard = async (req, res) => {
 			totalActiveStudents,
 			totalInactiveStudents,
 			totalActiveCoordinators,
+			activePage: 'dashboard'
 		});
 	} catch (err) {
 		console.log(err);
@@ -76,7 +77,7 @@ exports.viewStudents = async (req, res) => {
       student.totalSessionHours = hoursMap[student._id.toString()] || 0;
     });
 
-    res.render('admin/viewStudents', { students:Students });
+    res.render('admin/viewStudents', { students:Students,activePage: 'students' });
 
   } catch (err) {
     console.error(err);
@@ -155,7 +156,7 @@ exports.postAddCoordinator = async (req, res) => {
 exports.viewCoordinator = async (req, res) => {
 	try {
 		const coordinators = await coordinator.find();
-		return res.render('admin/viewCoordinators', { coordinators });
+		return res.render('admin/viewCoordinators', { coordinators,activePage: 'coordinators' });
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading coordinators');
@@ -278,6 +279,7 @@ exports.getTeachers = async (req, res) => {
 
 		res.render('admin/viewTeachers', {
 			teachers,
+			activePage:'teachers'
 		});
 	} catch (error) {
 		console.error('Get Teachers Error:', error);

@@ -8,15 +8,23 @@
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 	<link rel="stylesheet" href="/css/admin/viewcoordinators.css">
 </head>
+<style>
+  .heading{
+    color: #870216;
+  }
+</style>
 <body class="bg-light">
 	<%- include('partials/sidebar') %>
 
 		<div class="main-content">
-			<h2 class="fw-bold mb-4">Coordinators List</h2>
+			
 			<div class="card shadow-sm">
 				<div class="card-body">
-					<div class="d-flex justify-content-end mb-3">
-						<a href="/admin/addcoordinators" class="btn btn-primary">+ Add Coordinator</a>
+					<div class="d-flex flex-column justify-content-center align-items-center mb-5">
+						<h2 class="fw-bold fs-2 mb-4 heading">CO-ORDINATORS</h2>
+						<a href="/admin/addcoordinators" >
+							<button class="btn btn-success btn-sm">Add Coordinator</button>
+						</a>
 					</div>
 					<div class="table-responsive">
 						<table class="table table-bordered table-hover align-middle">
