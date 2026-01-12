@@ -22,6 +22,7 @@ exports.dashboard = async (req, res) => {
 			totalActiveStudents,
 			totalInactiveStudents,
 			totalActiveCoordinators,
+			activePage: 'dashboard'
 		});
 	} catch (err) {
 		console.log(err);
@@ -76,7 +77,7 @@ exports.viewStudents = async (req, res) => {
       student.totalSessionHours = hoursMap[student._id.toString()] || 0;
     });
 
-    res.render('admin/viewStudents', { students:Students });
+    res.render('admin/viewStudents', { students:Students,activePage: 'students' });
 
   } catch (err) {
     console.error(err);
@@ -155,7 +156,7 @@ exports.postAddCoordinator = async (req, res) => {
 exports.viewCoordinator = async (req, res) => {
 	try {
 		const coordinators = await coordinator.find();
-		return res.render('admin/viewCoordinators', { coordinators });
+		return res.render('admin/viewCoordinators', { coordinators,activePage: 'coordinators' });
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading coordinators');
@@ -282,41 +283,14 @@ exports.getTeachers = async (req, res) => {
       );
     }
 
-    res.render('admin/viewTeachers', { teachers });
-  } catch (error) {
-    console.error('Get Teachers Error:', error);
-    res.status(500).send('Server Error');
-  }
-};
-
-
-exports.viewTeacherProfile = async (req, res) => {
-  try {
-    const teacherId = req.params.id;
-
-    const teacher = await Teacher.findById(teacherId);
-    if (!teacher) {
-      return res.status(404).send('Teacher not found');
-    }
-
-    const sessions = await Session.find({
-      teacher: teacherId,
-      status: 'APPROVED',
-    }).select('durationInHours');
-
-    const totalHours = sessions.reduce(
-      (sum, s) => sum + s.durationInHours,
-      0
-    );
-
-    res.render('admin/teacherProfile', {
-      teacher,
-      totalHours,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Server Error');
-  }
+		res.render('admin/viewTeachers', {
+			teachers,
+			activePage:'teachers'
+		});
+	} catch (error) {
+		console.error('Get Teachers Error:', error);
+		res.status(500).send('Server Error');
+	}
 };
 
 exports.getEditTeacher = async (req, res) => {
@@ -410,6 +384,8 @@ exports.assignStudentsPage = async (req, res) => {
     const coord = await coordinator
       .findById(coordinatorId)
       .populate("assignedStudents");
+
+	
 
     if (!coord) {
       return res.send("Coordinator not found");

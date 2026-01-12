@@ -9,16 +9,18 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css">
   <link rel="stylesheet" href="/css/admin/viewTeachers.css">
 </head>
+<style>
+  .heading{
+    color: #870216;
+  }
+</style>
 
 <body class="bg-light">
   <%- include('./partials/sidebar') %>
     <div class="main-content py-4">
       <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <div>
-            <h4 class="fw-semibold mb-0">Teachers</h4>
-            <small class="text-muted">Teacher Directory</small>
-          </div>
+        <div class="d-flex flex-column justify-content-center align-items-center mb-5">
+          <h4 class="fw-bold fs-2 mb-3 heading">TEACHERS</h4>
           <a href="/admin/addteachers" class="btn btn-success btn-sm">
             <i class="bi bi-plus"></i> Add Teacher
           </a>
