@@ -24,7 +24,6 @@ const coordinatorSchema = new mongoose.Schema(
             required: true,
             select: false
         },
-        // REMOVED: assignedStudents: [...] 
         status: {
             type: String,
             enum: ['active', 'inactive'],
@@ -33,17 +32,17 @@ const coordinatorSchema = new mongoose.Schema(
     },
     { 
         timestamps: true,
-        // IMPORTANT: These options allow virtuals to be included when converting to JSON/Object
+
         toJSON: { virtuals: true },
         toObject: { virtuals: true }
     }
 );
 
-// Define the Virtual Relationship
+
 coordinatorSchema.virtual('assignedStudents', {
-    ref: 'Student',           // The model to use
-    localField: '_id',        // Find people where `localField`
-    foreignField: 'coordinator' // is equal to `foreignField`
+    ref: 'Student',
+    localField: '_id',        
+    foreignField: 'coordinator' 
 });
 
 coordinatorSchema.pre('save', async function () {
