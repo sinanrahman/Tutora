@@ -82,14 +82,14 @@
                           <%= s.coordinator ? s.coordinator.fullName : '—' %>
                         </td>
                         <td>
-                          <div class="action-group">
-                            <a href="/admin/students/edit/<%= s._id %>" class="btn btn-outline-primary btn-sm">View</a>
-                            
-                          </div>
+
+                          <a href="/admin/viewstudentdetails/<%= s._id %>" class="btn btn-outline-primary btn-sm">
+                            View
+                          </a>
                         </td>
                       </tr>
                       <% }) %>
-                        <% } %>
+                    <% } %>
               </tbody>
             </table>
           </div>

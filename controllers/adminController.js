@@ -49,13 +49,10 @@ exports.postAddStudent = async (req, res) => {
 	res.redirect('/admin/viewstudents');
 };
 
-
-
 exports.viewStudents = async (req, res) => {
   try {
     const Students = await student.find()
-      .populate('coordinator', 'fullName email')
-      .lean(); 
+      .populate('coordinator', 'fullName email').lean(); 
 
     const sessions = await Session.find({ status: 'APPROVED' })
       .select('student durationInHours');
@@ -81,6 +78,35 @@ exports.viewStudents = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.send('Error loading students');
+  }
+};
+
+exports.viewStudentDetails = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const stud = await student
+      .findById(id)
+      .populate('coordinator', 'fullName email phone')
+      .lean();
+
+    if (!stud) {
+      return res.send('Student not found');
+    }
+    const sessions = await Session.find({
+      student: id,
+      status: 'APPROVED'
+    }).select('durationInHours');
+
+    const totalHours = sessions.reduce(
+      (sum, s) => sum + s.durationInHours,
+      0
+    );
+    stud.totalSessionHours = totalHours;
+    res.render('admin/viewStudentDetails', { student: stud });
+
+  } catch (err) {
+    console.error(err);
+    res.send('Error loading student details');
   }
 };
 
@@ -161,6 +187,31 @@ exports.viewCoordinator = async (req, res) => {
 		res.send('Error loading coordinators');
 	}
 };
+
+exports.viewCoordinatorDetails = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const coord = await coordinator
+      .findById(id)
+      .populate('assignedStudents', 'fullName email standard')
+      .lean();
+
+    if (!coord) {
+      return res.send('Coordinator not found');
+    }
+
+    res.render('admin/viewCoordinatorDetails', {
+      coordinator: coord
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.send('Error loading coordinator details');
+  }
+};
+
+
 exports.deleteCoordinator = async (req, res) => {
 	try {
 		const id = req.params.id;
