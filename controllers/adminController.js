@@ -29,13 +29,7 @@ exports.dashboard = async (req, res) => {
 
 //students
 exports.addStudents = async (req, res) => {
-	try {
-		const coordinators = await coordinator.find().select('_id fullName');
-		return res.render('admin/addstudents', { coordinators });
-	} catch (err) {
-		console.log(err);
-		res.send('Error loading coordinators');
-	}
+	return res.render('admin/addstudents');
 };
 
 exports.postAddStudent = async (req, res) => {
@@ -53,20 +47,7 @@ exports.postAddStudent = async (req, res) => {
 	res.redirect('/admin/viewstudents');
 };
 
-exports.AdminPostAddStudentController = async (req, res) => {
-	const { fullname, email, phone, country, standard, gender, coordinator, status } = req.body;
-	await student.create({
-		fullName: fullname,
-		email: email,
-		phone: phone,
-		country: country,
-		standard: standard,
-		gender: gender,
-		status: status,
-		coordinator: coordinator,
-	});
-	res.redirect('/admin/viewstudents');
-};
+
 
 exports.viewStudents = async (req, res) => {
 	try {
