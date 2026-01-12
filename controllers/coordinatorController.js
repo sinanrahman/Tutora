@@ -3,6 +3,7 @@ const Teacher = require('../models/Teacher');
 const Student = require('../models/Student');
 const Session = require('../models/Session');
 
+
 const getTodayRange = () => {
 	const start = new Date();
 	start.setHours(0, 0, 0, 0);
@@ -26,7 +27,10 @@ exports.coordinatorDashboard = async (req, res) => {
 			return res.status(404).send('Coordinator not found');
 		}
 
-		const students = await Student.find({ coordinator: coordinatorId }).populate('assignedTeachers','fullName');
+		const students = await Student.find({ coordinator: coordinatorId }).populate(
+			'assignedTeachers',
+			'fullName'
+		);
 
 		const teachers = await Teacher.find().select('_id fullName subjects');
 
@@ -117,7 +121,7 @@ exports.getStudentProfile = async (req, res) => {
     sessions.forEach(session => {
       totalHours += session.durationInHours;
     });
-	console.log(coord)
+
     res.render('coordinator/student-profile', {
       student,
       coord,
