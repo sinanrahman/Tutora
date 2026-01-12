@@ -195,7 +195,7 @@ exports.getSessionApprovalPage = async (req, res) => {
 			.populate('teacher', 'fullName')
 			.sort({ createdAt: -1 });
 
-		const approvedSessions = await Session.find({ status: 'APPROVED' })
+		const approvedSessions = await Session.find({ status: { $in: ['APPROVED', 'REJECTED'] } })
 			.populate('student', 'fullName')
 			.populate('teacher', 'fullName')
 			.sort({ updatedAt: -1 });

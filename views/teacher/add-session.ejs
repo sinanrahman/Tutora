@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<title>Session Request</title>
-		<link
-			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-			rel="stylesheet"
-		/>
-	</head>
 
-	<body class="bg-light">
-		<%-include('../partials/teacherNavbar')%>
+<head>
+	<meta charset="UTF-8" />
+	<title>Session Request</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body class="bg-light">
+	<%-include('../partials/teacherNavbar')%>
 
 		<div class="container mt-4">
 			<div class="card shadow-sm mx-auto" style="max-width: 600px">
@@ -22,11 +20,11 @@
 							<label class="form-label">Student</label>
 							<select name="student" class="form-select" required>
 								<option value="">Select Student</option>
-								<% students.forEach(s => { %>
-								<option value="<%= s._id %>">
-									<%= s.fullName %> (Remaining: <%= s.remainingHours %> hrs)
-								</option>
-								<% }) %>
+								<% students.forEach(s=> { %>
+									<option value="<%= s._id %>">
+										<%= s.fullName %> (Remaining: <%= s.remainingHours %> hrs)
+									</option>
+									<% }) %>
 							</select>
 						</div>
 
@@ -43,17 +41,25 @@
 							<input type="date" name="date" class="form-control" required />
 						</div>
 
-						<div class="mb-3">
-							<label class="form-label">Duration (hours)</label>
-							<input
-								type="number"
-								step="0.25"
-								min="0.25"
-								name="durationInHours"
-								class="form-control"
-								required
-							/>
+						<div class="row mb-3">
+							<div class="col">
+								<label class="form-label">From</label>
+								<input type="time" id="fromTime" class="form-control" required />
+							</div>
+
+							<div class="col">
+								<label class="form-label">To</label>
+								<input type="time" id="toTime" class="form-control" required />
+							</div>
 						</div>
+
+						<div class="mb-3">
+							<label class="form-label">Calculated Duration (hours)</label>
+							<input type="text" id="durationDisplay" class="form-control" readonly />
+						</div>
+
+						<input type="hidden" name="durationInHours" id="durationInHours" />
+
 
 						<button class="btn btn-primary w-100">Submit for Approval</button>
 					</form>
@@ -64,7 +70,40 @@
 				</div>
 			</div>
 		</div>
+		<script>
+			const fromTime = document.getElementById('fromTime')
+			const toTime = document.getElementById('toTime')
+			const durationDisplay = document.getElementById('durationDisplay')
+			const durationInput = document.getElementById('durationInHours')
+
+			function calculateDuration() {
+				if (!fromTime.value || !toTime.value) return
+
+				const [fromH, fromM] = fromTime.value.split(':').map(Number)
+				const [toH, toM] = toTime.value.split(':').map(Number)
+
+				const fromMinutes = fromH * 60 + fromM
+				const toMinutes = toH * 60 + toM
+
+				if (toMinutes <= fromMinutes) {
+					durationDisplay.value = 'Invalid time range'
+					durationInput.value = ''
+					return
+				}
+
+				const diffMinutes = toMinutes - fromMinutes
+				const hours = (diffMinutes / 60).toFixed(2)
+
+				durationDisplay.value = hours + ' hours'
+				durationInput.value = hours
+			}
+
+			fromTime.addEventListener('change', calculateDuration)
+			toTime.addEventListener('change', calculateDuration)
+		</script>
+
 
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-	</body>
+</body>
+
 </html>
