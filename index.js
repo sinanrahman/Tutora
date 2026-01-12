@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const connectCloudinary = require('./config/cloudinary');
 const fileUpload = require('express-fileupload');
 
 const app = express();

@@ -1,6 +1,6 @@
 const student = require('../models/Student');
 const Session = require('../models/Session');
-
+const fileUploadToCloudinary =require('../utils/cloudinaryUpload')
 const Admin = require('../models/Admin');
 const coordinator = require('../models/Coordinator');
 const Teacher = require('../models/Teacher');
@@ -255,13 +255,7 @@ exports.createTeacher = async (req, res) => {
 		let profilePic = {};
 
 		if (req.files && req.files.profilePic) {
-			const result = await cloudinary.uploader.upload(req.files.profilePic.tempFilePath, {
-				folder: 'teachers',
-			});
-			profilePic = {
-				url: result.secure_url,
-				public_id: result.public_id,
-			};
+			profilePic = await fileUploadToCloudinary(req.files.profilePic);
 		}
 
 		const formattedSubjects = subjects.split(',').map((s) => s.trim().toLowerCase());
@@ -292,16 +286,56 @@ exports.createTeacher = async (req, res) => {
 };
 
 exports.getTeachers = async (req, res) => {
-	try {
-		const teachers = await Teacher.find().sort({ createdAt: -1 });
+  try {
+    const teachers = await Teacher.find().sort({ createdAt: -1 });
 
-		res.render('admin/viewTeachers', {
-			teachers,
-		});
-	} catch (error) {
-		console.error('Get Teachers Error:', error);
-		res.status(500).send('Server Error');
-	}
+    for (let teacher of teachers) {
+      const sessions = await Session.find({
+        teacher: teacher._id,
+        status: 'APPROVED',
+      }).select('durationInHours');
+
+      teacher.totalHours = sessions.reduce(
+        (sum, s) => sum + s.durationInHours,
+        0
+      );
+    }
+
+    res.render('admin/viewTeachers', { teachers });
+  } catch (error) {
+    console.error('Get Teachers Error:', error);
+    res.status(500).send('Server Error');
+  }
+};
+
+
+exports.viewTeacherProfile = async (req, res) => {
+  try {
+    const teacherId = req.params.id;
+
+    const teacher = await Teacher.findById(teacherId);
+    if (!teacher) {
+      return res.status(404).send('Teacher not found');
+    }
+
+    const sessions = await Session.find({
+      teacher: teacherId,
+      status: 'APPROVED',
+    }).select('durationInHours');
+
+    const totalHours = sessions.reduce(
+      (sum, s) => sum + s.durationInHours,
+      0
+    );
+
+    res.render('admin/teacherProfile', {
+      teacher,
+      totalHours,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
 };
 
 exports.getEditTeacher = async (req, res) => {
@@ -361,13 +395,7 @@ exports.updateTeacher = async (req, res) => {
 			if (teacher.profilePic?.public_id) {
 				await cloudinary.uploader.destroy(teacher.profilePic.public_id);
 			}
-			const result = await cloudinary.uploader.upload(req.files.profilePic.tempFilePath, {
-				folder: 'teachers',
-			});
-			teacher.profilePic = {
-				url: result.secure_url,
-				public_id: result.public_id,
-			};
+			teacher.profilePic = await fileUploadToCloudinary(req.files.profilePic);
 		}
 		await teacher.save();
 		res.redirect('/admin/viewteachers');
