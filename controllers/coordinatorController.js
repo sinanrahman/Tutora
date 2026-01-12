@@ -99,37 +99,49 @@ exports.getAssignedStudents = async (req, res) => {
 	}
 };
 
-/**
- * Student Profile
- */
+
 exports.getStudentProfile = async (req, res) => {
-	try {
-		if (!req.user || !req.user.id) {
-			return res.status(401).send('You must be logged in as a coordinator');
-		}
+  try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).send('You must be logged in as a coordinator');
+    }
 
-		const coord = await Coordinator.findById(req.user.id);
-		if (!coord) return res.status(404).send('Coordinator not found');
+    const coord = await Coordinator.findById(req.user.id);
+    if (!coord) return res.status(404).send('Coordinator not found');
 
-		const student = await Student.findOne({
-			_id: req.params.id,
-			coordinator: coord._id,
-		}).populate('assignedTeachers', 'fullName email');
+    // Get the student only if assigned to this coordinator
+    const student = await Student.findOne({
+      _id: req.params.id,
+      coordinator: coord._id,
+    }).populate('assignedTeachers', 'fullName email');
 
-		if (!student) {
-			return res.status(403).send('Access denied');
-		}
-
-		res.render('coordinator/student-profile', { student, coord });
-	} catch (err) {
-		console.error(err);
-		res.status(500).send('Error loading student profile');
+    if (!student) {
+      return res.status(403).send('Access denied');
 	}
+	
+    const sessions = await Session.find({
+      student: student._id,
+      status: 'APPROVED',
+    }).select('durationInHours');
+
+    let totalHours = 0;
+
+    sessions.forEach(session => {
+      totalHours += session.durationInHours;
+    });
+
+    res.render('coordinator/student-profile', {
+      student,
+      coord,
+      totalHours,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error loading student profile');
+  }
 };
 
-/**
- * Assign 4 Teachers to Student
- */
+
 exports.assignTeachers = async (req, res) => {
 	try {
 		const { studentId } = req.params;
