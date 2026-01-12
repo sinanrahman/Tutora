@@ -35,7 +35,7 @@ router
 
 router
   .route('/coordinators/delete/:id')
-  .get(protect, authorize('ADMIN'), deleteCoordinator)
+  .post(protect, authorize('ADMIN'), deleteCoordinator)
 
 
 router
