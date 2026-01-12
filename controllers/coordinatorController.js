@@ -3,6 +3,9 @@ const Teacher = require('../models/Teacher');
 const Student = require('../models/Student');
 const Session = require('../models/Session');
 
+/**
+ * Coordinator Dashboard
+ */
 
 const getTodayRange = () => {
 	const start = new Date();
@@ -34,14 +37,14 @@ exports.coordinatorDashboard = async (req, res) => {
 
 		const teachers = await Teacher.find().select('_id fullName subjects');
 
-		//  DAILY USAGE LOGIC
+		// 🔹 DAILY USAGE LOGIC
 		const { start, end } = getTodayRange();
 
 		const teacherUsage = await Session.aggregate([
 			{
 				$match: {
 					date: { $gte: start, $lte: end },
-					status: 'APPROVED', 
+					status: 'APPROVED', // optional but recommended
 				},
 			},
 			{
@@ -71,6 +74,9 @@ exports.coordinatorDashboard = async (req, res) => {
 	}
 };
 
+/**
+ * Assigned Students Page
+ */
 exports.getAssignedStudents = async (req, res) => {
 	try {
 		if (!req.user || !req.user.id) {
@@ -86,53 +92,53 @@ exports.getAssignedStudents = async (req, res) => {
 			.populate('assignedTeachers', 'fullName')
 			.sort({ createdAt: -1 });
 
-		res.render('coordinator/dashboard', { students, coord, teacher: [] });
+		res.render('coordinator/dashboard', { students, coord, teachers: [] });
 	} catch (err) {
 		console.error(err);
 		res.status(500).send('Error loading assigned students');
 	}
 };
 
-
 exports.getStudentProfile = async (req, res) => {
-  try {
-    if (!req.user || !req.user.id) {
-      return res.status(401).send('You must be logged in as a coordinator');
-    }
+	try {
+		if (!req.user || !req.user.id) {
+			return res.status(401).send('You must be logged in as a coordinator');
+		}
 
-    const coord = await Coordinator.findById(req.user.id);
-    if (!coord) return res.status(404).send('Coordinator not found');
+		const coord = await Coordinator.findById(req.user.id);
+		if (!coord) return res.status(404).send('Coordinator not found');
 
-    // Get the student only if assigned to this coordinator
-    const student = await Student.findOne({_id: req.params.id,coordinator: coord._id,})
-	.populate('assignedTeachers', 'fullName email');
+		// Get the student only if assigned to this coordinator
+		const student = await Student.findOne({
+			_id: req.params.id,
+			coordinator: coord._id,
+		}).populate('assignedTeachers', 'fullName email');
 
-    if (!student) {
-      return res.status(403).send('Access denied');
+		if (!student) {
+			return res.status(403).send('Access denied');
+		}
+
+		const sessions = await Session.find({
+			student: student._id,
+			status: 'APPROVED',
+		}).select('durationInHours');
+
+		let totalHours = 0;
+
+		sessions.forEach((session) => {
+			totalHours += session.durationInHours;
+		});
+
+		res.render('coordinator/student-profile', {
+			student,
+			coord,
+			totalHours,
+		});
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Error loading student profile');
 	}
-
-    const sessions = await Session.find({
-      student: student._id,
-      status: 'APPROVED',
-    }).select('durationInHours');
-
-    let totalHours = 0;
-
-    sessions.forEach(session => {
-      totalHours += session.durationInHours;
-    });
-
-    res.render('coordinator/student-profile', {
-      student,
-      coord,
-      totalHours,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error loading student profile');
-  }
 };
-
 
 exports.assignTeachers = async (req, res) => {
 	try {
@@ -207,15 +213,29 @@ exports.getSessionApprovalPage = async (req, res) => {
 
 exports.approveSession = async (req, res) => {
 	try {
+		const { action, durationInHours } = req.body;
+
 		const session = await Session.findById(req.params.id);
-		if (!session) return res.status(404).send('Session not found');
+		if (!session) {
+			return res.status(404).send('Session not found');
+		}
 
-		session.status = 'APPROVED';
+		if (action === 'approve') {
+			if (!durationInHours || isNaN(durationInHours) || durationInHours < 0.25) {
+				return res.status(400).send('Duration must be at least 0.25 hours');
+			}
+			session.durationInHours = Number(durationInHours);
+			session.status = 'APPROVED';
+		} else if (action === 'reject') {
+			session.status = 'REJECTED';
+		} else {
+			return res.status(400).send('Invalid action');
+		}
+
 		await session.save();
-
 		res.redirect('/coordinator/session-approval');
 	} catch (err) {
 		console.error(err);
-		res.status(500).send('Error approving session');
+		res.status(500).send('Error processing session');
 	}
 };
