@@ -32,7 +32,7 @@ exports.dashboard = async (req, res) => {
 
 //students
 exports.addStudents = async (req, res) => {
-	return res.render('admin/addstudents');
+	return res.render('admin/addstudents',{activePage: 'students'});
 };
 
 exports.postAddStudent = async (req, res) => {
@@ -103,7 +103,7 @@ exports.viewStudentDetails = async (req, res) => {
       0
     );
     stud.totalSessionHours = totalHours;
-    res.render('admin/viewStudentDetails', { student: stud });
+    res.render('admin/viewStudentDetails', { student: stud ,activePage: 'students'});
 
   } catch (err) {
     console.error(err);
@@ -118,7 +118,7 @@ exports.editStudentPage = async (req, res) => {
 		const coordinators = await coordinator.find().select('_id fullName');
 
 		if (!stud) return res.send('Student not found');
-		res.render('admin/editStudent', { student: stud, coordinators });
+		res.render('admin/editStudent', { student: stud, coordinators,activePage: 'students' });
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading edit page');
@@ -159,7 +159,7 @@ exports.deleteStudent = async (req, res) => {
 
 //co-ordinators
 exports.addCoordinators = (req, res) => {
-	return res.render('admin/addCoordinators');
+	return res.render('admin/addCoordinators',{activePage: 'coordinators'});
 };
 
 exports.postAddCoordinator = async (req, res) => {
@@ -203,7 +203,8 @@ exports.viewCoordinatorDetails = async (req, res) => {
     }
 
     res.render('admin/viewCoordinatorDetails', {
-      coordinator: coord
+      coordinator: coord,
+	  activePage: 'coordinators'
     });
 
   } catch (err) {
@@ -229,7 +230,7 @@ exports.editCoordinatorPage = async (req, res) => {
 		const id = req.params.id;
 		const coord = await coordinator.findById(id);
 		if (!coord) return res.send('Coordinator not found');
-		res.render('admin/editCoordinator', { coord });
+		res.render('admin/editCoordinator', { coord,activePage: 'coordinators' });
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading edit page');
@@ -344,6 +345,35 @@ exports.getTeachers = async (req, res) => {
 	}
 };
 
+
+exports.viewTeacherProfile = async (req, res) => {
+	try {
+		const teacherId = req.params.id;
+
+		const teacher = await Teacher.findById(teacherId);
+		if (!teacher) {
+			return res.status(404).send('Teacher not found');
+		}
+
+		const sessions = await Session.find({
+			teacher: teacherId,
+			status: 'APPROVED',
+		}).select('durationInHours');
+
+		const totalHours = sessions.reduce((sum, s) => sum + s.durationInHours, 0);
+
+		res.render('admin/teacherProfile', {
+			teacher,
+			totalHours,
+			activePage:'teachers'
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).send('Server Error');
+	}
+};
+
+
 exports.getEditTeacher = async (req, res) => {
 	try {
 		const teacher = await Teacher.findById(req.params.id);
@@ -352,6 +382,7 @@ exports.getEditTeacher = async (req, res) => {
 		}
 		res.render('admin/editTeacher', {
 			teacher,
+			activePage:'teachers'
 		});
 	} catch (error) {
 		console.error('Get Edit Teacher Error:', error);
@@ -455,7 +486,8 @@ exports.assignStudentsPage = async (req, res) => {
 
     res.render("admin/assignstudents", {
       coord,
-      students: studentsToShow
+      students: studentsToShow,
+	  activePage:'coordinators'
     });
 
   } catch (err) {
