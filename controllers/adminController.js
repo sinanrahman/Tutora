@@ -32,7 +32,7 @@ exports.dashboard = async (req, res) => {
 
 //students
 exports.addStudents = async (req, res) => {
-	return res.render('admin/addstudents');
+	return res.render('admin/addstudents',{activePage: 'students'});
 };
 
 exports.postAddStudent = async (req, res) => {
@@ -92,13 +92,17 @@ exports.viewStudentDetails = async (req, res) => {
 			status: 'APPROVED',
 		}).select('durationInHours');
 
-		const totalHours = sessions.reduce((sum, s) => sum + s.durationInHours, 0);
-		stud.totalSessionHours = totalHours;
-		res.render('admin/viewStudentDetails', { student: stud });
-	} catch (err) {
-		console.error(err);
-		res.send('Error loading student details');
-	}
+    const totalHours = sessions.reduce(
+      (sum, s) => sum + s.durationInHours,
+      0
+    );
+    stud.totalSessionHours = totalHours;
+    res.render('admin/viewStudentDetails', { student: stud ,activePage: 'students'});
+
+  } catch (err) {
+    console.error(err);
+    res.send('Error loading student details');
+  }
 };
 
 exports.editStudentPage = async (req, res) => {
@@ -108,7 +112,7 @@ exports.editStudentPage = async (req, res) => {
 		const coordinators = await coordinator.find().select('_id fullName');
 
 		if (!stud) return res.send('Student not found');
-		res.render('admin/editStudent', { student: stud, coordinators });
+		res.render('admin/editStudent', { student: stud, coordinators,activePage: 'students' });
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading edit page');
@@ -149,7 +153,7 @@ exports.deleteStudent = async (req, res) => {
 
 //co-ordinators
 exports.addCoordinators = (req, res) => {
-	return res.render('admin/addCoordinators');
+	return res.render('admin/addCoordinators',{activePage: 'coordinators'});
 };
 
 exports.postAddCoordinator = async (req, res) => {
@@ -192,13 +196,15 @@ exports.viewCoordinatorDetails = async (req, res) => {
 			return res.send('Coordinator not found');
 		}
 
-		res.render('admin/viewCoordinatorDetails', {
-			coordinator: coord,
-		});
-	} catch (err) {
-		console.log(err);
-		res.send('Error loading coordinator details');
-	}
+    res.render('admin/viewCoordinatorDetails', {
+      coordinator: coord,
+	  activePage: 'coordinators'
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.send('Error loading coordinator details');
+  }
 };
 
 exports.deleteCoordinator = async (req, res) => {
@@ -217,7 +223,7 @@ exports.editCoordinatorPage = async (req, res) => {
 		const id = req.params.id;
 		const coord = await coordinator.findById(id);
 		if (!coord) return res.send('Coordinator not found');
-		res.render('admin/editCoordinator', { coord });
+		res.render('admin/editCoordinator', { coord,activePage: 'coordinators' });
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading edit page');
@@ -348,6 +354,7 @@ exports.viewTeacherProfile = async (req, res) => {
 		res.render('admin/teacherProfile', {
 			teacher,
 			totalHours,
+			activePage:'teachers'
 		});
 	} catch (error) {
 		console.error(error);
@@ -363,6 +370,7 @@ exports.getEditTeacher = async (req, res) => {
 		}
 		res.render('admin/editTeacher', {
 			teacher,
+			activePage:'teachers'
 		});
 	} catch (error) {
 		console.error('Get Edit Teacher Error:', error);
@@ -459,14 +467,18 @@ exports.assignStudentsPage = async (req, res) => {
 			}
 		}
 
-		res.render('admin/assignstudents', {
-			coord,
-			students: studentsToShow,
-		});
-	} catch (err) {
-		console.log(err);
-		res.send('Error loading assign page');
-	}
+   
+
+    res.render("admin/assignstudents", {
+      coord,
+      students: studentsToShow,
+	  activePage:'coordinators'
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.send("Error loading assign page");
+  }
 };
 
 exports.assignStudents = async (req, res) => {
