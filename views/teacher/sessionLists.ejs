@@ -16,10 +16,10 @@
 		<%-include('../partials/teacherNavbar',{user})%>
 
 		<div class="container mt-5">
-			<h2>Session Requests</h2>
+			<h2>Session History</h2>
 
 			<% if (sessions && sessions.length > 0) { %>
-			<table class="table table-striped mt-4">
+			<table class="table table-bordered mt-4">
 				<thead>
 					<tr>
 						<th>#</th>
@@ -34,17 +34,19 @@
 					<% sessions.forEach((session, index) => { %>
 					<tr>
 						<td><%= index + 1 %></td>
-						<td><%= session.student.fullName %></td>
-						<td><%= session.type %></td>
-						<td><%= new Date(session.date).toLocaleDateString() %></td>
-						<td><%= session.durationInHours %></td>
+						<td><%= session.student ? session.student.fullName : 'N/A' %></td>
+						<td><%= session.type || 'N/A' %></td>
+						<td><%= session.date ? new Date(session.date).toLocaleDateString() : 'N/A' %></td>
+						<td><%= session.durationInHours || 0 %></td>
 						<td>
 							<% if(session.status === 'PENDING') { %>
 							<span class="badge bg-warning text-dark">Pending</span>
 							<% } else if(session.status === 'APPROVED') { %>
 							<span class="badge bg-success">Approved</span>
+							<% } else if(session.status === 'REJECTED') { %>
+							<span class="badge bg-danger">Rejected</span>
 							<% } else { %>
-							<span class="badge bg-secondary"><%= session.status %></span>
+							<span class="badge bg-secondary"><%= session.status || 'Unknown' %></span>
 							<% } %>
 						</td>
 					</tr>
