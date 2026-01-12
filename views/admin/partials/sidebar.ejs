@@ -1,48 +1,55 @@
-<nav id="sidebar" class="bg-dark text-white position-fixed vh-100 p-3">
-  <h3 class="text-center mb-4">TUTORA</h3>
+<nav id="sidebar" class="text-black position-fixed vh-100 p-3 d-flex flex-column justify-content-between">
 
   <ul class="nav flex-column">
-    <li class="nav-item mb-2">
-      <a href="/admin/Dashboard" class="nav-link text-white">
-        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+    <h3 class="text-center text-dark mb-4">TUTORA</h3>
+
+    <li
+      class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'dashboard' ? 'active' : '' %>">
+      <a href="/admin/Dashboard" class="nav-link text-black">
+        Dashboard
       </a>
     </li>
 
-    <li class="nav-item mb-2">
-      <a href="/admin/viewstudents" class="nav-link text-white">
-        <i class="bi bi-people-fill me-2"></i> Students
+    <li
+      class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'students' ? 'active' : '' %>">
+      <a href="/admin/viewstudents" class="nav-link text-black">
+        Students
       </a>
     </li>
 
-    <li class="nav-item mb-2">
-      <a href="/admin/viewcoordinators" class="nav-link text-white">
-        <i class="bi bi-person-badge-fill me-2"></i> Coordinators
+    <li
+      class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'coordinators' ? 'active' : '' %>">
+      <a href="/admin/viewcoordinators" class="nav-link text-black">
+        Coordinators
       </a>
     </li>
 
-    <li class="nav-item mb-2">
-      <a href="/admin/viewteachers" class="nav-link text-white">
-        <i class="bi bi-person-workspace me-2"></i> Teachers
+    <li
+      class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'teachers' ? 'active' : '' %>">
+      <a href="/admin/viewteachers" class="nav-link text-black">
+        Teachers
       </a>
     </li>
   </ul>
 
-  <hr class="text-secondary mt-4">
+  <div>
+    <div class="text-center mb-3">
+      <i class="bi bi-person-circle fs-2"></i>
+      <h6 class="mt-2 mb-0 text-dark">
+        <%= admin?.username %>
+      </h6>
+    </div>
 
-  <div class="text-center mb-3">
-    <i class="bi bi-person-circle fs-2"></i>
-    <h6 class="mt-2 mb-0">
-      <%= admin?.username %>
-    </h6>
+
+    <div class="mt-auto">
+      <button class="btn btn-outline-dark w-100" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        <i class="bi bi-box-arrow-right me-2"></i> Logout
+      </button>
+
+    </div>
+
   </div>
 
-
-  <div class="mt-auto">
-    <button class="btn btn-outline-light w-100" data-bs-toggle="modal" data-bs-target="#logoutModal">
-      <i class="bi bi-box-arrow-right me-2"></i> Logout
-    </button>
-
-  </div>
 </nav>
 
 
@@ -83,7 +90,7 @@
     top: 0;
     left: 0;
     height: 100vh;
-    background-color: #343a40;
+    background-color: #f4f5f7;
     padding-top: 20px;
     overflow-y: auto;
     z-index: 1000;
@@ -92,14 +99,20 @@
   }
 
   #sidebar .nav-link {
-    color: white;
+    color: #000;
     padding: 10px 20px;
+    border-radius: 5px;
   }
 
-  #sidebar .nav-link:hover,
-  #sidebar .nav-link.active {
-    background-color: #495057;
-    border-radius: 5px;
+  #sidebar .nav-item.active .nav-link {
+    background-color: #ff2e4b;
+    color: #fff !important;
+    font-weight: 600;
+  }
+
+  #sidebar .nav-link:hover {
+    background-color: #fa8d9b;
+    color: #000;
   }
 
   .main-content {
