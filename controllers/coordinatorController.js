@@ -92,7 +92,7 @@ exports.getAssignedStudents = async (req, res) => {
 			.populate('assignedTeachers', 'fullName')
 			.sort({ createdAt: -1 });
 
-		res.render('coordinator/assigned-students', { students, coord });
+		res.render('coordinator/dashboard', { students, coord, teacher: [] });
 	} catch (err) {
 		console.error(err);
 		res.status(500).send('Error loading assigned students');
@@ -175,48 +175,43 @@ exports.assignTeachers = async (req, res) => {
 	}
 };
 
-
 exports.getSessionApprovalPage = async (req, res) => {
-    try {
-        const coord = await Coordinator.findById(req.user.id);
-        if (!coord) return res.status(404).send("Coordinator not found");
+	try {
+		const coord = await Coordinator.findById(req.user.id);
+		if (!coord) return res.status(404).send('Coordinator not found');
 
-        const pendingSessions = await Session.find({ status: "PENDING" })
-            .populate("student", "fullName")
-            .populate("teacher", "fullName")
-            .sort({ createdAt: -1 });
+		const pendingSessions = await Session.find({ status: 'PENDING' })
+			.populate('student', 'fullName')
+			.populate('teacher', 'fullName')
+			.sort({ createdAt: -1 });
 
-        const approvedSessions = await Session.find({ status: "APPROVED" })
-            .populate("student", "fullName")
-            .populate("teacher", "fullName")
-            .sort({ updatedAt: -1 });
+		const approvedSessions = await Session.find({ status: 'APPROVED' })
+			.populate('student', 'fullName')
+			.populate('teacher', 'fullName')
+			.sort({ updatedAt: -1 });
 
-        res.render("coordinator/session-approval", {
-            coord,
-            pendingSessions,
-            approvedSessions
-        });
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error loading session approvals");
-    }
+		res.render('coordinator/session-approval', {
+			coord,
+			pendingSessions,
+			approvedSessions,
+		});
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Error loading session approvals');
+	}
 };
-
 
 exports.approveSession = async (req, res) => {
-    try {
-        const session = await Session.findById(req.params.id);
-        if (!session) return res.status(404).send("Session not found");
+	try {
+		const session = await Session.findById(req.params.id);
+		if (!session) return res.status(404).send('Session not found');
 
-        session.status = "APPROVED";
-        await session.save();
+		session.status = 'APPROVED';
+		await session.save();
 
-        res.redirect("/coordinator/session-approval");
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error approving session");
-    }
+		res.redirect('/coordinator/session-approval');
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Error approving session');
+	}
 };
-
