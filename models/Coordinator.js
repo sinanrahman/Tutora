@@ -29,12 +29,6 @@ const coordinatorSchema = new mongoose.Schema(
 				ref: 'Student',
 			},
 		],
-		assignedTeachers: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'Teacher',
-			},
-		],
 		status: {
 			type: String,
 			enum: ['active', 'inactive'],
