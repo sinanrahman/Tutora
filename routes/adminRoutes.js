@@ -1,7 +1,7 @@
 const express = require('express')
 const { protect } = require('../middlewares/authMiddleware')
 const { authorize } = require('../middlewares/roleMiddleware')
-const { addStudents, postAddStudent, viewStudents, deleteStudent, editStudentPage, updateStudent, addCoordinators, postAddCoordinator, viewCoordinator, deleteCoordinator, editCoordinatorPage, updateCoordinator, changeCoordinatorPassword, assignStudentsPage, assignStudents, addTeacher, createTeacher, getTeachers, getEditTeacher, updateTeacher, deleteTeacher, removeAssignedStudent, changeTeacherPassword, dashboard, viewTeacherProfile } = require('../controllers/adminController')
+const { addStudents, postAddStudent, viewStudents, deleteStudent, editStudentPage, updateStudent, addCoordinators, postAddCoordinator, viewCoordinator, deleteCoordinator, editCoordinatorPage, updateCoordinator, changeCoordinatorPassword, assignStudentsPage, assignStudents, addTeacher, createTeacher, getTeachers, getEditTeacher, updateTeacher, deleteTeacher, removeAssignedStudent, changeTeacherPassword, dashboard, viewStudentDetails, viewCoordinatorDetails,viewTeacherProfile } = require('../controllers/adminController')
 const router = express.Router()
 
 router
@@ -12,6 +12,9 @@ router
   .route('/viewstudents')
   .get(protect, authorize('ADMIN'), viewStudents)
 
+router
+  .route('/viewstudentdetails/:id')
+  .get(protect, authorize('ADMIN'),viewStudentDetails)
 router
   .route('/students/delete/:id')
   .get(protect, authorize('ADMIN'), deleteStudent)
@@ -32,6 +35,10 @@ router
 router
   .route('/viewcoordinators')
   .get(protect, authorize('ADMIN'), viewCoordinator)
+
+router
+  .route('/viewcoordinatordetails/:id')
+  .get(protect, authorize('ADMIN'),viewCoordinatorDetails)
 
 router
   .route('/coordinators/delete/:id')
