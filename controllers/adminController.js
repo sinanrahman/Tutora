@@ -344,6 +344,7 @@ exports.getTeachers = async (req, res) => {
 	}
 };
 
+
 exports.getEditTeacher = async (req, res) => {
 	try {
 		const teacher = await Teacher.findById(req.params.id);
