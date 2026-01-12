@@ -385,6 +385,8 @@ exports.assignStudentsPage = async (req, res) => {
       .findById(coordinatorId)
       .populate("assignedStudents");
 
+	
+
     if (!coord) {
       return res.send("Coordinator not found");
     }
