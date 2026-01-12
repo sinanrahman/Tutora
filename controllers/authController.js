@@ -10,33 +10,43 @@ const MAX_ATTEMPTS = 3
 const LOCK_TIME = 1 * 60 * 1000
 
 exports.loginPage = (req, res) => {
-	res.render('auth/login')
+	try {
+		res.render('auth/login')
+	} catch (error) {
+		console.log(error)
+	}
 }
 
 exports.adminLoginPage = (req, res) => {
-	res.render('auth/adminLogin', {
-		msg: '',
-		attemptsLeft: null,
-		remainingTime: 0
-	})
+	try {
+		res.render('auth/adminLogin', {
+			msg: '',
+			attemptsLeft: null,
+			remainingTime: 0
+		})
+	} catch (error) {
+		console.log(error)
+	}
 }
 
 
 exports.teacherLoginPage = (req, res) => {
-	res.render('auth/teacherLogin', { msg: '' })
+	try {
+		res.render('auth/teacherLogin', { msg: '' })
+	} catch (error) {
+		console.log(error)
+	}
 }
 
 exports.coordinatorLoginPage = (req, res) => {
-	res.render('auth/coordinatorLogin', { msg: '' })
+	try {
+		res.render('auth/coordinatorLogin', { msg: '' })
+	} catch (error) {
+		console.log(error)
+	}
 }
 
-const renderLoginWithMsg = (
-	res,
-	role,
-	msg,
-	attemptsLeft = MAX_ATTEMPTS,
-	remainingTime = 0
-) => {
+const renderLoginWithMsg = (res, role, msg, attemptsLeft = MAX_ATTEMPTS, remainingTime = 0) => {
 	if (role === 'admin') {
 		return res.render('auth/adminLogin', {
 			msg,
@@ -67,13 +77,7 @@ exports.login = async (req, res) => {
 			user = await Admin.findOne({ email }).select('+password')
 
 			if (!user) {
-				return renderLoginWithMsg(
-					res,
-					role,
-					'Invalid credentials',
-					MAX_ATTEMPTS,
-					0
-				)
+				return renderLoginWithMsg(res, role, 'Invalid credentials', MAX_ATTEMPTS, 0)
 			}
 
 			if (user.lockUntil && user.lockUntil > Date.now()) {
@@ -81,13 +85,7 @@ exports.login = async (req, res) => {
 					(user.lockUntil - Date.now()) / 1000
 				)
 
-				return renderLoginWithMsg(
-					res,
-					role,
-					'Too many attempts. Please wait.',
-					0,
-					remainingTime
-				)
+				return renderLoginWithMsg(res, role, 'Too many attempts. Please wait.', 0, remainingTime)
 			}
 			if (user.lockUntil && user.lockUntil <= Date.now()) {
 				user.loginAttempts = 0
@@ -106,14 +104,9 @@ exports.login = async (req, res) => {
 
 				await user.save()
 
-				const attemptsLeft = Math.max(
-					MAX_ATTEMPTS - user.loginAttempts,
-					0
-				)
+				const attemptsLeft = Math.max( MAX_ATTEMPTS - user.loginAttempts, 0 )
 
-				return renderLoginWithMsg(
-					res,
-					role,
+				return renderLoginWithMsg(res,role,
 					user.lockUntil
 						? 'Too many attempts. Please wait.'
 						: 'Wrong password',
@@ -206,7 +199,6 @@ exports.forgotPassword = async (req, res) => {
 			});
 		}
 
-		// Generate reset token
 		const resetToken = crypto.randomBytes(32).toString('hex');
 		admin.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
@@ -220,11 +212,11 @@ exports.forgotPassword = async (req, res) => {
 			to: admin.email,
 			subject: 'Admin Password Reset',
 			html: `
-        <p>Hello Admin,</p>
-        <p>Click the link below to reset your password:</p>
-        <a href="${resetURL}">${resetURL}</a>
-        <p>This link expires in 15 minutes.</p>
-      `,
+			<p>Hello Admin,</p>
+			<p>Click the link below to reset your password:</p>
+			<a href="${resetURL}">${resetURL}</a>
+			<p>This link expires in 15 minutes.</p>
+		`,
 		});
 
 		res.render('auth/forgotPassword', {
