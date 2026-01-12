@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<%- include('../partials/coordinatorNavbar') %>
+
+<div class="container mt-4">
+  <h3 class="fw-bold">Student Profile</h3>
+
+  <div class="card shadow-sm mt-3">
+    <div class="card-body">
+
+      <p><strong>Name:</strong> <%= student.fullName %></p>
+      <p><strong>Email:</strong> <%= student.email %></p>
+      <p><strong>Class:</strong> <%= student.standard %></p>
+      <p><strong>Phone:</strong> <%= student.phone %></p>
+      <p><strong>Country:</strong> <%= student.country %></p>
+
+      <hr>
+
+      <h5>Assigned Teachers</h5>
+      <% if (student.assignedTeachers.length === 0) { %>
+        <p class="text-muted">No teachers assigned</p>
+      <% } else { %>
+        <ul>
+          <% student.assignedTeachers.forEach(t => { %>
+            <li>
+              <strong><%= t.fullName %></strong>
+              <% if (Array.isArray(t.subjects)) { %>
+                - <%= t.subjects.join(', ') %>
+              <% } %>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+
+      <hr>
+
+      <h5>Total Attended Hours</h5>
+      <p class="fs-5 fw-bold text-primary"><%= totalHours %> hours</p>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
