@@ -3,6 +3,9 @@ const Teacher = require('../models/Teacher');
 const Student = require('../models/Student');
 const Session = require('../models/Session');
 
+/**
+ * Coordinator Dashboard
+ */
 
 const getTodayRange = () => {
 	const start = new Date();
