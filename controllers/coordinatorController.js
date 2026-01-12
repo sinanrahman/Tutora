@@ -3,10 +3,6 @@ const Teacher = require('../models/Teacher');
 const Student = require('../models/Student');
 const Session = require('../models/Session');
 
-/**
- * Coordinator Dashboard
- */
-
 const getTodayRange = () => {
 	const start = new Date();
 	start.setHours(0, 0, 0, 0);
@@ -30,21 +26,18 @@ exports.coordinatorDashboard = async (req, res) => {
 			return res.status(404).send('Coordinator not found');
 		}
 
-		const students = await Student.find({ coordinator: coordinatorId }).populate(
-			'assignedTeachers',
-			'fullName'
-		);
+		const students = await Student.find({ coordinator: coordinatorId }).populate('assignedTeachers','fullName');
 
 		const teachers = await Teacher.find().select('_id fullName subjects');
 
-		// 🔹 DAILY USAGE LOGIC
+		//  DAILY USAGE LOGIC
 		const { start, end } = getTodayRange();
 
 		const teacherUsage = await Session.aggregate([
 			{
 				$match: {
 					date: { $gte: start, $lte: end },
-					status: 'APPROVED', // optional but recommended
+					status: 'APPROVED', 
 				},
 			},
 			{
@@ -74,9 +67,6 @@ exports.coordinatorDashboard = async (req, res) => {
 	}
 };
 
-/**
- * Assigned Students Page
- */
 exports.getAssignedStudents = async (req, res) => {
 	try {
 		if (!req.user || !req.user.id) {
@@ -110,15 +100,13 @@ exports.getStudentProfile = async (req, res) => {
     if (!coord) return res.status(404).send('Coordinator not found');
 
     // Get the student only if assigned to this coordinator
-    const student = await Student.findOne({
-      _id: req.params.id,
-      coordinator: coord._id,
-    }).populate('assignedTeachers', 'fullName email');
+    const student = await Student.findOne({_id: req.params.id,coordinator: coord._id,})
+	.populate('assignedTeachers', 'fullName email');
 
     if (!student) {
       return res.status(403).send('Access denied');
 	}
-	
+
     const sessions = await Session.find({
       student: student._id,
       status: 'APPROVED',
@@ -129,7 +117,7 @@ exports.getStudentProfile = async (req, res) => {
     sessions.forEach(session => {
       totalHours += session.durationInHours;
     });
-
+	console.log(coord)
     res.render('coordinator/student-profile', {
       student,
       coord,
