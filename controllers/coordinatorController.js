@@ -92,7 +92,7 @@ exports.getAssignedStudents = async (req, res) => {
 			.populate('assignedTeachers', 'fullName')
 			.sort({ createdAt: -1 });
 
-		res.render('coordinator/dashboard', { students, coord, teacher: [] });
+		res.render('coordinator/dashboard', { students, coord, teachers: [] });
 	} catch (err) {
 		console.error(err);
 		res.status(500).send('Error loading assigned students');
