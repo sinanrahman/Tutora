@@ -23,8 +23,8 @@
 								<%= student.fullName %>
 							</p>
 							<p>
-								<strong>Email:</strong>
-								<%= student.email %>
+								<strong>ID:</strong>
+								<%= student._id %>
 							</p>
 							<p>
 								<strong>Class:</strong>
@@ -59,7 +59,10 @@
 
 							<h5>Total Attended Hours</h5>
 							<p class="fs-5 fw-bold text-primary"><%= totalHours %> hours</p>
-							<div class="button__container d-flex justify-content-end">
+							<div class="button__container d-flex justify-content-between">
+								<a href="/coordinator/dashboard" class="btn btn-secondary">
+									Back
+								</a>
 								<a href="/coordinator/update-teacher/<%=student._id%>" class="btn btn-primary">
 									Update Teacher
 								</a>
