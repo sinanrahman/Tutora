@@ -11,9 +11,11 @@
 </head>
 
 <body class="bg-light">
+  <%- include('partials/navbar') %>
+
   <%- include('partials/sidebar') %>
-    <div class="main-content">
-      <h2 class="mb-4 fw-bold">Add Coordinator</h2>
+    <div class="main-content p-5">
+      <h2 class="mb-4 pt-4 fw-bold">Add Coordinator</h2>
       <div class="card shadow-sm">
         <div class="card-body">
           <form method="post" action="/admin/addcoordinators">
