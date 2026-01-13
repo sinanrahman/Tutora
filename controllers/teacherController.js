@@ -18,6 +18,7 @@ exports.teacherDashboard = async (req, res) => {
 			user: teacher,
 			teacher,
 			students,
+			activePage: 'dashboard',
 		});
 	} catch (err) {
 		console.error(err);
@@ -37,6 +38,7 @@ exports.teacherSessionsPage = async (req, res) => {
 			user: teacher,
 			teacher,
 			sessions,
+			activePage: 'sessions',
 		});
 	} catch (err) {
 		console.error(err);
@@ -60,7 +62,8 @@ exports.addSessionPage = async (req, res) => {
       user: teacher,
       teacher,
       student,
-      selectedStudentId   // pass to EJS
+      selectedStudentId ,  // pass to EJS
+	  activePage: 'sessions',
     });
   } catch (err) {
     console.error(err);
@@ -79,6 +82,7 @@ exports.teacherProfilePage = async (req, res) => {
 		res.render('teacher/profile', {
 			user: teacher,
 			teacher,
+			activePage: 'profile',
 		});
 	} catch (err) {
 		console.error(err);
@@ -114,11 +118,12 @@ exports.viewStudentProfile = async (req, res) => {
 		sessions.forEach(s => {
 			totalHours += s.durationInHours;
 		});
-
+		const teacher = await Teacher.findById(req.user.id);
 		res.render('teacher/studentProfile', {
-			user: req.user,
+			user: teacher,
 			student,
 			totalHours,
+			activePage: 'dashboard',
 		});
 	} catch (err) {
 		console.error(err);
