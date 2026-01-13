@@ -93,19 +93,9 @@ exports.viewStudentDetails = async (req, res) => {
 			status: 'APPROVED',
 		}).select('durationInHours');
 
-<<<<<<< HEAD
-		const totalHours = sessions.reduce(
-			(sum, s) => sum + s.durationInHours,
-			0
-		);
-		stud.totalSessionHours = totalHours;
-		res.render('admin/viewStudentDetails', { student: stud, activePage: 'students' });
-
-=======
 		const totalHours = sessions.reduce((sum, s) => sum + s.durationInHours, 0);
 		stud.totalSessionHours = totalHours;
 		res.render('admin/viewStudentDetails', { student: stud, activePage: 'students' });
->>>>>>> 45280341ae3b8cf9ee540dfbdfa14419500eca73
 	} catch (err) {
 		console.error(err);
 		res.send('Error loading student details');
