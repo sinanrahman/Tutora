@@ -38,10 +38,18 @@ const studentSchema = new mongoose.Schema(
 			type: String,
 			required: true
 		},
+		school: {
+			type: String,
+			required: true
+		},
 		status: {
 			type: String,
 			enum: ['student', 'alumni'],
 			default: 'student',
+		},
+		lastDate: {
+			type:Date,
+			required: true
 		},
 		coordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'Coordinator' },
 		assignedTeachers: [

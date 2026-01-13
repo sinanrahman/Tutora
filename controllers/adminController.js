@@ -32,21 +32,40 @@ exports.dashboard = async (req, res) => {
 };
 
 //students
+// exports.addStudents = async (req, res) => {
+// 	return res.render('admin/addstudents',{activePage: 'students'});
+// };
+
 exports.addStudents = async (req, res) => {
-	return res.render('admin/addstudents',{activePage: 'students'});
+	try {
+		const coordinators = await coordinator
+			.find({ status: 'coordinator' })
+			.select('_id fullName');
+		res.render('admin/addstudents', {
+			coordinators,          // ✅ THIS NAME
+			activePage: 'students'
+		});
+	} catch (err) {
+		console.log(err);
+		res.send('Error loading add student page');
+	}
 };
 
+
+
+
 exports.postAddStudent = async (req, res) => {
-	const { fullname, email, phone, country, standard, gender, coordinator, status } = req.body;
+	const { fullname, email, phone, country, standard, school, coordinator, status, lastdate } = req.body;
 	await student.create({
 		fullName: fullname,
 		email: email,
 		phone: phone,
 		country: country,
 		standard: standard,
-		gender: gender,
+		school: school,
 		status: status,
 		coordinator: coordinator,
+		lastDate: lastdate
 	});
 	res.redirect('/admin/viewstudents');
 };
@@ -93,27 +112,28 @@ exports.viewStudentDetails = async (req, res) => {
 			status: 'APPROVED',
 		}).select('durationInHours');
 
-    const totalHours = sessions.reduce(
-      (sum, s) => sum + s.durationInHours,
-      0
-    );
-    stud.totalSessionHours = totalHours;
-    res.render('admin/viewStudentDetails', { student: stud ,activePage: 'students'});
+		const totalHours = sessions.reduce(
+			(sum, s) => sum + s.durationInHours,
+			0
+		);
+		stud.totalSessionHours = totalHours;
+		res.render('admin/viewStudentDetails', { student: stud, activePage: 'students' });
 
-  } catch (err) {
-    console.error(err);
-    res.send('Error loading student details');
-  }
+	} catch (err) {
+		console.error(err);
+		res.send('Error loading student details');
+	}
 };
 
 exports.editStudentPage = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const stud = await student.findById(id);
-		const coordinators = await coordinator.find().select('_id fullName');
-
+		const coordinators = await coordinator
+			.find({ status: 'coordinator' })
+			.select('_id fullName');
 		if (!stud) return res.send('Student not found');
-		res.render('admin/editStudent', { student: stud, coordinators,activePage: 'students' });
+		res.render('admin/editStudent', { student: stud, coordinators, activePage: 'students' });
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading edit page');
@@ -123,7 +143,7 @@ exports.editStudentPage = async (req, res) => {
 exports.updateStudent = async (req, res) => {
 	try {
 		const id = req.params.id;
-		const { fullname, email, phone, country, standard, gender, coordinator, status } = req.body;
+		const { fullname, email, phone, country, standard, coordinator, status, lastdate } = req.body;
 		await student.findByIdAndUpdate(id, {
 			fullName: fullname,
 			email: email,
@@ -131,7 +151,7 @@ exports.updateStudent = async (req, res) => {
 			country: country,
 			standard: standard,
 			status: status,
-			gender: gender,
+			lastDate: lastdate,
 			coordinator: coordinator,
 		});
 		res.redirect('/admin/viewstudents');
@@ -154,7 +174,7 @@ exports.deleteStudent = async (req, res) => {
 
 //co-ordinators
 exports.addCoordinators = (req, res) => {
-	return res.render('admin/addCoordinators',{activePage: 'coordinators'});
+	return res.render('admin/addCoordinators', { activePage: 'coordinators' });
 };
 
 exports.postAddCoordinator = async (req, res) => {
@@ -197,15 +217,15 @@ exports.viewCoordinatorDetails = async (req, res) => {
 			return res.send('Coordinator not found');
 		}
 
-    res.render('admin/viewCoordinatorDetails', {
-      coordinator: coord,
-	  activePage: 'coordinators'
-    });
+		res.render('admin/viewCoordinatorDetails', {
+			coordinator: coord,
+			activePage: 'coordinators'
+		});
 
-  } catch (err) {
-    console.log(err);
-    res.send('Error loading coordinator details');
-  }
+	} catch (err) {
+		console.log(err);
+		res.send('Error loading coordinator details');
+	}
 };
 
 exports.deleteCoordinator = async (req, res) => {
@@ -224,7 +244,7 @@ exports.editCoordinatorPage = async (req, res) => {
 		const id = req.params.id;
 		const coord = await coordinator.findById(id);
 		if (!coord) return res.send('Coordinator not found');
-		res.render('admin/editCoordinator', { coord,activePage: 'coordinators' });
+		res.render('admin/editCoordinator', { coord, activePage: 'coordinators' });
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading edit page');
@@ -355,7 +375,7 @@ exports.viewTeacherProfile = async (req, res) => {
 		res.render('admin/teacherProfile', {
 			teacher,
 			totalHours,
-			activePage:'teachers'
+			activePage: 'teachers'
 		});
 	} catch (error) {
 		console.error(error);
@@ -371,7 +391,7 @@ exports.getEditTeacher = async (req, res) => {
 		}
 		res.render('admin/editTeacher', {
 			teacher,
-			activePage:'teachers'
+			activePage: 'teachers'
 		});
 	} catch (error) {
 		console.error('Get Edit Teacher Error:', error);
@@ -467,19 +487,16 @@ exports.assignStudentsPage = async (req, res) => {
 				studentsToShow.push(s);
 			}
 		}
+		res.render("admin/assignstudents", {
+			coord,
+			students: studentsToShow,
+			activePage: 'coordinators'
+		});
 
-   
-
-    res.render("admin/assignstudents", {
-      coord,
-      students: studentsToShow,
-	  activePage:'coordinators'
-    });
-
-  } catch (err) {
-    console.log(err);
-    res.send("Error loading assign page");
-  }
+	} catch (err) {
+		console.log(err);
+		res.send("Error loading assign page");
+	}
 };
 
 exports.assignStudents = async (req, res) => {
@@ -591,42 +608,42 @@ exports.changeTeacherPassword = async (req, res) => {
 };
 
 exports.studentSessionHistory = async (req, res) => {
-    try {
-        const studentId = req.params.id;
-        const studentName = await Student.findById(req.params.id).select('fullName')
-        
-        const studentSessions = await Session.find({ 
-            student: studentId, 
-            status: "APPROVED" 
-        })
-        .populate('teacher', 'fullName') // _id is included by default
-        .sort({ createdAt: -1 })
-        // .lean(); // <--- Faster performance for read-only data
+	try {
+		const studentId = req.params.id;
+		const studentName = await Student.findById(req.params.id).select('fullName')
 
-        return res.render('admin/viewstudenthistory', { ssHistory: studentSessions,studentName });
-    } catch (error) {
-        console.error('Error fetching session history:', error);
-        // It is safer to render an error page or flash message than redirecting blindly
-        return res.redirect(`/admin/viewstudentdetails/${req.params.id}`);
-    }
+		const studentSessions = await Session.find({
+			student: studentId,
+			status: "APPROVED"
+		})
+			.populate('teacher', 'fullName') // _id is included by default
+			.sort({ createdAt: -1 })
+		// .lean(); // <--- Faster performance for read-only data
+
+		return res.render('admin/viewstudenthistory', { ssHistory: studentSessions, studentName });
+	} catch (error) {
+		console.error('Error fetching session history:', error);
+		// It is safer to render an error page or flash message than redirecting blindly
+		return res.redirect(`/admin/viewstudentdetails/${req.params.id}`);
+	}
 };
 exports.teacherSessionHistory = async (req, res) => {
-    try {
-        const teacherId = req.params.id;
-        const teacherName = await Teacher.findById(req.params.id).select('fullName')
-        const teacherSessions = await Session.find({ 
-            teacher: teacherId, 
-            status: "APPROVED" 
-        })
-        .populate('student', 'fullName') // _id is included by default
-        .sort({ createdAt: -1 })
-        // .lean(); // <--- Faster performance for read-only data
+	try {
+		const teacherId = req.params.id;
+		const teacherName = await Teacher.findById(req.params.id).select('fullName')
+		const teacherSessions = await Session.find({
+			teacher: teacherId,
+			status: "APPROVED"
+		})
+			.populate('student', 'fullName') // _id is included by default
+			.sort({ createdAt: -1 })
+		// .lean(); // <--- Faster performance for read-only data
 
-        return res.render('admin/viewteacherhistory', { tsHistory: teacherSessions,teacherName });
-    } catch (error) {
-        console.error('Error fetching session history:', error);
-        // It is safer to render an error page or flash message than redirecting blindly
-        return res.redirect(`/admin/viewteacherdetails/${req.params.id}`);
-    }
+		return res.render('admin/viewteacherhistory', { tsHistory: teacherSessions, teacherName });
+	} catch (error) {
+		console.error('Error fetching session history:', error);
+		// It is safer to render an error page or flash message than redirecting blindly
+		return res.redirect(`/admin/viewteacherdetails/${req.params.id}`);
+	}
 };
 
