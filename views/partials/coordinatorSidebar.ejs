@@ -30,7 +30,7 @@
     font-weight: 600;
   }
 
-  #sidebar .nav-link:hover {
+  #sidebar .nav-link:not(.t):hover {
     background-color: #fa8d9b;
     color: #000;
   }
@@ -67,14 +67,22 @@
         Session
       </a>
     </li>
-    <% if(activePage === 'student-profile'){%>
+    <!-- <% if(activePage === 'student-profile'){%>
         <li
       class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'student-profile' ? 'active' : '' %>">
-      <a href="/coordinator/session-approval" class="nav-link text-black">
+      <span class="nav-link text-black">
         Student-Profile
-      </a>
+      </span>
     </li>
     <% } %>
+    <% if(activePage === 'update-teacher'){%>
+        <li
+      class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'update-teacher' ? 'active' : '' %>">
+      <span class="nav-link text-black">
+        Update-teacher
+      </span>
+    </li>
+    <% } %> -->
   </ul>
 
   <div>

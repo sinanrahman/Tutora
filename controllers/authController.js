@@ -127,7 +127,7 @@ exports.login = async (req, res) => {
 		if (role === 'teacher') {
 			user = await Teacher.findOne({ email }).select('+password')
 
-			if (!user || user.status !== 'active') {
+			if (!user || user.status !== 'teacher') {
 				return renderLoginWithMsg(res, role, 'Invalid credentials')
 			}
 
@@ -142,7 +142,7 @@ exports.login = async (req, res) => {
 		if (role === 'coordinator') {
 			user = await Coordinator.findOne({ email }).select('+password')
 
-			if (!user || user.status !== 'active') {
+			if (!user || user.status !== 'coordinator') {
 				return renderLoginWithMsg(res, role, 'Invalid credentials')
 			}
 
