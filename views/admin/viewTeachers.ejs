@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <title>Teachers</title>
@@ -8,152 +7,99 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css">
   <link rel="stylesheet" href="/css/admin/viewTeachers.css">
+  <style>
+    .heading {
+      color: #870216;
+    }
+  </style>
 </head>
-<style>
-  .heading{
-    color: #870216;
-  }
-</style>
-
 <body class="bg-light">
+
   <%- include('partials/navbar') %>
   <%- include('./partials/sidebar') %>
-    <div class="main-content p-5">
-      <div class="container">
-        <div class="d-flex flex-column justify-content-center align-items-center mb-5">
-          <h4 class="fw-bold fs-2 mb-3 heading">TEACHERS</h4>
-          <a href="/admin/addteachers" class="btn btn-success btn-sm">
-            <i class="bi bi-plus"></i> Add Teacher
-          </a>
-        </div>
-        <div class="card shadow-sm">
-          <div class="table-responsive">
-            <table id="example" class="table table-bordered table-hover align-middle mb-0 text-nowrap">
-              <thead class="table-light text-muted small">
-                <tr>
-                  <th class="text-center" style="width:60px;">sl no</th>
-                  <th>Teacher</th>
-                  <th>Contact</th>
-                  <th>Subjects</th>
-                  <th>Qualification</th>
-                  <th class="text-center">Experience</th>
-                  <th class="text-center">Total Hours</th>
-                  <th class="text-center">Rate (₹)</th>
-                  <th class="text-center">Status</th>
-                  <th class="text-center">Actions</th>
 
+  <div class="main-content p-5">
+    <div class="container">
+      <div class="d-flex flex-column justify-content-center align-items-center mb-5">
+        <h4 class="fw-bold fs-2 mb-3 heading">TEACHERS</h4>
+        <a href="/admin/addteachers" class="btn btn-success btn-sm">
+          <i class="bi bi-plus"></i> Add Teacher
+        </a>
+      </div>
+      <div class="card shadow-sm">
+        <div class="table-responsive">
+          <table id="example" class="table table-bordered table-hover align-middle mb-0 text-nowrap">
+            <thead class="table-light text-muted small">
+              <tr>
+                <th class="text-center" style="width:60px;">Sl No</th>
+                <th>Teacher</th>
+                <th>ID</th>
+                <th>Subjects</th>
+                <th class="text-center">Total Hours</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (!teachers || teachers.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-4">
+                    No teachers found
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                <% if (!teachers || teachers.length===0) { %>
+              <% } else { %>
+                <% teachers.forEach((teacher, index) => { %>
                   <tr>
-                    <td colspan="9" class="text-center text-muted py-4">
-                      No teachers found
+                    <td class="text-center fw-semibold">
+                      <%= index + 1 %>
+                    </td>
+                    <td class="fw-semibold">
+                      <%= teacher.fullName %>
+                    </td>
+                    <td class="small text-muted">
+                      <%= teacher._id %>
+                    </td>
+                    <td>
+                      <% if (teacher.subjects && teacher.subjects.length) { %>
+                        <% teacher.subjects.forEach(sub => { %>
+                          <span class="badge bg-light text-dark border me-1 mb-1">
+                            <%= sub %>
+                          </span>
+                        <% }) %>
+                      <% } else { %>
+                        <span class="text-muted">—</span>
+                      <% } %>
+                    </td>
+                    <td class="text-center fw-semibold">
+                      <%= teacher.totalHours || 0 %> hrs
+                    </td>
+                    <td class="text-center">
+                      <span class="badge <%= teacher.status === 'teacher' ? 'bg-success' : 'bg-secondary' %>">
+                        <%= teacher.status %>
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <a
+                        href="/admin/teachers/profile/<%= teacher._id %>"
+                        class="btn btn-outline-primary btn-sm"
+                      >
+                        View
+                      </a>
                     </td>
                   </tr>
-                  <% } else { %>
-                    <% teachers.forEach((teacher, index)=> { %>
-                      <tr>
-                        <td class="text-center fw-semibold">
-                          <%= index + 1 %>
-                        </td>
-                        <td>
-                          <div class="d-flex align-items-center gap-3">
-                            <% if (teacher.profilePic?.url) { %>
-                              <img src="<%= teacher.profilePic.url %>" width="42" height="42" class="rounded-circle"
-                                style="object-fit:cover;">
-                              <% } else { %>
-                                <div
-                                  class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
-                                  style="width:42px;height:42px;">
-                                  <%= teacher.fullName.charAt(0).toUpperCase() %>
-                                </div>
-                                <% } %>
-                                  <div class="d-flex flex-column justify-content-center">
-                                    <div class="fw-semibold">
-                                      <%= teacher.fullName %>
-                                    </div>
-                                    <div class="text-muted small">
-                                      <%= teacher.email %>
-                                    </div>
-                                  </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="d-flex-center">
-                            <i class="bi bi-telephone"></i>
-                            <span>
-                              <%= teacher.phone || '—' %>
-                            </span>
-                          </div>
-                        </td>
-                        <td class="subjects-column">
-                          <% if (teacher.subjects?.length) { %>
-                            <% teacher.subjects.forEach(sub=> { %>
-                              <span class="subject-item text-dark">
-                                <%= sub %>
-                              </span>
-                              <% }) %>
-                                <% } else { %>
-                                  <span class="text-muted">—</span>
-                                  <% } %>
-                        </td>
-                        <td>
-                          <% if (teacher.qualification?.degree) { %>
-                            <div class="fw-semibold">
-                              <%= teacher.qualification.degree %>
-                            </div>
-                            <div class="text-muted small">
-                              <%= teacher.qualification.field %>
-                            </div>
-                            <% if (teacher.qualification.institution) { %>
-                              <div class="text-muted small">
-                                <i class="bi bi-building"></i>
-                                <%= teacher.qualification.institution %>
-                              </div>
-                              <% } %>
-                                <% } else { %>
-                                  <span class="text-muted">—</span>
-                                  <% } %>
-                        </td>
-                        <td class="text-center">
-                          <%= teacher.experienceYears || 0 %> yrs
-                        </td>
-                        <td class="text-center fw-semibold">
-                          <%= teacher.totalHours || 0 %> hrs
-                        </td>
-
-                        <td class="text-center">₹<%= teacher.hourlyRate %>
-                        </td>
-                        <td class="text-center">
-                          <span class="badge <%= teacher.status === 'active' ? 'bg-success' : 'bg-secondary' %>">
-                            <%= teacher.status %>
-                          </span>
-                        </td>
-
-                        <td class="text-center">
-                          <div class="actions-buttons">
-                            <a href="/admin/teachers/profile/<%= teacher._id %>"
-                              class="btn btn-outline-primary btn-sm text-primary">View</a>
-
-                          </div>
-                        </td>
-                      </tr>
-                      <% }) %>
-                        <% } %>
-              </tbody>
-            </table>
-          </div>
+                <% }) %>
+              <% } %>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
-
-    <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      new DataTable('#example')
-    </script>
+  </div>
+  <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    new DataTable('#example');
+  </script>
 </body>
-
 </html>
