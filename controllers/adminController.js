@@ -560,3 +560,54 @@ exports.teacherSessionHistory = async (req, res) => {
 	}
 };
 
+exports.getUpdateTeacher = async(req,res) =>{
+	try{
+		const coord = await Admin.findById(req.user.id)
+		const teachers = await Teacher.find()
+		// const assignedTeachers = await Student.findOne({_id:req.params.studentId}).select("assignedTeachers").populate('assignedTeachers')
+		const { assignedTeachers } = await Student.findOne({ _id: req.params.studentId })
+										  .select("assignedTeachers")
+										  .populate('assignedTeachers');
+		
+		return res.render('admin/updateTeacher',{
+			activePage:'update-teacher',
+			username:coord.fullName,
+			t:teachers,
+			assignedTeachers,
+			studentId:req.params.studentId
+
+		})
+	}catch(e){
+		console.log('error while rendering update teacher',e)
+		return res.redirect(`/admin/dashboard`)
+	}
+}
+
+
+exports.addUpdateTeacher = async (req, res) => {
+	try {
+		// $addToSet acts like push, but prevents duplicates
+		await Student.findByIdAndUpdate(req.params.studentId, {
+			$addToSet: { assignedTeachers: req.params.teacherId }
+		});
+
+		return res.redirect(`/admin/update-teacher/${req.params.studentId}`);
+	} catch (e) {
+		console.log('error while assigning teacher', e);
+		return res.redirect(`/admin/dashboard`);
+	}
+}
+
+exports.removeUpdateTeacher = async (req, res) => {
+	try {
+		// $pull removes the specific ID from the array
+		await Student.findByIdAndUpdate(req.params.studentId, {
+			$pull: { assignedTeachers: req.params.teacherId }
+		});
+
+		return res.redirect(`/admin/update-teacher/${req.params.studentId}`);
+	} catch (e) {
+		console.log('error while removing assigned teacher', e);
+		return res.redirect(`/admin/dashboard`);
+	}
+}
