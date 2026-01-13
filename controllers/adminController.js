@@ -93,9 +93,19 @@ exports.viewStudentDetails = async (req, res) => {
 			status: 'APPROVED',
 		}).select('durationInHours');
 
+<<<<<<< HEAD
+		const totalHours = sessions.reduce(
+			(sum, s) => sum + s.durationInHours,
+			0
+		);
+		stud.totalSessionHours = totalHours;
+		res.render('admin/viewStudentDetails', { student: stud, activePage: 'students' });
+
+=======
 		const totalHours = sessions.reduce((sum, s) => sum + s.durationInHours, 0);
 		stud.totalSessionHours = totalHours;
 		res.render('admin/viewStudentDetails', { student: stud, activePage: 'students' });
+>>>>>>> 45280341ae3b8cf9ee540dfbdfa14419500eca73
 	} catch (err) {
 		console.error(err);
 		res.send('Error loading student details');
@@ -186,7 +196,11 @@ exports.viewCoordinatorDetails = async (req, res) => {
 
 		const coord = await coordinator
 			.findById(id)
-			.populate('assignedStudents', 'fullName email standard')
+			.populate({
+				path: 'assignedStudents',
+				match: { status: 'student' }, 
+				select: 'fullName email standard'
+			})
 			.lean();
 
 		if (!coord) {
@@ -195,8 +209,14 @@ exports.viewCoordinatorDetails = async (req, res) => {
 
 		res.render('admin/viewCoordinatorDetails', {
 			coordinator: coord,
+<<<<<<< HEAD
+			activePage: 'coordinators'
+		});
+
+=======
 			activePage: 'coordinators',
 		});
+>>>>>>> 45280341ae3b8cf9ee540dfbdfa14419500eca73
 	} catch (err) {
 		console.log(err);
 		res.send('Error loading coordinator details');
@@ -350,7 +370,11 @@ exports.viewTeacherProfile = async (req, res) => {
 		res.render('admin/teacherProfile', {
 			teacher,
 			totalHours,
+<<<<<<< HEAD
+			activePage: 'teachers'
+=======
 			activePage: 'teachers',
+>>>>>>> 45280341ae3b8cf9ee540dfbdfa14419500eca73
 		});
 	} catch (error) {
 		console.error(error);
@@ -366,7 +390,11 @@ exports.getEditTeacher = async (req, res) => {
 		}
 		res.render('admin/editTeacher', {
 			teacher,
+<<<<<<< HEAD
+			activePage: 'teachers'
+=======
 			activePage: 'teachers',
+>>>>>>> 45280341ae3b8cf9ee540dfbdfa14419500eca73
 		});
 	} catch (error) {
 		console.error('Get Edit Teacher Error:', error);
@@ -442,6 +470,8 @@ exports.deleteTeacher = async (req, res) => {
 	}
 };
 
+<<<<<<< HEAD
+=======
 //assigning
 exports.assignStudentsPage = async (req, res) => {
 	try {
@@ -533,6 +563,7 @@ exports.removeAssignedStudent = async (req, res) => {
 	}
 };
 
+>>>>>>> 45280341ae3b8cf9ee540dfbdfa14419500eca73
 exports.changeCoordinatorPassword = async (req, res) => {
 	try {
 		const { id } = req.params;
@@ -585,6 +616,19 @@ exports.changeTeacherPassword = async (req, res) => {
 exports.studentSessionHistory = async (req, res) => {
 	try {
 		const studentId = req.params.id;
+<<<<<<< HEAD
+		const studentName = await Student.findById(req.params.id).select('fullName')
+
+		const studentSessions = await Session.find({
+			student: studentId,
+			status: "APPROVED"
+		})
+			.populate('teacher', 'fullName') // _id is included by default
+			.sort({ createdAt: -1 })
+		// .lean(); // <--- Faster performance for read-only data
+
+		return res.render('admin/viewstudenthistory', { ssHistory: studentSessions, studentName });
+=======
 		const studentName = await Student.findById(req.params.id).select('fullName');
 
 		const studentSessions = await Session.find({
@@ -600,6 +644,7 @@ exports.studentSessionHistory = async (req, res) => {
 			studentName,
 			activePage: 'students',
 		});
+>>>>>>> 45280341ae3b8cf9ee540dfbdfa14419500eca73
 	} catch (error) {
 		console.error('Error fetching session history:', error);
 		// It is safer to render an error page or flash message than redirecting blindly
@@ -609,6 +654,15 @@ exports.studentSessionHistory = async (req, res) => {
 exports.teacherSessionHistory = async (req, res) => {
 	try {
 		const teacherId = req.params.id;
+<<<<<<< HEAD
+		const teacherName = await Teacher.findById(req.params.id).select('fullName')
+		const teacherSessions = await Session.find({
+			teacher: teacherId,
+			status: "APPROVED"
+		})
+			.populate('student', 'fullName') // _id is included by default
+			.sort({ createdAt: -1 })
+=======
 		const teacherName = await Teacher.findById(req.params.id).select('fullName');
 		const teacherSessions = await Session.find({
 			teacher: teacherId,
@@ -616,6 +670,7 @@ exports.teacherSessionHistory = async (req, res) => {
 		})
 			.populate('student', 'fullName') // _id is included by default
 			.sort({ createdAt: -1 });
+>>>>>>> 45280341ae3b8cf9ee540dfbdfa14419500eca73
 		// .lean(); // <--- Faster performance for read-only data
 
 		return res.render('admin/viewteacherhistory', { tsHistory: teacherSessions, teacherName });

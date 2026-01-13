@@ -8,6 +8,7 @@ router
   .route('/addstudents')
   .get(protect, authorize('ADMIN'), addStudents)
   .post(protect, authorize('ADMIN'), postAddStudent)
+
 router
   .route('/viewstudents')
   .get(protect, authorize('ADMIN'), viewStudents)
@@ -15,6 +16,7 @@ router
 router
   .route('/viewstudentdetails/:id')
   .get(protect, authorize('ADMIN'),viewStudentDetails)
+
 router
   .route('/students/delete/:id')
   .get(protect, authorize('ADMIN'), deleteStudent)
@@ -26,6 +28,7 @@ router
 router
   .route('/students/update/:id')
   .post(protect, authorize('ADMIN'), updateStudent)
+
 router
   .route('/students/history/:id')
   .get(protect, authorize('ADMIN'), studentSessionHistory)
@@ -34,6 +37,8 @@ router
   .route('/addcoordinators')
   .get(protect, authorize('ADMIN'), addCoordinators)
   .post(protect, authorize('ADMIN'), postAddCoordinator)
+
+  
 router
   .route('/viewcoordinators')
   .get(protect, authorize('ADMIN'), viewCoordinator)
@@ -45,7 +50,6 @@ router
 router
   .route('/coordinators/delete/:id')
   .post(protect, authorize('ADMIN'), deleteCoordinator)
-
 
 router
   .route('/coordinators/edit/:id')
@@ -61,11 +65,6 @@ router
 
 router
   .get('/dashboard', protect, authorize('ADMIN'), dashboard)
-
-router
-  .route("/assignstudents/:id")
-  .get(protect, authorize('ADMIN'),assignStudentsPage)
-  .post(protect, authorize('ADMIN'),assignStudents)
 
 router
   .route('/addteachers')
@@ -88,13 +87,10 @@ router
 router
   .route('/teachers/delete/:id')
   .post(protect, authorize('ADMIN'),deleteTeacher)
+
 router
   .route('/teachers/history/:id')
   .get(protect, authorize('ADMIN'), teacherSessionHistory)
-
-router
-  .route('/assignstudents/:coordId/:studentId')
-  .post(protect, authorize('ADMIN'),removeAssignedStudent)
 
 router
   .route('/teachers/change-password/:id')
