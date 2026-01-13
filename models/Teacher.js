@@ -72,7 +72,7 @@ const teacherSchema = new mongoose.Schema(
 
 		status: {
 			type: String,
-			enum: ['teacher', 'alumini'],
+			enum: ['teacher', 'alumni'],
 			default: 'teacher',
 		},
 	},

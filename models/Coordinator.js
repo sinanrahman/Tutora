@@ -26,7 +26,7 @@ const coordinatorSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ['coordinator', 'alumini'],
+            enum: ['coordinator', 'alumni'],
             default: 'coordinator',
         },
     },

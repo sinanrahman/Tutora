@@ -40,7 +40,7 @@ const studentSchema = new mongoose.Schema(
 		},
 		status: {
 			type: String,
-			enum: ['student', 'alumini'],
+			enum: ['student', 'alumni'],
 			default: 'student',
 		},
 		coordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'Coordinator' },
