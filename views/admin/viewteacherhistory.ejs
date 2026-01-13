@@ -11,14 +11,20 @@
 			crossorigin="anonymous"
 		/>
 	</head>
+	<style>
+		.heading {
+			color: #870216;
+		}
+	</style>
 
 	<body>
-		<%- include('../partials/navbar') %> <%- include('../partials/sidebar') %>
-		<div class="container p-5">
-			<div class="row mt-5">
-				<div class="col">
-					<h3 class="mb-3">Teacher Session History [ <%=teacherName.fullName%> ]</h3>
-					<table class="table table-bordered table-hover">
+		<%- include('./partials/navbar') %> <%- include('./partials/sidebar') %>
+		<div class="main-content p-5">
+			<h3 class="fw-bold pt-4 mb-4 text-center heading">Teacher Session History</h3>
+			<h3 class="mb-3 text-success"><%=teacherName.fullName%></h3>
+			<div class="card shadow-sm border-0">
+				<div class="card-body p-0">
+					<table class="table table-bordered mb-0">
 						<thead>
 							<tr>
 								<th scope="col">SI NO</th>
@@ -41,6 +47,11 @@
 							<%})%>
 						</tbody>
 					</table>
+				</div>
+			</div>
+			<div class="row g-2 mt-4">
+				<div class="col-md-3 col-12">
+					<a href="/admin/viewstudents" class="btn btn-secondary w-100">Back</a>
 				</div>
 			</div>
 		</div>
