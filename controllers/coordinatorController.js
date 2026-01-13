@@ -67,6 +67,8 @@ exports.coordinatorDashboard = async (req, res) => {
 			coord,
 			students,
 			teachers,
+			activePage:"dashboard",
+			username:coord.fullName
 		});
 	} catch (err) {
 		console.error(err);
@@ -133,6 +135,8 @@ exports.getStudentProfile = async (req, res) => {
 			student,
 			coord,
 			totalHours,
+			activePage:"student-profile",
+			username:coord.fullName
 		});
 	} catch (err) {
 		console.error(err);
@@ -207,6 +211,8 @@ exports.getSessionApprovalPage = async (req, res) => {
 			coord,
 			pendingSessions,
 			approvedSessions,
+			activePage:"session",
+			username:coord.fullName
 		});
 	} catch (err) {
 		console.error(err);
@@ -242,3 +248,12 @@ exports.approveSession = async (req, res) => {
 		res.status(500).send('Error processing session');
 	}
 };
+
+exports.getUpdateTeacher = async(req,res) =>{
+	try{
+		return res.render('coordinator/update-teacher')
+	}catch(e){
+		console.log('error while rendering update teacher',e)
+		return res.redirect(`/coordinator/dashboard`)
+	}
+}

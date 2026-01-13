@@ -4,7 +4,8 @@ const {
     getAssignedStudents,
     getStudentProfile,
     assignTeachers, getSessionApprovalPage,
-    approveSession
+    approveSession,
+    getUpdateTeacher
 } = require('../controllers/coordinatorController')
 
 const { protect } = require('../middlewares/authMiddleware')
@@ -53,5 +54,11 @@ router.post(
     authorize('COORDINATOR'),
     approveSession
 );
+router.get(
+    '/update-teacher/:studentId',
+    protect,
+    authorize('COORDINATOR'),
+    getUpdateTeacher
+)
 
 module.exports = router

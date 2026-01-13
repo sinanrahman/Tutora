@@ -48,39 +48,40 @@
   <ul class="nav flex-column">
 
     <li
+      class="nav-item mb-2 fw-bold">
+      <a href="/coordinator/Dashboard" class="nav-link t text-black">
+        Coordinator Panel
+      </a>
+    </li>
+
+    <li
       class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'dashboard' ? 'active' : '' %>">
-      <a href="/admin/Dashboard" class="nav-link text-black">
+      <a href="/coordinator/Dashboard" class="nav-link text-black">
         Dashboard
       </a>
     </li>
 
     <li
-      class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'students' ? 'active' : '' %>">
-      <a href="/admin/viewstudents" class="nav-link text-black">
-        Students
+      class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'session' ? 'active' : '' %>">
+      <a href="/coordinator/session-approval" class="nav-link text-black">
+        Session
       </a>
     </li>
-
-    <li
-      class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'coordinators' ? 'active' : '' %>">
-      <a href="/admin/viewcoordinators" class="nav-link text-black">
-        Coordinators
+    <% if(activePage === 'student-profile'){%>
+        <li
+      class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'student-profile' ? 'active' : '' %>">
+      <a href="/coordinator/session-approval" class="nav-link text-black">
+        Student-Profile
       </a>
     </li>
-
-    <li
-      class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'teachers' ? 'active' : '' %>">
-      <a href="/admin/viewteachers" class="nav-link text-black">
-        Teachers
-      </a>
-    </li>
+    <% } %>
   </ul>
 
   <div>
     <div class="text-center mb-3">
       <i class="bi bi-person-circle fs-2"></i>
       <h6 class="mt-2 mb-0 text-dark">
-        <%= admin?.username %>
+        <%= username %>
       </h6>
     </div>
 

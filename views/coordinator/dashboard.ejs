@@ -24,11 +24,12 @@
 </head>
 
 <body>
+<%-include('../admin/partials/navbar') %>
 
-     <%-include('../partials/coordinatorNavbar')%>
-    <div class="main-content">
+     <%-include('../partials/coordinatorSidebar')%>
+    <div class="main-content py-5">
 
-      <h4 class="fw-bold mb-2">My Assigned Students</h4>
+      <h4 class="fw-bold mb-2 mt-3">My Assigned Students</h4>
       <p class="text-muted">
         Coordinator: <strong>
           <%= coord.fullName %>
