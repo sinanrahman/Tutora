@@ -67,6 +67,8 @@ exports.coordinatorDashboard = async (req, res) => {
 			coord,
 			students,
 			teachers,
+			activePage:"dashboard",
+			username:coord.fullName
 		});
 	} catch (err) {
 		console.error(err);
@@ -133,6 +135,8 @@ exports.getStudentProfile = async (req, res) => {
 			student,
 			coord,
 			totalHours,
+			activePage:"student-profile",
+			username:coord.fullName
 		});
 	} catch (err) {
 		console.error(err);
@@ -213,6 +217,8 @@ exports.getSessionApprovalPage = async (req, res) => {
 			coord,
 			pendingSessions,
 			approvedSessions,
+			activePage:"session",
+			username:coord.fullName
 		});
 	} catch (err) {
 		console.error(err);
@@ -244,3 +250,54 @@ exports.approveSession = async (req, res) => {
 	}
 };
 
+exports.getUpdateTeacher = async(req,res) =>{
+	try{
+		const coord = await Coordinator.findById(req.user.id)
+		const teachers = await Teacher.find()
+		// const assignedTeachers = await Student.findOne({_id:req.params.studentId}).select("assignedTeachers").populate('assignedTeachers')
+		const { assignedTeachers } = await Student.findOne({ _id: req.params.studentId })
+                                          .select("assignedTeachers")
+                                          .populate('assignedTeachers');
+		
+		return res.render('coordinator/update-teacher',{
+			activePage:'update-teacher',
+			username:coord.fullName,
+			t:teachers,
+			assignedTeachers,
+			studentId:req.params.studentId
+
+		})
+	}catch(e){
+		console.log('error while rendering update teacher',e)
+		return res.redirect(`/coordinator/dashboard`)
+	}
+}
+
+
+exports.addUpdateTeacher = async (req, res) => {
+    try {
+        // $addToSet acts like push, but prevents duplicates
+        await Student.findByIdAndUpdate(req.params.studentId, {
+            $addToSet: { assignedTeachers: req.params.teacherId }
+        });
+
+        return res.redirect(`/coordinator/update-teacher/${req.params.studentId}`);
+    } catch (e) {
+        console.log('error while assigning teacher', e);
+        return res.redirect(`/coordinator/dashboard`);
+    }
+}
+
+exports.removeUpdateTeacher = async (req, res) => {
+    try {
+        // $pull removes the specific ID from the array
+        await Student.findByIdAndUpdate(req.params.studentId, {
+            $pull: { assignedTeachers: req.params.teacherId }
+        });
+
+        return res.redirect(`/coordinator/update-teacher/${req.params.studentId}`);
+    } catch (e) {
+        console.log('error while removing assigned teacher', e);
+        return res.redirect(`/coordinator/dashboard`);
+    }
+}
