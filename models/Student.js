@@ -7,7 +7,6 @@ const studentSchema = new mongoose.Schema(
 			required: true,
 			trim: true,
 		},
-
 		email: {
 			type: String,
 			required: true,
@@ -15,18 +14,11 @@ const studentSchema = new mongoose.Schema(
 			lowercase: true,
 			trim: true,
 		},
-
 		phone: {
 			type: String,
 			required: true,
 			trim: true,
 		},
-		gender: {
-			type: String,
-			enum: ['male', 'female', 'other'],
-			default: 'male',
-		},
-
 		country: {
 			type: String,
 			required: true,
@@ -48,8 +40,8 @@ const studentSchema = new mongoose.Schema(
 		},
 		status: {
 			type: String,
-			enum: ['active', 'inactive'],
-			default: 'active',
+			enum: ['student', 'alumini'],
+			default: 'student',
 		},
 		coordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'Coordinator' },
 		assignedTeachers: [
