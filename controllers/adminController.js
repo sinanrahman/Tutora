@@ -251,7 +251,7 @@ exports.updateCoordinator = async (req, res) => {
 // teacher
 
 exports.addTeacher = (req, res) => {
-	res.render('admin/addTeachers');
+	res.render('admin/addTeachers',{activePage: 'teacher'});
 };
 
 exports.createTeacher = async (req, res) => {
