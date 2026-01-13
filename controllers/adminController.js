@@ -487,6 +487,9 @@ exports.assignStudentsPage = async (req, res) => {
 				studentsToShow.push(s);
 			}
 		}
+
+
+
 		res.render("admin/assignstudents", {
 			coord,
 			students: studentsToShow,

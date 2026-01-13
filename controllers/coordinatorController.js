@@ -193,15 +193,21 @@ exports.getSessionApprovalPage = async (req, res) => {
 		const coord = await Coordinator.findById(req.user.id);
 		if (!coord) return res.status(404).send('Coordinator not found');
 
-		const pendingSessions = await Session.find({ status: 'PENDING' })
+		const pendingSessions = await Session.find({
+			status: 'PENDING',
+		})
 			.populate('student', 'fullName')
 			.populate('teacher', 'fullName')
 			.sort({ createdAt: -1 });
 
-		const approvedSessions = await Session.find({ status: { $in: ['APPROVED', 'REJECTED'] } })
-			.populate('student', 'fullName')
-			.populate('teacher', 'fullName')
-			.sort({ updatedAt: -1 });
+	const approvedSessions = await Session.find({
+  status: 'APPROVED',
+ 
+})
+.populate('student', 'fullName')
+.populate('teacher', 'fullName')
+.sort({ updatedAt: -1 });
+
 
 		res.render('coordinator/session-approval', {
 			coord,
@@ -213,32 +219,28 @@ exports.getSessionApprovalPage = async (req, res) => {
 		res.status(500).send('Error loading session approvals');
 	}
 };
-
 exports.approveSession = async (req, res) => {
 	try {
-		const { action, durationInHours } = req.body;
+		const { durationInHours } = req.body;
 
 		const session = await Session.findById(req.params.id);
 		if (!session) {
-			return res.status(404).send('Session not found');
+			return res.status(404).json({ error: 'Session not found' });
 		}
 
-		if (action === 'approve') {
-			if (!durationInHours || isNaN(durationInHours) || durationInHours < 0.25) {
-				return res.status(400).send('Duration must be at least 0.25 hours');
-			}
-			session.durationInHours = Number(durationInHours);
-			session.status = 'APPROVED';
-		} else if (action === 'reject') {
-			session.status = 'REJECTED';
-		} else {
-			return res.status(400).send('Invalid action');
+		const duration = Number(durationInHours);
+		if (isNaN(duration) || duration < 0) {
+			return res.status(400).json({ error: 'Invalid duration' });
 		}
 
+		session.durationInHours = duration;
+		session.status = 'APPROVED';
 		await session.save();
-		res.redirect('/coordinator/session-approval');
+
+		res.json({ success: true });
 	} catch (err) {
 		console.error(err);
-		res.status(500).send('Error processing session');
+		res.status(500).json({ error: err.message });
 	}
 };
+

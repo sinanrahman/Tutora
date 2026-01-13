@@ -29,6 +29,7 @@ const coordinatorSchema = new mongoose.Schema(
             enum: ['coordinator', 'alumni'],
             default: 'coordinator',
         },
+
     },
     { 
         timestamps: true,
