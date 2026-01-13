@@ -22,7 +22,7 @@
   }
 
   .sidebar-header h5 {
-    color: #ff2e4b;
+    color: black;
     font-weight: 700;
     margin: 0;
   }
@@ -34,14 +34,15 @@
     font-size: 0.95rem;
   }
 
-  #sidebar .nav-link:hover {
-    background: #fa8d9b;
+   #sidebar .nav-item.active .nav-link {
+    background-color: #ff2e4b;
+    color: #fff !important;
+    font-weight: 600;
   }
 
-  #sidebar .nav-item.active .nav-link {
-    background: #ff2e4b;
-    color: #fff;
-    font-weight: 600;
+  #sidebar .nav-link:hover {
+    background-color: #fa8d9b;
+    color: #000;
   }
 
   /* MAIN CONTENT */
@@ -67,13 +68,13 @@
     </div>
 
     <ul class="nav flex-column gap-2">
-      <li class="nav-item mb-2 border border-1 border-dark-subtle rounded-2">
+      <li class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'dashboard' ? 'active' : '' %>">
         <a href="/teacher/dashboard" class="nav-link text-black">
           <i class="bi bi-house-door me-2"></i>Dashboard
         </a>
       </li>
 
-      <li class="nav-item mb-2 border border-1 border-dark-subtle rounded-2">
+      <li class="nav-item mb-2 border border-1 border-dark-subtle rounded-2 <%= activePage === 'sessions' ? 'active' : '' %>">
         <a href="/teacher/sessions" class="nav-link text-black">
           <i class="bi bi-list-ul me-2"></i>Session List
         </a>

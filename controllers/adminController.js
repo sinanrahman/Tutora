@@ -210,7 +210,11 @@ exports.viewCoordinatorDetails = async (req, res) => {
 
 		const coord = await coordinator
 			.findById(id)
-			.populate('assignedStudents', 'fullName email standard')
+			.populate({
+				path: 'assignedStudents',
+				match: { status: 'student' }, 
+				select: 'fullName email standard'
+			})
 			.lean();
 
 		if (!coord) {
@@ -464,100 +468,6 @@ exports.deleteTeacher = async (req, res) => {
 	} catch (error) {
 		console.error('Delete Teacher Error:', error);
 		res.status(500).send('Server Error');
-	}
-};
-
-//assigning
-exports.assignStudentsPage = async (req, res) => {
-	try {
-		const coordinatorId = req.params.id;
-
-		const coord = await coordinator.findById(coordinatorId).populate('assignedStudents');
-
-		if (!coord) {
-			return res.send('Coordinator not found');
-		}
-		const allStudents = await student.find({ status: 'active' });
-
-		const studentsToShow = [];
-		for (const s of allStudents) {
-			if (!s.coordinator) {
-				studentsToShow.push(s);
-			} else if (s.coordinator.toString() === coordinatorId.toString()) {
-				studentsToShow.push(s);
-			}
-		}
-
-
-
-		res.render("admin/assignstudents", {
-			coord,
-			students: studentsToShow,
-			activePage: 'coordinators'
-		});
-
-	} catch (err) {
-		console.log(err);
-		res.send("Error loading assign page");
-	}
-};
-
-exports.assignStudents = async (req, res) => {
-	try {
-		const coordinatorId = req.params.id;
-		let selectedStudents = req.body.students;
-		if (!selectedStudents) {
-			return res.redirect(`/admin/assignstudents/${coordinatorId}`);
-		}
-		if (!Array.isArray(selectedStudents)) {
-			selectedStudents = [selectedStudents];
-		}
-		const currentlyAssigned = await student.find({ coordinator: coordinatorId });
-
-		for (const s of currentlyAssigned) {
-			s.coordinator = null;
-			await s.save();
-		}
-		const assignedIds = [];
-
-		for (const id of selectedStudents) {
-			const s = await student.findById(id);
-
-			if (!s) continue;
-			if (s.coordinator && s.coordinator.toString() !== coordinatorId.toString()) {
-				continue;
-			}
-
-			s.coordinator = coordinatorId;
-			await s.save();
-
-			assignedIds.push(s._id);
-		}
-		const coord = await coordinator.findById(coordinatorId);
-		coord.assignedStudents = assignedIds;
-		await coord.save();
-
-		res.redirect(`/admin/assignstudents/${coordinatorId}`);
-	} catch (err) {
-		console.log(err);
-		res.send('Error assigning students');
-	}
-};
-
-exports.removeAssignedStudent = async (req, res) => {
-	try {
-		const { coordId, studentId } = req.params;
-		const coord = await coordinator.findById(coordId);
-		coord.assignedStudents = coord.assignedStudents.filter((id) => id.toString() !== studentId);
-		await coord.save();
-		const stu = await student.findById(studentId);
-		stu.coordinator = null;
-		await stu.save();
-
-		res.redirect(`/admin/assignstudents/${coordId}`);
-	} catch (err) {
-		console.log(err);
-		res.send('Error removing student');
 	}
 };
 

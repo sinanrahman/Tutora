@@ -4,7 +4,10 @@ const {
     getAssignedStudents,
     getStudentProfile,
     assignTeachers, getSessionApprovalPage,
-    approveSession
+    approveSession,
+    getUpdateTeacher,
+    removeUpdateTeacher,
+    addUpdateTeacher
 } = require('../controllers/coordinatorController')
 
 const { protect } = require('../middlewares/authMiddleware')
@@ -53,5 +56,23 @@ router.post(
     authorize('COORDINATOR'),
     approveSession
 );
+router.get(
+    '/update-teacher/:studentId',
+    protect,
+    authorize('COORDINATOR'),
+    getUpdateTeacher
+)
+router.get(
+    '/update-teacher/:studentId/add/:teacherId',
+    protect,
+    authorize('COORDINATOR'),
+    addUpdateTeacher
+)
+router.get(
+    '/update-teacher/:studentId/remove/:teacherId',
+    protect,
+    authorize('COORDINATOR'),
+    removeUpdateTeacher
+)
 
 module.exports = router

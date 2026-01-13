@@ -7,10 +7,14 @@
 </head>
 <body>
 
-<%- include('../partials/coordinatorNavbar') %>
+<%-include('../admin/partials/navbar') %>
+     <%-include('../partials/coordinatorSidebar')%>
 
-<div class="container mt-4">
-  <h3 class="fw-bold">Student Profile</h3>
+
+<div class="container mt-5 ">
+  <div class="row d-flex justify-content-center mt-5">
+    <div class="col-4 mt-5">
+      <h3 class="fw-bold text-center text-secondary">Student Profile</h3>
 
   <div class="card shadow-sm mt-3">
     <div class="card-body">
@@ -43,7 +47,12 @@
 
       <h5>Total Attended Hours</h5>
       <p class="fs-5 fw-bold text-primary"><%= totalHours %> hours</p>
+      <div class="button__container d-flex justify-content-end">
+        <a href="/coordinator/update-teacher/<%=student._id%>"class="btn btn-warning">Update Teacher</a>
 
+      </div>
+    </div>
+  </div>
     </div>
   </div>
 </div>
