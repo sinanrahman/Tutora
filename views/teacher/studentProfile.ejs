@@ -13,10 +13,12 @@
     }
 </style>
 <body>
+	<%-include('../partials/teacherSidebar',{user})%>
+    <%- include('../admin/partials/navbar') %>
 
-<%- include('../partials/teacherNavbar') %>
-
-<div class="container mt-4">
+	<div class="main-content">
+			<div class="container-fluid">
+<div class="container mt-4 p-5">
   <h3 class="fw-bold heading text-center">STUDENT PROFILE</h3>
 
   <div class="card shadow-sm mt-3">
@@ -48,6 +50,7 @@
     </div>
   </div>
 </div>
-
+</div>
+</div>
 </body>
 </html>
