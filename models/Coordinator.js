@@ -29,6 +29,7 @@ const coordinatorSchema = new mongoose.Schema(
             enum: ['active', 'inactive'],
             default: 'active',
         },
+
     },
     { 
         timestamps: true,

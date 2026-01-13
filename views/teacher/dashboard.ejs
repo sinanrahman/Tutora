@@ -11,9 +11,11 @@
 
 </head>
 
-<%-include('../partials/teacherNavbar',{user:teacher})%>
-	<body class="bg-light">
-		<div class="container mt-4">
+<%-include('../partials/teacherSidebar',{user:teacher})%>
+<%- include('../admin/partials/navbar') %>
+<body class="bg-light">
+	<div class="main-content">
+		<div class="container-fluid">
 			<h4 class="fw-bold">My Assigned Students</h4>
 			<p class="text-muted">
 				Teacher:
@@ -71,6 +73,7 @@
 				</div>
 			</div>
 		</div>
+	</div>
   <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
 
@@ -78,5 +81,5 @@
 	  new DataTable('#studentsTable');
 
   </script>
-	</body>
+</body>
 </html>
