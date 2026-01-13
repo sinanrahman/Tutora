@@ -28,7 +28,7 @@ const sessionSchema = new mongoose.Schema(
 		durationInHours: {
 			type: Number,
 			required: true,
-			min: 0.25,
+			min: 0,
 		},
 
 		studentCharge: {

@@ -4,17 +4,21 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Session Requests</title>
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
-	</head>
-	<style>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+		/>
+	</head><style>
 		.heading {
 		color: #870216;
 	}
 	</style>
-	<body>
-		<%-include('../partials/teacherNavbar',{user})%>
+	<body class="bg-light">
 
-		<div class="container mt-5">
+		<%-include('../partials/teacherSidebar',{user})%>
+        <%- include('../admin/partials/navbar') %>
+		<div class="main-content">
+			<div class="container-fluid">
 			<h2 class="heading text-center">SESSION HISTORY</h2>
 
 			<% if (sessions && sessions.length > 0) { %>
@@ -42,10 +46,7 @@
 							<span class="badge bg-warning text-dark">Pending</span>
 							<% } else if(session.status === 'APPROVED') { %>
 							<span class="badge bg-success">Approved</span>
-							<% } else if(session.status === 'REJECTED') { %>
-							<span class="badge bg-danger">Rejected</span>
-							<% } else { %>
-							<span class="badge bg-secondary"><%= session.status || 'Unknown' %></span>
+
 							<% } %>
 						</td>
 					</tr>
