@@ -1,18 +1,18 @@
 
   <style>
   #sidebar {
-    width: 220px;
-    padding-top: 100px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    background-color: #f4f5f7;
-    overflow-y: auto;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-  }
+  width: 220px;
+  padding-top: 100px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background-color: #f4f5f7;
+  overflow-y: auto;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
 
   .nav{
     padding-top: 50px;
@@ -41,9 +41,18 @@
     min-height: 100vh;
     background: #f8f9fa;
   }
+  @media (max-width: 991px) {
+  #sidebar {
+    display: none;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+  }
+}
 </style>
 <body>
-  <nav id="sidebar" class="text-black position-fixed vh-100 p-3 d-flex flex-column justify-content-between">
+<nav id="sidebar" class="d-none d-lg-flex text-black position-fixed vh-100 p-3 flex-column justify-content-between">
 
   <ul class="nav flex-column">
 
@@ -105,8 +114,6 @@
 
 </nav>
 
-
-<!-- Logout Confirmation Modal -->
 <div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow">
