@@ -3,280 +3,253 @@ const Teacher = require('../models/Teacher');
 const Student = require('../models/Student');
 const Session = require('../models/Session');
 
-/**
- * Coordinator Dashboard
- */
-
 const getTodayRange = () => {
-	const start = new Date();
-	start.setHours(0, 0, 0, 0);
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
 
-	const end = new Date();
-	end.setHours(23, 59, 59, 999);
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
 
-	return { start, end };
+    return { start, end };
 };
 
+//      RENDER COORDINATOR DASHBOARD
 exports.coordinatorDashboard = async (req, res) => {
-	try {
-		if (!req.user || !req.user.id) {
-			return res.status(401).send('You must be logged in as a coordinator');
-		}
+    try {
+        if (!req.user || !req.user.id) {
+            return res.render('auth/pageNotFound', { msg: 'Error: You must be logged in as a coordinator' });
+        }
 
-		const coordinatorId = req.user.id;
+        const coordinatorId = req.user.id;
 
-		const coord = await Coordinator.findById(coordinatorId);
-		if (!coord) {
-			return res.status(404).send('Coordinator not found');
-		}
+        const coord = await Coordinator.findById(coordinatorId);
+        if (!coord) {
+            return res.render('auth/pageNotFound', { msg: 'Error: Coordinator not found' });
+        }
 
-		const students = await Student.find({ coordinator: coordinatorId }).populate(
-			'assignedTeachers',
-			'fullName'
-		);
+        const students = await Student.find({ coordinator: coordinatorId }).populate(
+            'assignedTeachers',
+            'fullName'
+        );
 
-		const teachers = await Teacher.find().select('_id fullName subjects');
+        const teachers = await Teacher.find().select('_id fullName subjects');
 
-		// 🔹 DAILY USAGE LOGIC
-		const { start, end } = getTodayRange();
+        const { start, end } = getTodayRange();
 
-		const teacherUsage = await Session.aggregate([
-			{
-				$match: {
-					date: { $gte: start, $lte: end },
-					status: 'APPROVED', // optional but recommended
-				},
-			},
-			{
-				$group: {
-					_id: {
-						teacher: '$teacher',
-						student: '$student',
-					},
-				},
-			},
-			{
-				$group: {
-					_id: '$_id.teacher',
-					count: { $sum: 1 },
-				},
-			},
-		]);
+        // Optional: Aggregation logic for teacherUsage can go here
 
-		res.render('coordinator/dashboard', {
-			coord,
-			students,
-			teachers,
-			activePage:"dashboard",
-			username:coord.fullName
-		});
-	} catch (err) {
-		console.error(err);
-		res.status(500).send('Server error while loading dashboard');
-	}
+        return res.render('coordinator/dashboard', {
+            coord,
+            students,
+            teachers,
+            activePage: "dashboard",
+            username: coord.fullName
+        });
+    } catch (err) {
+        console.error(err);
+        return res.render('auth/pageNotFound', { msg: 'Server error while loading dashboard' });
+    }
 };
 
-/**
- * Assigned Students Page
- */
+//      GET ASSIGNED STUDENTS
 exports.getAssignedStudents = async (req, res) => {
-	try {
-		if (!req.user || !req.user.id) {
-			return res.status(401).send('You must be logged in as a coordinator');
-		}
+    try {
+        if (!req.user || !req.user.id) {
+            return res.render('auth/pageNotFound', { msg: 'Error: You must be logged in as a coordinator' });
+        }
 
-		const coord = await Coordinator.findById(req.user.id);
-		if (!coord) return res.status(404).send('Coordinator not found');
+        const coord = await Coordinator.findById(req.user.id);
+        if (!coord) {
+            return res.render('auth/pageNotFound', { msg: 'Error: Coordinator not found' });
+        }
 
-		const students = await Student.find({
-			coordinator: coord._id,
-		})
-			.populate('assignedTeachers', 'fullName')
-			.sort({ createdAt: -1 });
+        const students = await Student.find({
+            coordinator: coord._id,
+        })
+            .populate('assignedTeachers', 'fullName')
+            .sort({ createdAt: -1 });
 
-		res.render('coordinator/dashboard', { students, coord, teachers: [] });
-	} catch (err) {
-		console.error(err);
-		res.status(500).send('Error loading assigned students');
-	}
+        return res.render('coordinator/dashboard', { students, coord, teachers: [] });
+    } catch (err) {
+        console.error(err);
+        return res.render('auth/pageNotFound', { msg: 'Error loading assigned students' });
+    }
 };
 
+//      GET STUDENT PROFILE
 exports.getStudentProfile = async (req, res) => {
-	try {
-		if (!req.user || !req.user.id) {
-			return res.status(401).send('You must be logged in as a coordinator');
-		}
+    try {
+        if (!req.user || !req.user.id) {
+            return res.render('auth/pageNotFound', { msg: 'Error: You must be logged in as a coordinator' });
+        }
 
-		const coord = await Coordinator.findById(req.user.id);
-		if (!coord) return res.status(404).send('Coordinator not found');
+        const coord = await Coordinator.findById(req.user.id);
+        if (!coord) {
+            return res.render('auth/pageNotFound', { msg: 'Error: Coordinator not found' });
+        }
 
-		// Get the student only if assigned to this coordinator
-		const student = await Student.findOne({
-			_id: req.params.id,
-			coordinator: coord._id,
-		}).populate('assignedTeachers', 'fullName email');
+        const student = await Student.findOne({
+            _id: req.params.id,
+            coordinator: coord._id,
+        }).populate('assignedTeachers', 'fullName email');
 
-		if (!student) {
-			return res.status(403).send('Access denied');
-		}
+        if (!student) {
+            return res.render('auth/pageNotFound', { msg: 'Error: Access denied or student not found' });
+        }
 
-		const sessions = await Session.find({
-			student: student._id,
-			status: 'APPROVED',
-		}).select('durationInHours');
+        const sessions = await Session.find({
+            student: student._id,
+            status: 'APPROVED',
+        }).select('durationInHours');
 
-		let totalHours = 0;
+        let totalHours = 0;
 
-		sessions.forEach((session) => {
-			totalHours += session.durationInHours;
-		});
+        sessions.forEach((session) => {
+            totalHours += session.durationInHours;
+        });
 
-		res.render('coordinator/student-profile', {
-			student,
-			coord,
-			totalHours,
-			activePage:"student-profile",
-			username:coord.fullName
-		});
-	} catch (err) {
-		console.error(err);
-		res.status(500).send('Error loading student profile');
-	}
+        return res.render('coordinator/student-profile', {
+            student,
+            coord,
+            totalHours,
+            activePage: "student-profile",
+            username: coord.fullName
+        });
+    } catch (err) {
+        console.error(err);
+        return res.render('auth/pageNotFound', { msg: 'Error loading student profile' });
+    }
 };
 
+//      ASSIGN TEACHERS TO STUDENT
 exports.assignTeachers = async (req, res) => {
-	try {
-		const { studentId } = req.params;
-		const { teachers } = req.body;
-		
-		// console.log(teachers)
+    try {
+        const { studentId } = req.params;
+        const { teachers } = req.body;
+        
+        if (!teachers || teachers.length !== 4) {
+            return res.render('auth/pageNotFound', { msg: 'Error: Exactly 4 teachers are required' });
+        }
 
-		if (!teachers || teachers.length !== 4) {
-			return res.status(400).send('Exactly 4 teachers required');
-		}
+        const { start, end } = getTodayRange();
 
-		const { start, end } = getTodayRange();
+        for (const teacherId of teachers) {
+            const teacher = await Teacher.findById(teacherId);
+            const uniqueStudentsToday = await Session.distinct('student', {
+                teacher: teacherId,
+                date: { $gte: start, $lte: end },
+                status: 'APPROVED',
+            });
 
-		// daily teacher limit
+            if (uniqueStudentsToday.length >= teacher.dailyHourLimit) {
+                return res.render('auth/pageNotFound', { msg: `Error: ${teacher.fullName} has reached today's teaching limit` });
+            }
+        }
 
-		for (const teacherId of teachers) {
-			const teacher = await Teacher.findById(teacherId);
-			console.log(teacher)
-			const uniqueStudentsToday = await Session.distinct('student', {
-				teacher: teacherId,
-				date: { $gte: start, $lte: end },
-				status: 'APPROVED',
-			});
+        const updatedStudent = await Student.findByIdAndUpdate(
+            studentId,
+            { assignedTeachers: teachers },
+            { new: true }
+        );
 
-			if (uniqueStudentsToday.length >= teacher.dailyHourLimit) {
-				return res.status(400).send(`${teacher.fullName} reached today's teaching limit`);
-			}
+        if (!updatedStudent) {
+            return res.render('auth/pageNotFound', { msg: 'Error: Student not found for assignment' });
+        }
 
-		}
-
-		// Atomic update (NO VersionError)
-		const updatedStudent = await Student.findByIdAndUpdate(
-			studentId,
-			{ assignedTeachers: teachers },
-			{ new: true }
-		);
-
-		if (!updatedStudent) {
-			return res.status(404).send('Student not found');
-		}
-
-		res.redirect('/coordinator/assigned-students');
-	} catch (err) {
-		console.error(err);
-		res.status(500).send('Error assigning teachers');
-	}
+        return res.redirect('/coordinator/assigned-students');
+    } catch (err) {
+        console.error(err);
+        return res.render('auth/pageNotFound', { msg: 'Error assigning teachers' });
+    }
 };
 
+//      RENDER SESSION APPROVAL PAGE
 exports.getSessionApprovalPage = async (req, res) => {
-	try {
-		const coord = await Coordinator.findById(req.user.id);
-		if (!coord) return res.status(404).send('Coordinator not found');
+    try {
+        const coord = await Coordinator.findById(req.user.id);
+        if (!coord) {
+            return res.render('auth/pageNotFound', { msg: 'Error: Coordinator not found' });
+        }
 
-		const pendingSessions = await Session.find({
-			status: 'PENDING',
-		})
-			.populate('student', 'fullName')
-			.populate('teacher', 'fullName')
-			.sort({ createdAt: -1 });
+        const pendingSessions = await Session.find({
+            status: 'PENDING',
+        })
+            .populate('student', 'fullName')
+            .populate('teacher', 'fullName')
+            .sort({ createdAt: -1 });
 
-	const approvedSessions = await Session.find({
-  status: 'APPROVED',
- 
-})
-.populate('student', 'fullName')
-.populate('teacher', 'fullName')
-.sort({ updatedAt: -1 });
+        const approvedSessions = await Session.find({
+            status: 'APPROVED',
+        })
+            .populate('student', 'fullName')
+            .populate('teacher', 'fullName')
+            .sort({ updatedAt: -1 });
 
-
-		res.render('coordinator/session-approval', {
-			coord,
-			pendingSessions,
-			approvedSessions,
-			activePage:"session",
-			username:coord.fullName
-		});
-	} catch (err) {
-		console.error(err);
-		res.status(500).send('Error loading session approvals');
-	}
+        return res.render('coordinator/session-approval', {
+            coord,
+            pendingSessions,
+            approvedSessions,
+            activePage: "session",
+            username: coord.fullName
+        });
+    } catch (err) {
+        console.error(err);
+        return res.render('auth/pageNotFound', { msg: 'Error loading session approvals' });
+    }
 };
+
+//      APPROVE SESSION
 exports.approveSession = async (req, res) => {
-	try {
-		const { durationInHours } = req.body;
+    try {
+        const { durationInHours } = req.body;
 
-		const session = await Session.findById(req.params.id);
-		if (!session) {
-			return res.status(404).json({ error: 'Session not found' });
-		}
+        const session = await Session.findById(req.params.id);
+        if (!session) {
+            // Keeping JSON here as this is likely an API/AJAX call
+            return res.status(404).json({ error: 'Session not found' });
+        }
 
-		const duration = Number(durationInHours);
-		if (isNaN(duration) || duration < 0) {
-			return res.status(400).json({ error: 'Invalid duration' });
-		}
+        const duration = Number(durationInHours);
+        if (isNaN(duration) || duration < 0) {
+            return res.status(400).json({ error: 'Invalid duration' });
+        }
 
-		session.durationInHours = duration;
-		session.status = 'APPROVED';
-		await session.save();
+        session.durationInHours = duration;
+        session.status = 'APPROVED';
+        await session.save();
 
-		res.json({ success: true });
-	} catch (err) {
-		console.error(err);
-		res.status(500).json({ error: err.message });
-	}
+        return res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: err.message });
+    }
 };
 
+//      RENDER UPDATE TEACHER PAGE
 exports.getUpdateTeacher = async(req,res) =>{
-	try{
-		const coord = await Coordinator.findById(req.user.id)
-		const teachers = await Teacher.find()
-		// const assignedTeachers = await Student.findOne({_id:req.params.studentId}).select("assignedTeachers").populate('assignedTeachers')
-		const { assignedTeachers } = await Student.findOne({ _id: req.params.studentId })
-                                          .select("assignedTeachers")
-                                          .populate('assignedTeachers');
-		
-		return res.render('coordinator/update-teacher',{
-			activePage:'update-teacher',
-			username:coord.fullName,
-			t:teachers,
-			assignedTeachers,
-			studentId:req.params.studentId
-
-		})
-	}catch(e){
-		console.log('error while rendering update teacher',e)
-		return res.redirect(`/coordinator/dashboard`)
-	}
+    try{
+        const coord = await Coordinator.findById(req.user.id)
+        const teachers = await Teacher.find()
+        const { assignedTeachers } = await Student.findOne({ _id: req.params.studentId })
+                                                  .select("assignedTeachers")
+                                                  .populate('assignedTeachers');
+        
+        return res.render('coordinator/update-teacher',{
+            activePage:'update-teacher',
+            username:coord.fullName,
+            t:teachers,
+            assignedTeachers,
+            studentId:req.params.studentId
+        })
+    }catch(e){
+        console.log('error while rendering update teacher',e)
+        return res.redirect(`/coordinator/dashboard`)
+    }
 }
 
-
+//      ADD TEACHER TO STUDENT
 exports.addUpdateTeacher = async (req, res) => {
     try {
-        // $addToSet acts like push, but prevents duplicates
         await Student.findByIdAndUpdate(req.params.studentId, {
             $addToSet: { assignedTeachers: req.params.teacherId }
         });
@@ -288,9 +261,9 @@ exports.addUpdateTeacher = async (req, res) => {
     }
 }
 
+//      REMOVE TEACHER FROM STUDENT
 exports.removeUpdateTeacher = async (req, res) => {
     try {
-        // $pull removes the specific ID from the array
         await Student.findByIdAndUpdate(req.params.studentId, {
             $pull: { assignedTeachers: req.params.teacherId }
         });
