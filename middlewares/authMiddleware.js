@@ -16,7 +16,7 @@ exports.protect = async (req, res, next) => {
       if (!admin) return res.redirect('/');
 
       // Make available to all EJS files
-       return res.locals.admin = admin;
+      res.locals.admin = admin;
     }
 
     next();
