@@ -1,111 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Teachers</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css">
-  <link rel="stylesheet" href="/css/admin/viewTeachers.css">
-  <style>
-    .heading {
-      color: #870216;
-    }
-  </style>
-</head>
-<body class="bg-light">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Teachers</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css" />
+		<link rel="stylesheet" href="/css/admin/viewTeachers.css" />
+		<style>
+			.heading {
+				color: #870216;
+			}
+		</style>
+	</head>
+	<body class="bg-light">
+		<%- include('partials/navbar') %> <%- include('../partials/sidebar') %>
 
-  <%- include('partials/navbar') %>
-  <%- include('./partials/sidebar') %>
-
-  <div class="main-content p-5">
-    <div class="container">
-      <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
-        <ol class="breadcrumb p-3">
-          <li class="breadcrumb-item "><a href="/admin/Dashboard">Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Teachers</li>
-        </ol>
-      </nav>
-      <div class="d-flex flex-column justify-content-center align-items-center mb-5">
-        <h4 class="fw-bold fs-2 mb-3 heading">TEACHERS</h4>
-        <a href="/admin/addteachers" class="btn btn-success btn-sm">
-          <i class="bi bi-plus"></i> Add Teacher
-        </a>
-      </div>
-      <div class="card shadow-sm">
-        <div class="table-responsive">
-          <table id="example" class="table table-bordered table-hover align-middle mb-0 text-nowrap">
-            <thead class="table-light text-muted small">
-              <tr>
-                <th class="text-center" style="width:60px;">Sl No</th>
-                <th>Teacher</th>
-                <th>ID</th>
-                <th>Subjects</th>
-                <th class="text-center">Total Hours</th>
-                <th class="text-center">Status</th>
-                <th class="text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% if (!teachers || teachers.length === 0) { %>
-                <tr>
-                  <td colspan="7" class="text-center text-muted py-4">
-                    No teachers found
-                  </td>
-                </tr>
-              <% } else { %>
-                <% teachers.forEach((teacher, index) => { %>
-                  <tr>
-                    <td class="text-center fw-semibold">
-                      <%= index + 1 %>
-                    </td>
-                    <td class="fw-semibold">
-                      <%= teacher.fullName %>
-                    </td>
-                    <td class="small text-muted">
-                      <%= teacher._id %>
-                    </td>
-                    <td>
-                      <% if (teacher.subjects && teacher.subjects.length) { %>
-                        <% teacher.subjects.forEach(sub => { %>
-                          <span class="badge bg-light text-dark border me-1 mb-1">
-                            <%= sub %>
-                          </span>
-                        <% }) %>
-                      <% } else { %>
-                        <span class="text-muted">—</span>
-                      <% } %>
-                    </td>
-                    <td class="text-center fw-semibold">
-                      <%= teacher.totalHours || 0 %> hrs
-                    </td>
-                    <td class="text-center">
-                      <span class="badge <%= teacher.status === 'teacher' ? 'bg-success' : 'bg-secondary' %>">
-                        <%= teacher.status %>
-                      </span>
-                    </td>
-                    <td class="text-center">
-                      <a
-                        href="/admin/teachers/profile/<%= teacher._id %>"
-                        class="btn btn-outline-primary btn-sm"
-                      >
-                        View
-                      </a>
-                    </td>
-                  </tr>
-                <% }) %>
-              <% } %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    new DataTable('#example');
-  </script>
-</body>
+		<div class="main-content p-5">
+			<div class="container">
+				<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+					<ol class="breadcrumb p-3">
+						<li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
+						<li class="breadcrumb-item active" aria-current="page">Teachers</li>
+					</ol>
+				</nav>
+				<div class="d-flex flex-column justify-content-center align-items-center mb-5">
+					<h4 class="fw-bold fs-2 mb-3 heading">TEACHERS</h4>
+					<a href="/admin/addteachers" class="btn btn-success btn-sm">
+						<i class="bi bi-plus"></i>
+						Add Teacher
+					</a>
+				</div>
+				<div class="card shadow-sm">
+					<div class="table-responsive">
+						<table
+							id="example"
+							class="table table-bordered table-hover align-middle mb-0 text-nowrap"
+						>
+							<thead class="table-light text-muted small">
+								<tr>
+									<th class="text-center" style="width: 60px">Sl No</th>
+									<th>Teacher</th>
+									<th>ID</th>
+									<th>Subjects</th>
+									<th class="text-center">Total Hours</th>
+									<th class="text-center">Status</th>
+									<th class="text-center">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								<% if (!teachers || teachers.length === 0) { %>
+								<tr>
+									<td colspan="7" class="text-center text-muted py-4">No teachers found</td>
+								</tr>
+								<% } else { %> <% teachers.forEach((teacher, index) => { %>
+								<tr>
+									<td class="text-center fw-semibold"><%= index + 1 %></td>
+									<td class="fw-semibold"><%= teacher.fullName %></td>
+									<td class="small text-muted"><%= teacher._id %></td>
+									<td>
+										<% if (teacher.subjects && teacher.subjects.length) { %> <%
+										teacher.subjects.forEach(sub => { %>
+										<span class="badge bg-light text-dark border me-1 mb-1"><%= sub %></span>
+										<% }) %> <% } else { %>
+										<span class="text-muted">—</span>
+										<% } %>
+									</td>
+									<td class="text-center fw-semibold"><%= teacher.totalHours || 0 %> hrs</td>
+									<td class="text-center">
+										<span
+											class="badge <%= teacher.status === 'teacher' ? 'bg-success' : 'bg-secondary' %>"
+										>
+											<%= teacher.status %>
+										</span>
+									</td>
+									<td class="text-center">
+										<a
+											href="/admin/teachers/profile/<%= teacher._id %>"
+											class="btn btn-outline-primary btn-sm"
+										>
+											View
+										</a>
+									</td>
+								</tr>
+								<% }) %> <% } %>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+		<script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+		<script>
+			new DataTable('#example');
+		</script>
+	</body>
 </html>

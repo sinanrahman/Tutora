@@ -6,7 +6,6 @@ const cookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
 const connectdb = require('./config/db');
 
-
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -17,21 +16,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static('static'));
 
 app.use(cookieParser());
-app.use(fileUpload({ 
-	useTempFiles: true, 
-	tempFileDir: '/tmp/' 
-}));
+app.use(
+	fileUpload({
+		useTempFiles: true,
+		tempFileDir: '/tmp/',
+	})
+);
 
 app.use((req, res, next) => {
 	res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
 	next();
 });
 
-//		ALL LOGIN 
+
+
+//		ALL LOGIN
 const auth = require('./routes/authRoutes');
 app.use('/', auth);
 
-//		ADMIN 
+//		ADMIN
 const adminRoutes = require('./routes/adminRoutes');
 app.use('/admin', adminRoutes);
 
@@ -49,7 +52,7 @@ app.use('/sessions', sessionRoutes);
 
 //		ERROR PAGE
 app.use((req, res) => {
-	res.status(404).render('auth/pageNotFound',{msg:' '});
+	res.status(404).render('auth/pageNotFound', { msg: ' ' });
 });
 
 const port = process.env.PORT || 5000;
