@@ -14,6 +14,13 @@
   <%- include('partials/navbar') %>
     <%- include('partials/sidebar') %>
       <div class="main-content p-5">
+        <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+        <ol class="breadcrumb p-3">
+          <li class="breadcrumb-item "><a href="/admin/Dashboard">Home</a></li>
+          <li class="breadcrumb-item "><a href="/admin/viewstudents">Students</a></li>
+          <li class="breadcrumb-item active" aria-current="page">addStudent</li>
+        </ol>
+      </nav>
         <h3 class="fw-bold pt-4 mb-3">Add Student</h3>
         <div class="card shadow-sm border-0">
           <div class="card-body">
