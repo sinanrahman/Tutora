@@ -1,81 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Teacher</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Teacher</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
+
 <body>
   <%-include('./partials/navbar') %>
-     <%-include('./partials/sidebar')%>
-     <h1 class="fw-bold mt-5 pt-5 text-center" style="color: #870216;">UPDATE TEACHER</h1>
+  <%-include('./partials/sidebar')%>
+  <div class="main-content p-5">
+    <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+      <ol class="breadcrumb p-3">
+        <li class="breadcrumb-item "><a href="/admin/Dashboard">Home</a></li>
+        <li class="breadcrumb-item "><a href="/admin/viewstudents">Students</a></li>
+        <li class="breadcrumb-item "><a href="/admin/viewStudents">viewStudent</a></li>
+        <li class="breadcrumb-item active" aria-current="page">updateTeacher</li>
+      </ol>
+    </nav>
+    <h1 class="fw-bold mt-5 pt-5 text-center" style="color: #870216;">UPDATE TEACHER</h1>
     <div class="container py-1">
-        <div class="row py-5">
-            <div class="col-10 offset-2">
-                <h3 class="fw-bold text-success">Assigned Teachers</h3>
-              <table class="table table-hover table-bordered rounded-2 mb-5">
-  <thead>
-    <tr>
-      <th scope="col">SI NO</th>
-      <th scope="col">Name</th>
-      <th scope="col">Id</th>
-      <th scope="col">Subject</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <%assignedTeachers.forEach((t,i)=>{%>
-      <tr>
-      <th scope="row"><%= i+1%></th>
-      <td><%= t.fullName%></td>
-      <td><%= t._id%></td>
-      <td><%= t.subjects%></td>
-      <td><a href="/admin/update-teacher/<%=studentId%>/remove/<%=t._id%>" class="btn btn-danger">Remove</a></td>
-    </tr>
-    <%})%>
-  </tbody>
-</table>
-              <h3 class="fw-bold text-success">Teacher List</h3>
-<table class="table table-hover table-bordered rounded-2">
-  <thead>
-    <tr>
-      <th scope="col">SI NO</th>
-      <th scope="col">Name</th>
-      <th scope="col">Id</th>
-      <th scope="col">Subject</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% t.forEach((teacher, i) => { %>
-      <% 
+      <div class="row py-5">
+        <div class="col-10 offset-2">
+          <h3 class="fw-bold text-success">Assigned Teachers</h3>
+          <table class="table table-hover table-bordered rounded-2 mb-5">
+            <thead>
+              <tr>
+                <th scope="col">SI NO</th>
+                <th scope="col">Name</th>
+                <th scope="col">Id</th>
+                <th scope="col">Subject</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%assignedTeachers.forEach((t,i)=>{%>
+              <tr>
+                <th scope="row"><%= i+1%></th>
+                <td><%= t.fullName%></td>
+                <td><%= t._id%></td>
+                <td><%= t.subjects%></td>
+                <td><a href="/admin/update-teacher/<%=studentId%>/remove/<%=t._id%>" class="btn btn-danger">Remove</a></td>
+              </tr>
+              <%})%>
+            </tbody>
+          </table>
+          <h3 class="fw-bold text-success">Teacher List</h3>
+          <table class="table table-hover table-bordered rounded-2">
+            <thead>
+              <tr>
+                <th scope="col">SI NO</th>
+                <th scope="col">Name</th>
+                <th scope="col">Id</th>
+                <th scope="col">Subject</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% t.forEach((teacher, i) => { %>
+              <% 
         const isAssigned = assignedTeachers.some(assigned => 
           assigned._id.toString() === teacher._id.toString()
         );
       %>
 
-      <tr class="<%= isAssigned ? 'table-secondary' : '' %>">
-        <th scope="row"><%= i + 1 %></th>
-        <td><%= teacher.fullName %></td>
-        <td><%= teacher._id %></td>
-        <td><%= teacher.subjects %></td>
-        <td>
-          <% if (isAssigned) { %>
-            <button class="btn btn-secondary" disabled>Assigned</button>
-          <% } else { %>
-            <a href="/admin/update-teacher/<%= studentId %>/add/<%= teacher._id %>" class="btn btn-success">Add</a>
-          <% } %>
-        </td>
-      </tr>
-    <% }) %>
-  </tbody>
-</table>
+              <tr class="<%= isAssigned ? 'table-secondary' : '' %>">
+                <th scope="row"><%= i + 1 %></th>
+                <td><%= teacher.fullName %></td>
+                <td><%= teacher._id %></td>
+                <td><%= teacher.subjects %></td>
+                <td>
+                  <% if (isAssigned) { %>
+                  <button class="btn btn-secondary" disabled>Assigned</button>
+                  <% } else { %>
+                  <a href="/admin/update-teacher/<%= studentId %>/add/<%= teacher._id %>" class="btn btn-success">Add</a>
+                  <% } %>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
 
 
-            </div>
         </div>
+      </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
+
 </html>

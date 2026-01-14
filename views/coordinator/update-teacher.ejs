@@ -9,6 +9,13 @@
 <body>
   <%-include('../admin/partials/navbar') %>
      <%-include('../partials/coordinatorSidebar')%>
+     <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+        <ol class="breadcrumb  m-5 p-3">
+          <li class="breadcrumb-item "><a href="/coordinator/Dashboard">Home</a></li>
+          <li class="breadcrumb-item "><a href="/coordinator/Dashboard">studentProfile</a></li>
+          <li class="breadcrumb-item active" aria-current="page">updateTeacher</li>
+        </ol>
+      </nav>
      <h1 class="fw-bold mt-5 pt-5 text-center" style="color: #870216;">UPDATE TEACHER</h1>
     <div class="container py-1">
         <div class="row py-5">

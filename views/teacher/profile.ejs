@@ -129,7 +129,12 @@
     <%- include('../partials/teacherSidebar', { user }) %> <%-
     include('../admin/partials/navbar') %>
 
-    <div class="main-content">
+    <div class="main-content"><nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+      <ol class="breadcrumb p-3">
+        <li class="breadcrumb-item "><a href="/teacher/Dashboard">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Profile</li>
+      </ol>
+    </nav>
       <div class="container-fluid">
         <div class="card shadow-sm">
           <div class="card-body">
