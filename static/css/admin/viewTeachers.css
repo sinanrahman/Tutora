@@ -1,22 +1,30 @@
+ .heading {
+   color: #870216;
+ }
+
  td i {
-      vertical-align: middle;
-    }
-    .d-flex-center {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .subjects-column .subject-item {
-      display: block;
-      margin-bottom: 0.25rem;
-    }
-    .actions-buttons {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.25rem;
-      flex-wrap: nowrap;
-    }
-    td .btn {
-      white-space: nowrap;
-    }
+   vertical-align: middle;
+ }
+
+ .d-flex-center {
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+ }
+
+ .subjects-column .subject-item {
+   display: block;
+   margin-bottom: 0.25rem;
+ }
+
+ .actions-buttons {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: 0.25rem;
+   flex-wrap: nowrap;
+ }
+
+ td .btn {
+   white-space: nowrap;
+ }
