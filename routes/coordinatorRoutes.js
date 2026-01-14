@@ -1,78 +1,86 @@
-const express = require('express')
+const express = require('express');
+const router = express.Router();
+
+//      MIDDLEWARE
+const { protect } = require('../middlewares/authMiddleware');
+const { authorize } = require('../middlewares/roleMiddleware');
+
+//      CONTROLLERS
 const {
     coordinatorDashboard,
     getAssignedStudents,
     getStudentProfile,
-    assignTeachers, getSessionApprovalPage,
+    assignTeachers,
+    getSessionApprovalPage,
     approveSession,
     getUpdateTeacher,
     removeUpdateTeacher,
     addUpdateTeacher
-} = require('../controllers/coordinatorController')
+} = require('../controllers/coordinatorController');
 
-const { protect } = require('../middlewares/authMiddleware')
-const { authorize } = require('../middlewares/roleMiddleware')
 
-const router = express.Router()
+// ==========================================
+//              DASHBOARD ROUTES
+// ==========================================
 
-router.get(
-    '/dashboard',
-    protect,
-    authorize('COORDINATOR'),
-    coordinatorDashboard
-)
+//      COORDINATOR DASHBOARD
+router
+    .route('/dashboard')
+    .get(protect, authorize('COORDINATOR'), coordinatorDashboard);
 
-router.get(
-    '/assigned-students',
-    protect,
-    authorize('COORDINATOR'),
-    getAssignedStudents
-)
 
-router.get(
-    '/student/:id',
-    protect,
-    authorize('COORDINATOR'),
-    getStudentProfile
-)
+// ==========================================
+//              STUDENT ROUTES
+// ==========================================
 
-router.post(
-    '/assign-teachers/:studentId',
-    protect,
-    authorize('COORDINATOR'),
-    assignTeachers
-)
+//      VIEW ASSIGNED STUDENTS
+router
+    .route('/assigned-students')
+    .get(protect, authorize('COORDINATOR'), getAssignedStudents);
 
-router.get(
-    '/session-approval',
-    protect,
-    authorize('COORDINATOR'),
-    getSessionApprovalPage
-);
+//      VIEW SINGLE STUDENT PROFILE
+router
+    .route('/student/:id')
+    .get(protect, authorize('COORDINATOR'), getStudentProfile);
 
-router.post(
-    '/sessions/approve/:id',
-    protect,
-    authorize('COORDINATOR'),
-    approveSession
-);
-router.get(
-    '/update-teacher/:studentId',
-    protect,
-    authorize('COORDINATOR'),
-    getUpdateTeacher
-)
-router.get(
-    '/update-teacher/:studentId/add/:teacherId',
-    protect,
-    authorize('COORDINATOR'),
-    addUpdateTeacher
-)
-router.get(
-    '/update-teacher/:studentId/remove/:teacherId',
-    protect,
-    authorize('COORDINATOR'),
-    removeUpdateTeacher
-)
+//      ASSIGN TEACHERS (FORM SUBMISSION)
+router
+    .route('/assign-teachers/:studentId')
+    .post(protect, authorize('COORDINATOR'), assignTeachers);
 
-module.exports = router
+
+// ==========================================
+//              SESSION ROUTES
+// ==========================================
+
+//      SESSION APPROVAL PAGE
+router
+    .route('/session-approval')
+    .get(protect, authorize('COORDINATOR'), getSessionApprovalPage);
+
+//      APPROVE SPECIFIC SESSION
+router
+    .route('/sessions/approve/:id')
+    .post(protect, authorize('COORDINATOR'), approveSession);
+
+
+// ==========================================
+//        TEACHER ASSIGNMENT ROUTES
+// ==========================================
+
+//      RENDER ASSIGN TEACHER PAGE
+router
+    .route('/update-teacher/:studentId')
+    .get(protect, authorize('COORDINATOR'), getUpdateTeacher);
+
+//      ADD TEACHER TO STUDENT
+router
+    .route('/update-teacher/:studentId/add/:teacherId')
+    .get(protect, authorize('COORDINATOR'), addUpdateTeacher);
+
+//      REMOVE TEACHER FROM STUDENT
+router
+    .route('/update-teacher/:studentId/remove/:teacherId')
+    .get(protect, authorize('COORDINATOR'), removeUpdateTeacher);
+
+module.exports = router;

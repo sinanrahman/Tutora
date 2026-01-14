@@ -1,35 +1,74 @@
-const express = require('express')
-const router = express.Router()
-const authController = require('../controllers/authController')
+const express = require('express');
+const router = express.Router();
+
+//      CONTROLLERS
+const {
+    loginPage,
+    adminLoginPage,
+    teacherLoginPage,
+    coordinatorLoginPage,
+    login,
+    logout,
+    forgotPassword,
+    renderResetPasswordPage,
+    resetPassword
+} = require('../controllers/authController');
 
 
-const { loginPage, adminLoginPage, teacherLoginPage, coordinatorLoginPage,login ,logout} = require('../controllers/authController')
+// ==========================================
+//              LOGIN PAGE ROUTES
+// ==========================================
 
+//      RENDER MAIN SELECTION PAGE
 router
     .route('/')
-    .get(loginPage)
-    
+    .get(loginPage);
+
+//      RENDER ADMIN LOGIN
 router
     .route('/adminlogin')
-    .get(adminLoginPage)
+    .get(adminLoginPage);
 
+//      RENDER TEACHER LOGIN
 router
     .route('/teacherLogin')
-    .get(teacherLoginPage)
+    .get(teacherLoginPage);
 
+//      RENDER COORDINATOR LOGIN
 router
     .route('/coordinatorLogin')
-    .get(coordinatorLoginPage)
-
-router.post('/login', login)
+    .get(coordinatorLoginPage);
 
 
-router.get('/forgot-password', (req, res) => res.render('auth/forgotPassword', { msg: '' }))
-router.post('/forgot-password', authController.forgotPassword)
+// ==========================================
+//              AUTH ACTION ROUTES
+// ==========================================
 
-// Reset Password
-router.get('/reset-password/:token', authController.renderResetPasswordPage)
-router.post('/reset-password/:token', authController.resetPassword)
-router.get('/logout', logout);
+//      HANDLE LOGIN SUBMISSION
+router
+    .route('/login')
+    .post(login);
 
-module.exports = router
+//      HANDLE LOGOUT
+router
+    .route('/logout')
+    .get(logout);
+
+
+// ==========================================
+//          PASSWORD MANAGEMENT ROUTES
+// ==========================================
+
+//      FORGOT PASSWORD (REQUEST LINK)
+router
+    .route('/forgot-password')
+    .get((req, res) => res.render('auth/forgotPassword', { msg: '' }))
+    .post(forgotPassword);
+
+//      RESET PASSWORD (ENTER NEW PASSWORD)
+router
+    .route('/reset-password/:token')
+    .get(renderResetPasswordPage)
+    .post(resetPassword);
+
+module.exports = router;
