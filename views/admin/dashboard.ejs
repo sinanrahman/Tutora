@@ -14,9 +14,28 @@
 </style>
 
 <body class="bg-light">
+
+
+ 
+<!-- Mobile Top Bar -->
+<div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
+  <div class="d-flex align-items-center justify-content-between px-3" style="height: 60px;">
+
+    <!-- Logo (Left) -->
+    <img src="/image/logo.png" alt="Logo" class="mobile-logo-img">
+    <button
+      class="btn btn-light"
+      onclick="toggleSidebar()"
+    >
+      <i class="bi bi-list fs-4"></i>
+    </button>
+
+  </div>
+</div>
+
+
   <%- include('partials/navbar') %>
   <%- include('partials/sidebar') %>
-
 
   <div class="main-content p-5">
     <h3 class="fw-bold fs-2 pt-4 mb-5 text-center heading">Admin Dashboard</h3>
@@ -65,6 +84,28 @@
       </div>
     </div>
   </div>
-</body>
 
+
+  <script>
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+  }
+
+  // Close sidebar when clicking outside (mobile)
+  document.addEventListener('click', function (e) {
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.querySelector('.bi-list')?.parentElement;
+
+    if (
+      window.innerWidth < 768 &&
+      sidebar.classList.contains('active') &&
+      !sidebar.contains(e.target) &&
+      !toggleBtn?.contains(e.target)
+    ) {
+      sidebar.classList.remove('active');
+    }
+  });
+</script>
+
+</body>
 </html>
