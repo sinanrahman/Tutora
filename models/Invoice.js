@@ -15,14 +15,6 @@ const invoiceSchema = new mongoose.Schema(
     amount: {
       type: Number,
       required: true,
-    },
-    hours:{
-      type:Number,
-      required:true
-    },
-    hourlyRate:{
-      type:Number,
-      req
     }
   },
   { timestamps: true }
