@@ -1,72 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Teacher History</title>
-		<link
-			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-			rel="stylesheet"
-			integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-			crossorigin="anonymous"
-		/>
-	</head>
-	<style>
-		.heading {
-			color: #870216;
-		}
-	</style>
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher History</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin/teacherHistory.css">
+</head>
+<body class="bg-light">
+  <div class="d-md-none mobile-topbar">
+    <img src="/image/logo.png" class="mobile-logo-img" alt="Logo">
+    <button class="sidebar-toggle-btn" onclick="toggleSidebar()">
+      <i class="bi bi-list fs-4"></i>
+    </button>
+  </div>
 
-	<body>
-		<%- include('./partials/navbar') %> <%- include('./partials/sidebar') %>
-		<div class="main-content p-5">
-			<nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
-        <ol class="breadcrumb p-3">
-          <li class="breadcrumb-item "><a href="/admin/Dashboard">Home</a></li>
-          <li class="breadcrumb-item "><a href="/admin/viewTeachers">Teachers</a></li>
-          <li class="breadcrumb-item "><a href="/admin/viewTeachers">teacherProfile</a></li>
-          <li class="breadcrumb-item active" aria-current="page">History</li>
-        </ol>
-      </nav>
-			<h3 class="fw-bold pt-4 mb-4 text-center heading">Teacher Session History</h3>
-			<h3 class="mb-3 text-success"><%=teacherName.fullName%></h3>
-			<div class="card shadow-sm border-0">
-				<div class="card-body p-0">
-					<table class="table table-bordered mb-0">
-						<thead>
-							<tr>
-								<th scope="col">SI NO</th>
-								<th scope="col">Students</th>
-								<th scope="col">Session Type</th>
-								<th scope="col">Duration[in Hours]</th>
-								<th scope="col">Date</th>
-							</tr>
-						</thead>
-						<tbody>
-							<%tsHistory.forEach((session,index)=>{%>
-							<tr>
-								<td><%=index+1%></td>
-								<td><%=session.student.fullName%></td>
-								<td><%=session.type%></td>
-								<td><%=session.durationInHours%></td>
-								<td><%= session.date ? new Date(session.date).toLocaleDateString() : 'N/A' %></td>
-							</tr>
-
-							<%})%>
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<div class="row g-2 mt-4">
-				<div class="col-md-3 col-12">
-					<a href="/admin/viewteachers" class="btn btn-secondary w-100">Back</a>
-				</div>
-			</div>
-		</div>
-		<script
-			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-			integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-			crossorigin="anonymous"
-		></script>
-	</body>
+  <%- include('./partials/navbar') %>
+<%- include('../partials/sidebar') %>
+  <div class="main-content">
+    <div class="container-fluid px-3 px-md-4">
+      <div class="content-wrapper bg-white rounded-4 shadow-sm p-4">
+        <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+          <ol class="breadcrumb mb-3">
+            <li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
+            <li class="breadcrumb-item"><a href="/admin/viewTeachers">Teachers</a></li>
+            <li class="breadcrumb-item active">History</li>
+          </ol>
+        </nav>
+        <h3 class="fw-bold text-center heading mb-4">Teacher Session History</h3>
+        <h5 class="text-success mb-3"><%= teacherName.fullName %></h5>
+        <div class="card shadow-sm">
+          <div class="table-responsive">
+            <table class="table table-bordered mb-0 text-nowrap">
+              <thead class="table-light">
+                <tr>
+                  <th>Sl No</th>
+                  <th>Student</th>
+                  <th>Session Type</th>
+                  <th>Duration</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% tsHistory.forEach((s, i) => { %>
+                <tr>
+                  <td><%= i + 1 %></td>
+                  <td><%= s.student.fullName %></td>
+                  <td><%= s.type %></td>
+                  <td><%= s.durationInHours %> hrs</td>
+                  <td><%= new Date(s.date).toLocaleDateString() %></td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4">
+          <a href="/admin/viewTeachers" class="btn btn-secondary">Back</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

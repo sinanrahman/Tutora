@@ -1,0 +1,88 @@
+.main-content {
+    padding: 40px;
+    margin-top: 50px;
+    min-height: 100vh;
+    background: #f8f9fa;
+}
+
+.card {
+    border-radius: 10px;
+}
+
+.mobile-logo-img {
+    height: 40px;
+    width: auto;
+}
+
+.mobile-topbar {
+    z-index: 1200;
+}
+
+.heading {
+    color: #870216;
+}
+
+@media (max-width: 767.98px) {
+    .main-content {
+        padding-top: 75px;
+    }
+}
+
+   ------------------------- */
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Desktop: keep default layout */
+@media (min-width: 768px) {
+  .details-table th,
+  .details-table td {
+    padding: 0.75rem;
+    vertical-align: middle;
+  }
+}
+
+/* Mobile: stack cells so label and value appear as separate rows */
+@media (max-width: 767.98px) {
+  /* hide any table header if present */
+  .details-table thead {
+    display: none;
+  }
+
+  /* make each table row a block so its cells can stack */
+  .details-table,
+  .details-table tbody,
+  .details-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  /* make each cell full width and stack vertically */
+  .details-table th,
+  .details-table td {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+  }
+
+  /* visually separate each original table row (now a block containing 4 stacked cells) */
+  .details-table tr {
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
+  }
+
+  /* keep th visually distinct */
+  .details-table th {
+    background: #f1f3f5;
+    font-weight: 600;
+  }
+
+  /* ensure badges and buttons still align nicely */
+  .details-table td .badge {
+    display: inline-block;
+  }
+}

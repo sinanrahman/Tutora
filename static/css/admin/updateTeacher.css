@@ -1,0 +1,54 @@
+    .mobile-logo-img {
+      height: 40px;
+      width: auto;
+    }
+
+    .main-content {
+      margin-left: 220px;
+      padding: 20px;
+      min-height: 100vh;
+      background-color: #f8f9fa;
+    }
+
+    table th,
+    table td {
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    table {
+      min-width: 900px;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    .btn-sm {
+      min-width: 80px;
+    }
+    @media (max-width: 767.98px) {
+      .navbar {
+        display: none !important;
+      }
+
+      #sidebar {
+        transform: translateX(-100%);
+      }
+
+      #sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0 !important;
+        padding: 15px;
+        padding-top: 75px !important;
+      }
+
+      table th,
+      table td {
+        font-size: 14px;
+      }
+    }
+ 

@@ -1,38 +1,50 @@
-	#sidebar {
-				width: 220px;
-				position: fixed;
-				top: 0;
-				left: 0;
-				height: 100vh;
-				background: #343a40;
-				padding-top: 20px;
-				overflow-y: auto;
-				z-index: 1000;
-			}
+	.main-content {
+		padding: 40px;
+		margin-top: 50px;
+		min-height: 100vh;
+		background: #f8f9fa;
+	}
 
-			.main-content {
-				margin-left: 220px;
-				padding: 20px;
-				min-height: 100vh;
-				background: #f8f9fa;
-			}
+	.card {
+		border-radius: 10px;
+	}
 
-			.card {
-				border-radius: 10px;
-			}
+	.table th,
+	.table td {
+		vertical-align: middle;
+	}
 
-			.table th,
-			.table td {
-				vertical-align: middle;
-			}
+	.action-group .btn {
+		min-width: 90px;
+	}
 
-			.action-group .btn {
-				min-width: 90px;
-			}
+	.action-group {
+		display: inline-flex;
+		gap: 0.4rem;
+		flex-wrap: nowrap;
+		white-space: nowrap;
+	}
 
-			.action-group {
-				display: inline-flex;
-				gap: 0.4rem;
-				flex-wrap: nowrap;
-				white-space: nowrap;
-			}
+	@media (max-width: 767.98px) {
+		.main-content {
+			padding-top: 75px;
+		}
+	}
+
+
+	.mobile-logo {
+		z-index: 1050;
+	}
+
+	.mobile-logo-img {
+		height: 40px;
+		width: auto;
+	}
+
+	.mobile-topbar {
+		z-index: 1100;
+	}
+
+	.heading {
+		color: #870216;
+	}
