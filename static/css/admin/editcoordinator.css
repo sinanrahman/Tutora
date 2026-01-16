@@ -1,6 +1,30 @@
-  .main-content {
-      margin-left: 220px;
-      padding: 20px;
-      min-height: 100vh;
-      background-color: #f8f9fa;
+.main-content {
+    padding: 40px;
+    margin-top: 50px;
+    min-height: 100vh;
+    background: #f8f9fa;
+}
+
+.card {
+    border-radius: 10px;
+}
+
+.mobile-logo-img {
+    height: 40px;
+    width: auto;
+}
+
+.mobile-topbar {
+    z-index: 1200;
+}
+
+.heading {
+    color: #870216;
+}
+
+@media (max-width: 767.98px) {
+    .main-content {
+        padding-top: 75px;
     }
+}
+
