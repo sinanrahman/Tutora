@@ -18,16 +18,16 @@
 	</style>
 
 	<body>
-		<%- include('./partials/navbar') %> <%- include('./partials/sidebar') %>
+		<%- include('./partials/navbar') %> <%- include('../partials/sidebar') %>
 		<div class="main-content p-5">
-			<nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
-        <ol class="breadcrumb p-3">
-          <li class="breadcrumb-item "><a href="/admin/Dashboard">Home</a></li>
-          <li class="breadcrumb-item "><a href="/admin/viewTeachers">Teachers</a></li>
-          <li class="breadcrumb-item "><a href="/admin/viewTeachers">teacherProfile</a></li>
-          <li class="breadcrumb-item active" aria-current="page">History</li>
-        </ol>
-      </nav>
+			<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+				<ol class="breadcrumb p-3">
+					<li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
+					<li class="breadcrumb-item"><a href="/admin/viewTeachers">Teachers</a></li>
+					<li class="breadcrumb-item"><a href="/admin/viewTeachers">teacherProfile</a></li>
+					<li class="breadcrumb-item active" aria-current="page">History</li>
+				</ol>
+			</nav>
 			<h3 class="fw-bold pt-4 mb-4 text-center heading">Teacher Session History</h3>
 			<h3 class="mb-3 text-success"><%=teacherName.fullName%></h3>
 			<div class="card shadow-sm border-0">
