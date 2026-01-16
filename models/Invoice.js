@@ -2,19 +2,33 @@ const mongoose = require("mongoose");
 
 const invoiceSchema = new mongoose.Schema(
   {
-    Studentid: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref:'Student',
-      required: true,
-    },
-    description: {
+    id: {
       type: String,
       required: true,
-      trim: true,
+    },
+    studentId: {
+      type: String
     },
     amount: {
       type: Number,
       required: true,
+    },
+    item: {
+      type: [{
+        type: String,
+        amount: Number
+      }]
+    },
+    description: {
+      type: String
+    },
+    date: {
+      type: Date,
+      default: Date.now()
+    },
+    paid: {
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }

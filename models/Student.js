@@ -43,18 +43,27 @@ const studentSchema = new mongoose.Schema(
 			default: 'student',
 		},
 		lastDate: {
-			type:Date,
+			type: Date,
 			required: true
 		},
-		package:{
-			hours:{
-				type:Number
+		package: {
+			hours: {
+				type: Number
 			},
-			amount:{
-				type:Number
+			amount: {
+				type: Number
 			},
-			description:{
-				type:String
+			description: {
+				type: String
+			},
+			startDate: {
+				type: Date
+			},
+			endDate: {
+				type: Date
+			},
+			paymentDate: {
+				type: Date
 			}
 		},
 		coordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'Coordinator' },
