@@ -3,138 +3,120 @@
 <head>
   <meta charset="UTF-8">
   <title>Edit Teacher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/admin/EditTeacher.css">
 </head>
 <body class="bg-light">
-
+  <div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
+    <div class="d-flex align-items-center justify-content-between px-3 mobile-topbar-inner">
+      <img src="/image/logo.png" alt="Logo" class="mobile-logo-img">
+      <button class="btn btn-light" onclick="toggleSidebar()">
+        <i class="bi bi-list fs-4"></i>
+      </button>
+    </div>
+  </div>
   <%- include('partials/navbar') %>
   <%- include('./partials/sidebar') %>
 
-  <div class="main-content p-5">
+  <div class="main-content">
     <div class="container">
-      <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
-        <ol class="breadcrumb p-3">
-          <li class="breadcrumb-item "><a href="/admin/Dashboard">Home</a></li>
-          <li class="breadcrumb-item "><a href="/admin/viewTeachers">Teachers</a></li>
-          <li class="breadcrumb-item "><a href="/admin/teachers/profile/<%= teacher._id %>">teacherProfile</a></li>
-          <li class="breadcrumb-item active" aria-current="page">editTeacher</li>
-        </ol>
-      </nav>
-      <div class="row justify-content-center">
-        <div class="col-md-9 col-lg-8">
-          <div class="card shadow">
-            <div class="card-header bg-dark text-white">
-              <h5 class="mb-0">Edit Teacher</h5>
-            </div>
-            <div class="card-body">
-              <form action="/admin/teachers/edit/<%= teacher._id %>" method="POST" enctype="multipart/form-data">
-                <div class="mb-3">
-                  <label class="form-label">Full Name</label>
-                  <input type="text" name="fullName" class="form-control" value="<%= teacher.fullName %>" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Email</label>
-                  <input type="email" name="email" class="form-control" value="<%= teacher.email %>" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Phone</label>
-                  <input type="text" name="phone" class="form-control" value="<%= teacher.phone || '' %>">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Profile Picture</label>
-                  <% if (teacher.profilePic?.url) { %>
-                    <div class="mb-3">
-                      <img
-                        id="previewImage"
-                        src="<%= teacher.profilePic.url %>"
-                        class="rounded-circle border"
-                        style="width:120px;height:120px;object-fit:cover;"
-                      >
-                    </div>
-                  <% } %>
-                  <input type="file" name="profilePic" class="form-control" onchange="previewFile(event)">
-                  <small class="text-muted">Leave empty to keep existing image</small>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Experience (Years)</label>
-                  <input type="number" name="experienceYears" min="0" class="form-control"
-                    value="<%= teacher.experienceYears || 0 %>">
-                </div>
-                <hr>
-                <h6 class="fw-bold">Qualification</h6>
-                <div class="mb-3">
-                  <label class="form-label">Degree</label>
-                  <input type="text" name="degree" class="form-control"
-                    value="<%= teacher.qualification?.degree %>" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Field</label>
-                  <input type="text" name="field" class="form-control"
-                    value="<%= teacher.qualification?.field %>" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Institution</label>
-                  <input type="text" name="institution" class="form-control"
-                    value="<%= teacher.qualification?.institution || '' %>">
-                </div>
-                <hr>
-                <div class="mb-3">
-                  <label class="form-label">Subjects</label>
-                  <input type="text" name="subjects" class="form-control"
-                    value="<%= (teacher.subjects || []).join(', ') %>" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Hourly Rate (₹)</label>
-                  <input type="number" name="hourlyRate" class="form-control"
-                    value="<%= teacher.hourlyRate %>" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Daily Student Limit</label>
-                  <input type="number" name="dailyStudents" min="1" max="12" class="form-control"
-                    value="<%= teacher.dailyStudents %>" required>
-                </div>
-                <div class="mb-4">
-                  <label class="form-label">Status</label>
-                  <select name="status" class="form-select" required>
-                    <option value="teacher" <%= teacher.status === 'teacher' ? 'selected' : '' %>>Teacher</option>
-                    <option value="alumni" <%= teacher.status === 'alumni' ? 'selected' : '' %>>Alumni</option>
-                  </select>
-                </div>
-                <div class="row g-2">
-                  <div class="col-md-3">
-                    <button type="submit" class="btn btn-warning fw-bold w-100">
-                      Update
-                    </button>
+      <div class="page-card">
+        <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+          <ol class="breadcrumb mb-3">
+            <li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
+            <li class="breadcrumb-item"><a href="/admin/viewteachers">Teachers</a></li>
+            <li class="breadcrumb-item"><a href="/admin/teachers/profile/<%= teacher._id %>">Teacher Profile</a></li>
+            <li class="breadcrumb-item active">Edit Teacher</li>
+          </ol>
+        </nav>
+        <h4 class="fw-bold mb-3 heading text-center">EDIT TEACHER</h4>
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <form action="/admin/teachers/edit/<%= teacher._id %>" method="POST" enctype="multipart/form-data">
+              <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" name="fullName" class="form-control" value="<%= teacher.fullName %>" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" value="<%= teacher.email %>" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Phone</label>
+                <input type="text" name="phone" class="form-control" value="<%= teacher.phone || '' %>">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Profile Picture</label>
+                <% if (teacher.profilePic?.url) { %>
+                  <div class="mb-2 d-flex">
+                    <img id="previewImage"
+                      src="<%= teacher.profilePic.url %>"
+                      class="rounded-circle border"
+                      style="width:120px;height:120px;object-fit:cover;">
                   </div>
-                  <div class="col-md-3">
-                    <button
-                      type="button"
-                      class="btn btn-outline-dark fw-bold w-100"
-                      data-bs-toggle="modal"
-                      data-bs-target="#changePasswordModal">
-                      Password
-                    </button>
-                  </div>
-                  <div class="col-md-3">
-                    <button
-                      type="button"
-                      class="btn btn-danger fw-bold w-100"
-                      data-bs-toggle="modal"
-                      data-bs-target="#deleteModal"
-                      data-id="<%= teacher._id %>">
-                      <i class="bi bi-trash"></i> Delete
-                    </button>
-                  </div>
-                  <div class="col-md-3">
-                    <a href="/admin/teachers/profile/<%= teacher._id %>" class="btn btn-secondary fw-bold w-100">
-                      Cancel
-                    </a>
-                  </div>
+                <% } %>
+                <input type="file" name="profilePic" class="form-control" onchange="previewFile(event)">
+                <small class="text-muted">Leave empty to keep existing image</small>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Experience (Years)</label>
+                <input type="number" name="experienceYears" class="form-control"
+                  value="<%= teacher.experienceYears || 0 %>">
+              </div>
+              <hr>
+              <h6 class="fw-bold">Qualification</h6>
+              <div class="mb-3">
+                <label class="form-label">Degree</label>
+                <input type="text" name="degree" class="form-control"
+                  value="<%= teacher.qualification?.degree %>" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Field</label>
+                <input type="text" name="field" class="form-control"
+                  value="<%= teacher.qualification?.field %>" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Institution</label>
+                <input type="text" name="institution" class="form-control"
+                  value="<%= teacher.qualification?.institution || '' %>">
+              </div>
+              <hr>
+              <div class="mb-3">
+                <label class="form-label">Subjects</label>
+                <input type="text" name="subjects" class="form-control"
+                  value="<%= (teacher.subjects || []).join(', ') %>" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Hourly Rate</label>
+                <input type="number" name="hourlyRate" class="form-control"
+                  value="<%= teacher.hourlyRate %>" required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                  <option value="teacher" <%= teacher.status === 'teacher' ? 'selected' : '' %>>Teacher</option>
+                  <option value="alumni" <%= teacher.status === 'alumni' ? 'selected' : '' %>>Alumni</option>
+                </select>
+              </div>
+              <div class="row g-2">
+                <div class="col-md-3">
+                  <button class="btn btn-warning w-100 fw-bold">Update</button>
                 </div>
-              </form>
-            </div>
+                <div class="col-md-3">
+                  <button type="button" class="btn btn-outline-dark w-100 fw-bold"
+                    data-bs-toggle="modal" data-bs-target="#changePasswordModal">Password</button>
+                </div>
+                <div class="col-md-3">
+                  <button type="button" class="btn btn-danger w-100 fw-bold"
+                    data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="<%= teacher._id %>">Delete</button>
+                </div>
+                <div class="col-md-3">
+                  <a href="/admin/teachers/profile/<%= teacher._id %>" class="btn btn-secondary w-100 fw-bold">Cancel</a>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -145,49 +127,45 @@
       <form action="/admin/teachers/change-password/<%= teacher._id %>" method="POST" class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Change Password</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <input type="password" name="password" minlength="8" class="form-control" required>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-dark fw-bold">Update</button>
+          <button class="btn btn-dark fw-bold">Update</button>
         </div>
       </form>
     </div>
   </div>
   <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <form id="deleteForm" method="POST">
-          <div class="modal-header">
-            <h5 class="modal-title">Confirm Delete</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            Are you sure you want to delete this teacher?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-danger">Yes, Delete</button>
-          </div>
-        </form>
-      </div>
+      <form id="deleteForm" method="POST" class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Delete</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">Are you sure?</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-danger">Delete</button>
+        </div>
+      </form>
     </div>
   </div>
   <script>
-    function previewFile(event) {
+    function previewFile(e){
       const img = document.getElementById('previewImage');
-      if (event.target.files[0]) {
-        img.src = URL.createObjectURL(event.target.files[0]);
+      if(img && e.target.files[0]){
+        img.src = URL.createObjectURL(e.target.files[0]);
       }
     }
-    const deleteModal = document.getElementById('deleteModal');
-    deleteModal.addEventListener('show.bs.modal', event => {
-      const button = event.relatedTarget;
-      const teacherId = button.getAttribute('data-id');
-      document.getElementById('deleteForm').action =
-        `/admin/teachers/delete/${teacherId}`;
+    function toggleSidebar(){
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+    document.getElementById('deleteModal').addEventListener('show.bs.modal', e=>{
+      const id = e.relatedTarget.getAttribute('data-id');
+      document.getElementById('deleteForm').action = `/admin/teachers/delete/${id}`;
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
