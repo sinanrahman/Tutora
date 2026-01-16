@@ -41,5 +41,24 @@
   color: inherit;
   display: block;
 }
+.mobile-logo {
+  z-index: 1050;
+}
 
+.mobile-logo-img {
+  height: 40px;
+  width: auto;
+}
 
+.mobile-topbar {
+  z-index: 1100;
+}
+/* Hide navbar on mobile */
+@media (max-width: 767.98px) {
+  .navbar {
+    display: none !important;
+  }
+   .main-content {
+    padding-top: 75px;
+  }
+}

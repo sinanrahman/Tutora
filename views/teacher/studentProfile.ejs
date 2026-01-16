@@ -148,7 +148,7 @@
     }</style>
 <body>
   <%-include('../partials/teacherNavbar') %>
-	<%-include('../partials/teacherSidebar',{user})%>
+	<%-include('../partials/sidebar')%>
 
 
 	<div class="navbar-top">
@@ -160,39 +160,56 @@
 
 	<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-	<div class="main-content">
+		<div class="main-content">
 			<div class="container-fluid">
-        <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
-      <ol class="breadcrumb p-3">
-        <li class="breadcrumb-item "><a href="/teacher/Dashboard">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">studentProfile</li>
-      </ol>
-    </nav>
-<div class="container mt-4 p-5">
-  <h3 class="fw-bold heading text-center">STUDENT PROFILE</h3>
+				<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+					<ol class="breadcrumb p-3">
+						<li class="breadcrumb-item"><a href="/teacher/Dashboard">Home</a></li>
+						<li class="breadcrumb-item active" aria-current="page">studentProfile</li>
+					</ol>
+				</nav>
+				<div class="container mt-4 p-5">
+					<h3 class="fw-bold heading text-center">STUDENT PROFILE</h3>
 
-  <div class="card shadow-sm mt-3">
-    <div class="card-body">
+					<div class="card shadow-sm mt-3">
+						<div class="card-body">
+							<p>
+								<strong>Name:</strong>
+								<%= student.fullName %>
+							</p>
+							<p>
+								<strong>id:</strong>
+								<%= student._id %>
+							</p>
+							<p>
+								<strong>Class:</strong>
+								<%= student.standard %>
+							</p>
+							<p>
+								<strong>Phone:</strong>
+								<%= student.phone %>
+							</p>
+							<p>
+								<strong>Country:</strong>
+								<%= student.country %>
+							</p>
+							<p>
+								<strong>Status:</strong>
+								<span class="badge <%= student.status === 'active' ? 'bg-success' : 'bg-danger' %>">
+									<%= student.status %>
+								</span>
+							</p>
+							<hr />
 
-      <p><strong>Name:</strong> <%= student.fullName %></p>
-      <p><strong>id:</strong> <%= student._id %></p>
-      <p><strong>Class:</strong> <%= student.standard %></p>
-      <p><strong>Phone:</strong> <%= student.phone %></p>
-      <p><strong>Country:</strong> <%= student.country %></p>
-      <p><strong>Status:</strong> 
-        <span class="badge <%= student.status === 'active' ? 'bg-success' : 'bg-danger' %>">
-          <%= student.status %>
-        </span>
-      </p>
-      <hr>
+							<h5>Total Attended Hours</h5>
+							<p class="fs-5 fw-bold text-primary"><%= totalHours %> hours</p>
 
-      <h5>Total Attended Hours</h5>
-      <p class="fs-5 fw-bold text-primary"><%= totalHours %> hours</p>
+							<hr />
 
-      <hr>
+							<h5>Remaining Hours</h5>
+							<p class="fs-5 fw-bold text-success"><%= student.remainingHours %> hours</p>
 
-      <h5>Remaining Hours</h5>
-      <p class="fs-5 fw-bold text-success"><%= student.remainingHours %> hours</p>
+							<hr />
 
       <hr>
 
