@@ -20,17 +20,41 @@
 		}
 	</style>
 
+	<head>
+		<meta charset="UTF-8" />
+		<title>View Coordinators</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="/css/admin/viewcoordinators.css" />
+	</head>
+
 	<body class="bg-light">
+		<div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
+			<div class="d-flex align-items-center justify-content-between px-3" style="height: 60px">
+				<img src="/image/logo.png" alt="Logo" class="mobile-logo-img" />
+
+				<button class="btn btn-light" onclick="toggleSidebar()">
+					<i class="bi bi-list fs-4"></i>
+				</button>
+			</div>
+		</div>
 		<%- include('partials/navbar') %> <%- include('../partials/sidebar') %>
 
-		<div class="main-content p-5">
-			<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
-				<ol class="breadcrumb p-3">
-					<li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
-					<li class="breadcrumb-item active" aria-current="page">coordinator</li>
-				</ol>
-			</nav>
+		<div class="main-content p-4">
 			<div class="card shadow-sm">
+				<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+					<ol class="breadcrumb p-3">
+						<li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
+						<li class="breadcrumb-item active" aria-current="page">coordinator</li>
+					</ol>
+				</nav>
 				<div class="card-body">
 					<div class="d-flex flex-column justify-content-center align-items-center mb-5">
 						<h2 class="fw-bold fs-2 mb-4 heading">CO-ORDINATORS</h2>
@@ -127,6 +151,24 @@
 				const coordinatorId = button.getAttribute('data-id');
 				const form = document.getElementById('deleteForm');
 				form.action = `/admin/coordinators/delete/${coordinatorId}`;
+			});
+
+			function toggleSidebar() {
+				document.getElementById('sidebar').classList.toggle('active');
+			}
+
+			document.addEventListener('click', function (e) {
+				const sidebar = document.getElementById('sidebar');
+				const toggleBtn = document.querySelector('.bi-list')?.parentElement;
+
+				if (
+					window.innerWidth < 768 &&
+					sidebar.classList.contains('active') &&
+					!sidebar.contains(e.target) &&
+					!toggleBtn?.contains(e.target)
+				) {
+					sidebar.classList.remove('active');
+				}
 			});
 		</script>
 	</body>

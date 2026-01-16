@@ -38,6 +38,22 @@
 		padding: 20px;
 		min-height: 100vh;
 	}
+
+	@media (max-width: 767.98px) {                                                
+  #sidebar {
+    transform: translateX(-100%);
+  }
+
+  #sidebar.active {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 15px;
+  }
+}
+  
 </style>
 
 <nav id="sidebar" class="p-3 d-flex flex-column justify-content-between">

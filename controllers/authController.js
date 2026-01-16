@@ -71,7 +71,6 @@ const renderLoginWithMsg = (res, role, msg, attemptsLeft = MAX_ATTEMPTS, remaini
     return res.render('auth/login', { msg });
 };
 
-//      HANDLE LOGIN LOGIC
 exports.login = async (req, res) => {
     try {
         const { email, password, role } = req.body;
