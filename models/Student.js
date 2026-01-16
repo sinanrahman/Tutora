@@ -24,11 +24,6 @@ const studentSchema = new mongoose.Schema(
 			required: true,
 			trim: true,
 		},
-		prepaidHours: {
-			type: Number,
-			default: 120,
-			required: true,
-		},
 		remainingHours: {
 			type: Number,
 			default: 120,
@@ -50,6 +45,17 @@ const studentSchema = new mongoose.Schema(
 		lastDate: {
 			type:Date,
 			required: true
+		},
+		package:{
+			hours:{
+				type:Number
+			},
+			amount:{
+				type:Number
+			},
+			description:{
+				type:String
+			}
 		},
 		coordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'Coordinator' },
 		assignedTeachers: [
