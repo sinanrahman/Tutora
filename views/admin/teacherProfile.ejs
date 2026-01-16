@@ -108,17 +108,21 @@
                   <span class="text-muted">—</span>
                 <% } %>
               </div>
-              <div class="row g-2 mt-4 justify-content-center">
-                <div class="col-md-4 col-12">
-                  <a href="/admin/viewteachers" class="btn btn-secondary btn-lg w-100">Back</a>
-                </div>
-                <div class="col-md-4 col-12">
-                  <a href="/admin/teachers/history/<%= teacher._id %>" class="btn btn-success btn-lg w-100">History</a>
-                </div>
-                <div class="col-md-4 col-12">
-                  <a href="/admin/teachers/edit/<%= teacher._id %>" class="btn btn-warning btn-lg w-100">Edit</a>
-                </div>
-              </div>
+             <div class="row g-2 mt-4 justify-content-center">
+  <div class="col-md-3 col-12">
+    <a href="/admin/viewteachers" class="btn btn-secondary btn-lg w-100">Back</a>
+  </div>
+  <div class="col-md-3 col-12">
+    <a href="/admin/teachers/history/<%= teacher._id %>" class="btn btn-success btn-lg w-100">History</a>
+  </div>
+  <div class="col-md-3 col-12">
+    <a href="/admin/teachers/salary/<%= teacher._id %>" class="btn btn-primary btn-lg w-100">Salary</a>
+  </div>
+  <div class="col-md-3 col-12">
+    <a href="/admin/teachers/edit/<%= teacher._id %>" class="btn btn-warning btn-lg w-100">Edit</a>
+  </div>
+</div>
+
           </div>
         </div>
       </div>

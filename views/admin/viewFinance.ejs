@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>View Finance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- DataTables -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css">
+
+  <!-- Shared Admin CSS -->
+  <link rel="stylesheet" href="/css/admin/viewstudents.css">
+</head>
+
+<body class="bg-light">
+
+  <!-- Mobile Topbar -->
+  <div class="d-md-none mobile-topbar fixed-top bg-light ">
+    <div class="d-flex align-items-center justify-content-between px-3" style="height:60px;">
+      <img src="/image/logo.png" alt="Logo" class="mobile-logo-img">
+      <button class="btn btn-light" onclick="toggleSidebar()">
+        <i class="bi bi-list fs-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <%- include('partials/navbar') %>
+  <%- include('../partials/sidebar') %>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content p-5">
+
+    <div class="card shadow-sm border-0">
+
+      <!-- Breadcrumb -->
+      <nav style="--bs-breadcrumb-divider:'>';">
+        <ol class="breadcrumb p-3 mb-0">
+          <li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
+          <li class="breadcrumb-item active">Finance</li>
+        </ol>
+      </nav>
+
+      <div class="card-body">
+
+        <!-- Heading + Button -->
+        <div class="d-flex flex-column align-items-center mb-3">
+  <h3 class="fw-bold fs-2 heading mb-3" style="color:#870216;">FINANCE</h3>
+
+  <div class="d-flex gap-2 flex-wrap justify-content-center">
+    <a href="/admin/addfinance" class="btn btn-success btn-sm">
+      <i class="bi bi-plus-circle"></i> Add Transaction
+    </a>
+  </div>
+</div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+          <table class="table table-hover table-striped" id="financeTable">
+            <thead class="table-light">
+              <tr>
+                <th>Sl No</th>
+                <th>Transaction ID</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>TXN001</td>
+                <td>
+                  <span class="badge bg-success">Credit</span>
+                </td>
+                <td>₹ 25,000</td>
+                <td>Student course fee received</td>
+              </tr>
+
+              <tr>
+                <td>2</td>
+                <td>TXN002</td>
+                <td>
+                  <span class="badge bg-danger">Debit</span>
+                </td>
+                <td>₹ 5,000</td>
+                <td>Electricity bill payment</td>
+              </tr>
+
+              <tr>
+                <td>3</td>
+                <td>TXN003</td>
+                <td>
+                  <span class="badge bg-success">Credit</span>
+                </td>
+                <td>₹ 15,000</td>
+                <td>January tuition fees collected</td>
+              </tr>
+
+              <tr>
+                <td>4</td>
+                <td>TXN004</td>
+                <td>
+                  <span class="badge bg-danger">Debit</span>
+                </td>
+                <td>₹ 3,000</td>
+                <td>Office maintenance expense</td>
+              </tr>
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
+
+  <script>
+    new DataTable('#financeTable');
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    document.addEventListener('click', function (e) {
+      const sidebar = document.getElementById('sidebar');
+      const toggleBtn = document.querySelector('.bi-list')?.parentElement;
+
+      if (
+        window.innerWidth < 768 &&
+        sidebar.classList.contains('active') &&
+        !sidebar.contains(e.target) &&
+        !toggleBtn?.contains(e.target)
+      ) {
+        sidebar.classList.remove('active');
+      }
+    });
+  </script>
+
+</body>
+</html>

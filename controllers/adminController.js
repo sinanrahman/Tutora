@@ -15,7 +15,7 @@ exports.dashboard = async (req, res) => {
         const totalStudents = await Student.countDocuments();
         const totalCoordinators = await Coordinator.countDocuments();
         const totalTeachers = await Teacher.countDocuments();
-        
+
         return res.render('admin/dashboard', {
             totalStudents,
             totalCoordinators,
@@ -24,7 +24,7 @@ exports.dashboard = async (req, res) => {
         });
     } catch (err) {
         console.log(err);
-        return res.render('auth/pageNotFound',{msg:'Error while rendering dashboard'})
+        return res.render('auth/pageNotFound', { msg: 'Error while rendering dashboard' })
     }
 };
 
@@ -33,12 +33,12 @@ exports.addStudents = async (req, res) => {
     try {
         const coordinators = await Coordinator.find({ status: 'coordinator' }).select('_id fullName');
         return res.render('admin/addstudents', {
-            coordinators, 
+            coordinators,
             activePage: 'students',
         });
     } catch (err) {
         console.log(err);
-        return res.render('auth/pageNotFound',{msg:'Error loading Add Students page'})
+        return res.render('auth/pageNotFound', { msg: 'Error loading Add Students page' })
     }
 };
 
@@ -68,7 +68,7 @@ exports.viewStudents = async (req, res) => {
         return res.render('admin/viewStudents', { students: Students, activePage: 'students' });
     } catch (err) {
         console.error(err);
-        return res.render('auth/pageNotFound',{msg:'Error loading View All Students page'})
+        return res.render('auth/pageNotFound', { msg: 'Error loading View All Students page' })
     }
 };
 
@@ -79,7 +79,7 @@ exports.viewStudentDetails = async (req, res) => {
         const stud = await Student.findById(studentId).populate('coordinator', 'fullName email phone').lean();
 
         if (!stud) {
-            return res.render('auth/pageNotFound',{msg:'Error: Student not found'})
+            return res.render('auth/pageNotFound', { msg: 'Error: Student not found' })
         }
         const sessions = await Session.find({
             student: studentId,
@@ -91,7 +91,7 @@ exports.viewStudentDetails = async (req, res) => {
         return res.render('admin/viewStudentDetails', { student: stud, activePage: 'students' });
     } catch (err) {
         console.error(err);
-        return res.render('auth/pageNotFound',{msg:'Error loading student details'})
+        return res.render('auth/pageNotFound', { msg: 'Error loading student details' })
     }
 };
 
@@ -101,14 +101,14 @@ exports.editStudentPage = async (req, res) => {
         const studentId = req.params.id;
         const stud = await Student.findById(studentId);
         const coordinators = await Coordinator.find({ status: 'coordinator' }).select('_id fullName');
-        
+
         if (!stud) {
             return res.render('auth/pageNotFound', { msg: 'Student not found for editing' });
         }
         return res.render('admin/editStudent', { student: stud, coordinators, activePage: 'students' });
     } catch (err) {
         console.log(err);
-        return res.render('auth/pageNotFound',{msg:'Error loading Edit Student page'})
+        return res.render('auth/pageNotFound', { msg: 'Error loading Edit Student page' })
     }
 };
 
@@ -116,11 +116,11 @@ exports.editStudentPage = async (req, res) => {
 exports.updateStudent = async (req, res) => {
     try {
         const studentId = req.params.id;
-        await Student.findByIdAndUpdate(studentId,req.body);
+        await Student.findByIdAndUpdate(studentId, req.body);
         return res.redirect('/admin/viewstudents');
     } catch (err) {
         console.log(err);
-        return res.render('auth/pageNotFound',{msg:'Error updating student details'})
+        return res.render('auth/pageNotFound', { msg: 'Error updating student details' })
     }
 };
 
@@ -132,7 +132,7 @@ exports.deleteStudent = async (req, res) => {
         return res.redirect('/admin/viewstudents');
     } catch (err) {
         console.log(err);
-        return res.render('auth/pageNotFound',{msg:'Error deleting student'})
+        return res.render('auth/pageNotFound', { msg: 'Error deleting student' })
     }
 };
 
@@ -147,7 +147,7 @@ exports.postAddCoordinator = async (req, res) => {
         const { fullName, email, phone, password, status } = req.body;
         const admin = await Admin.findOne();
         if (!admin) {
-            return res.render('auth/pageNotFound',{msg:'Error: No admin found. Create an admin first'})
+            return res.render('auth/pageNotFound', { msg: 'Error: No admin found. Create an admin first' })
         }
         await Coordinator.create({
             fullName: fullName,
@@ -158,9 +158,9 @@ exports.postAddCoordinator = async (req, res) => {
             createdBy: admin._id,
         });
         return res.redirect('/admin/viewcoordinators');
-    } catch(e){
+    } catch (e) {
         console.log(e)
-        return res.render('auth/pageNotFound',{msg:'Error: Coordinator not added'})
+        return res.render('auth/pageNotFound', { msg: 'Error: Coordinator not added' })
     }
 };
 
@@ -171,7 +171,7 @@ exports.viewCoordinator = async (req, res) => {
         return res.render('admin/viewCoordinators', { coordinators, activePage: 'coordinators' });
     } catch (err) {
         console.log(err);
-        return res.render('auth/pageNotFound',{msg:'Error loading coordinators list'})
+        return res.render('auth/pageNotFound', { msg: 'Error loading coordinators list' })
     }
 };
 
@@ -244,7 +244,7 @@ exports.updateCoordinator = async (req, res) => {
 
 //      RENDER ADD TEACHER PAGE
 exports.addTeacher = (req, res) => {
-    return res.render('admin/addTeachers',{activePage: 'teachers'});
+    return res.render('admin/addTeachers', { activePage: 'teachers' });
 };
 
 //      CREATING NEW TEACHER
@@ -594,3 +594,26 @@ exports.removeUpdateTeacher = async (req, res) => {
         return res.redirect(`/admin/dashboard`);
     }
 };
+
+//financeee
+exports.viewFinance = (req, res) => {
+    return res.render('admin/viewFinance', { activePage: 'finance' })
+}
+
+exports.addFinance = (req, res) => {
+    return res.render('admin/addFinance', { activePage: 'finance' })
+}
+
+exports.viewSalary = async (req, res) => {
+    const teacherId = req.params.id;
+    const teacher = await Teacher.findById(teacherId);
+
+    return res.render('admin/viewSalary', { activePage: 'teachers', teacher })
+}
+
+exports.addSalary = async (req, res) => {
+    const teacherId = req.params.id;
+    const teachers = await Teacher.findById(teacherId);
+
+    return res.render('admin/addSalary', { activePage: 'teachers', teachers })
+}
