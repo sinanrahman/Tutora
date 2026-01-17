@@ -41,6 +41,10 @@ const {
 	getUpdateTeacher,
 	addUpdateTeacher,
 	removeUpdateTeacher,
+	viewFinance,
+	addFinance,
+	viewSalary,
+	addSalary,
 } = require('../controllers/adminController');
 
 // ==========================================
@@ -195,5 +199,22 @@ router.get(
 	authorize('ADMIN'),
 	removeUpdateTeacher
 );
+
+router
+	.route('/viewfinance')
+	.get(protect, setSidebarMenu, authorize('ADMIN'),viewFinance);
+
+router
+	.route('/addfinance')
+	.get(protect, setSidebarMenu, authorize('ADMIN'),addFinance);
+
+router
+	.route('/teachers/salary/:id')
+	.get(protect, setSidebarMenu, authorize('ADMIN'),viewSalary);
+
+router
+	.route('/teachers/salary/:id/add')
+	.get(protect, setSidebarMenu, authorize('ADMIN'),addSalary);
+
 
 module.exports = router;

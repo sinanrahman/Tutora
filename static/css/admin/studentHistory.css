@@ -1,0 +1,100 @@
+.heading {
+  color: #870216;
+}
+
+#sidebar {
+  width: 220px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background-color: #343a40;
+  padding-top: 20px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+#sidebar h3 {
+  font-size: 1.3rem;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+#sidebar .nav-link {
+  color: white;
+  padding: 10px 20px;
+  display: block;
+  text-decoration: none;
+}
+
+#sidebar .nav-link:hover,
+#sidebar .nav-link.active {
+  background-color: #495057;
+  border-radius: 5px;
+}
+
+.main-content {
+  margin-left: 220px;
+  margin-top: 40px; /* Added top margin like Add Student page */
+  padding: 20px;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.card {
+  border-radius: 10px;
+}
+
+table th,
+table td {
+  vertical-align: middle;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.mobile-topbar {
+  z-index: 1100;
+}
+
+.mobile-logo-img {
+  height: 40px;
+  width: auto;
+}
+
+/* Prevent overlap on mobile */
+@media (max-width: 767.98px) {
+  .card {
+    border-radius: 12px;
+  }
+
+  .breadcrumb {
+    font-size: 14px;
+  }
+
+  .main-content h3 {
+    font-size: 1.25rem;
+  }
+
+  .d-flex.justify-content-end {
+    flex-direction: column;
+  }
+
+  .navbar {
+    display: none !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    padding-top: 75px !important; /* keeps mobile spacing same as Add Student page */
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

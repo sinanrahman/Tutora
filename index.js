@@ -28,8 +28,6 @@ app.use((req, res, next) => {
 	next();
 });
 
-
-
 //		ALL LOGIN
 const auth = require('./routes/authRoutes');
 app.use('/', auth);

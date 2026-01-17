@@ -33,6 +33,7 @@
     .main-content {
       margin-left: 220px; 
       padding: 20px;
+      margin-top: 40px;
       min-height: 100vh;
       background-color: #f8f9fa;
     }
@@ -59,3 +60,42 @@
     .action-group .btn {
       min-width: 70px;
     }
+
+    
+    .mobile-topbar {
+  z-index: 1100;
+}
+
+.mobile-logo-img {
+  height: 40px;
+  width: auto;
+}
+
+    @media (max-width: 767.98px) {
+  /* Hide navbar */
+  .navbar {
+    display: none !important;
+  }
+
+  .heading {
+    font-size: 1.4rem;
+  }
+  /* Sidebar hidden */
+  #sidebar {
+    transform: translateX(-100%);
+  }
+
+  #sidebar.active {
+    transform: translateX(0);
+  }
+
+  .table-responsive {
+    font-size: 14px;
+  }
+  /* Main content full width */
+  .main-content {
+    margin-left: 0 !important;
+    padding: 15px;
+    padding-top: 75px !important;
+  }
+}

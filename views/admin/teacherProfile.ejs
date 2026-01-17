@@ -1,120 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<title>Teacher Details</title>
-		<link
-			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-			rel="stylesheet"
-		/>
-		<link
-			href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-			rel="stylesheet"
-		/>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-		<link rel="stylesheet" href="/css/admin/teacherProfile.css" />
-	</head>
-	<body class="bg-light">
-		<%- include('partials/navbar') %> <%- include('../partials/sidebar') %>
+<head>
+  <meta charset="UTF-8">
+  <title>Teacher Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin/teacherProfile.css">
+</head>
+<body class="bg-light">
+    <%- include('partials/navbar') %>
+    <%- include('../partials/sidebar') %>
 
-  <%- include('partials/navbar') %>
-  <%- include('./partials/sidebar') %>
+  <div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
+    <div class="d-flex align-items-center justify-content-between px-3 mobile-topbar-inner">
+      <img src="/image/logo.png" alt="Logo" class="mobile-logo-img">
+      <button class="btn btn-light" onclick="toggleSidebar()">
+        <i class="bi bi-list fs-4"></i>
+      </button>
+    </div>
+  </div>
 
-  <div class="main-content p-5">
-    <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
-        <ol class="breadcrumb p-3">
-          <li class="breadcrumb-item "><a href="/admin/Dashboard">Home</a></li>
-          <li class="breadcrumb-item "><a href="/admin/viewTeachers">Teachers</a></li>
-          <li class="breadcrumb-item active" aria-current="page">teacherProfile</li>
-        </ol>
-      </nav>
-    <h3 class="fw-bold pt-4 mb-4">Teacher Details</h3>
-    <div class="card shadow-sm border-0">
-      <div class="card-body p-0">
-        <div class="p-4 d-flex align-items-center gap-4 border-bottom">
-          <img
-            src="<%= teacher.profilePic?.url || '/images/default-avatar.png' %>"
-            class="profile-img"
-            alt="Profile Picture"
-          >
-          <div>
-            <h4 class="mb-1"><%= teacher.fullName %></h4>
-            <p class="mb-1 text-muted">
-              <i class="bi bi-envelope"></i> <%= teacher.email %>
-            </p>
-            <span class="badge <%= teacher.status === 'teacher' ? 'bg-success' : 'bg-secondary' %>">
-              <%= teacher.status.toUpperCase() %>
-            </span>
-          </div>
-        </div>
-        <table class="table table-bordered mb-0">
-          <tbody>
-            <tr>
-              <th class="bg-light w-25">Phone</th>
-              <td><%= teacher.phone || '—' %></td>
-            </tr>
-            <tr>
-              <th class="bg-light">Experience</th>
-              <td><%= teacher.experienceYears %> Years</td>
-            </tr>
-            <tr>
-              <th class="bg-light">Total Hours Taken</th>
-              <td><strong><%= totalHours %></strong> hrs</td>
-            </tr>
-            <tr>
-              <th class="bg-light">Hourly Rate</th>
-              <td>₹ <%= teacher.hourlyRate %></td>
-            </tr>
-            <tr>
-              <th class="bg-light">Daily Students</th>
-              <td><%= teacher.dailyStudents %></td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="p-4">
-          <h5 class="fw-bold mb-3">Qualification</h5>
-          <table class="table table-bordered">
-            <tbody>
-              <tr>
-                <th class="bg-light w-25">Degree</th>
-                <td><%= teacher.qualification?.degree || '—' %></td>
-              </tr>
-              <tr>
-                <th class="bg-light">Field</th>
-                <td><%= teacher.qualification?.field || '—' %></td>
-              </tr>
-              <tr>
-                <th class="bg-light">Institution</th>
-                <td><%= teacher.qualification?.institution || '—' %></td>
-              </tr>
-            </tbody>
-          </table>
-          <h5 class="fw-bold mt-4 mb-2">Subjects</h5>
-          <div class="mb-4">
-            <% if (teacher.subjects?.length) { %>
-              <% teacher.subjects.forEach(sub => { %>
-                <span class="badge bg-primary fs-6 me-1 mb-1 text-capitalize">
-                  <%= sub %>
+  <div class="main-content">
+    <div class="container-fluid px-3 px-md-4">
+      <div class="content-wrapper bg-white rounded-4 shadow-sm p-4">
+        <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+          <ol class="breadcrumb mb-3">
+            <li class="breadcrumb-item">
+              <a href="/admin/Dashboard">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+              <a href="/admin/viewteachers">Teachers</a>
+            </li>
+            <li class="breadcrumb-item active">
+              Teacher Profile
+            </li>
+          </ol>
+        </nav>
+        <h3 class="fw-bold mb-4 heading text-center">
+          Teacher Details
+        </h3>
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-0">
+            <div class="p-4 d-flex flex-column flex-md-row align-items-center gap-4 border-bottom text-center text-md-start">
+              <img src="<%= teacher.profilePic?.url || '/images/default-avatar.png' %>" class="profile-img" alt="Profile Picture">
+              <div>
+                <h4 class="mb-1"><%= teacher.fullName %></h4>
+                <p class="mb-1 text-muted">
+                  <i class="bi bi-envelope"></i> <%= teacher.email %>
+                </p>
+                <span class="badge <%= teacher.status === 'teacher' ? 'bg-success' : 'bg-secondary' %>">
+                  <%= teacher.status.toUpperCase() %>
                 </span>
-              <% }) %>
-            <% } else { %>
-              <span class="text-muted">—</span>
-            <% } %>
-          </div>
-          <div class="row g-2 mt-4 justify-content-center">
-            <div class="col-md-4 col-12">
-              <a href="/admin/viewteachers" class="btn btn-secondary btn-lg w-100">Back</a>
+              </div>
             </div>
-            <div class="col-md-4 col-12">
-              <a href="/admin/teachers/history/<%= teacher._id %>" class="btn btn-success btn-lg w-100">History</a>
-            </div>
-            <div class="col-md-4 col-12">
-              <a href="/admin/teachers/edit/<%= teacher._id %>" class="btn btn-warning btn-lg w-100">Edit</a>
-            </div>
+
+            <table class="table table-bordered mb-0">
+              <tbody>
+                <tr>
+                  <th class="bg-light w-25">Phone</th>
+                  <td><%= teacher.phone || '—' %></td>
+                </tr>
+                <tr>
+                  <th class="bg-light">Experience</th>
+                  <td><%= teacher.experienceYears %> Years</td>
+                </tr>
+                <tr>
+                  <th class="bg-light">Total Hours Taken</th>
+                  <td><strong><%= totalHours %></strong> hrs</td>
+                </tr>
+                <tr>
+                  <th class="bg-light">Hourly Rate</th>
+                  <td>₹ <%= teacher.hourlyRate %></td>
+                </tr>
+                <tr>
+                  <th class="bg-light">Daily Students</th>
+                  <td><%= teacher.dailyStudents %></td>
+                </tr>
+              </tbody>
+            </table>            
+              <h5 class="fw-bold my-4">Qualification</h5>
+              <table class="table table-bordered qualification-table">
+                <tbody>
+                  <tr>
+                    <th class="bg-light w-25">Degree</th>
+                    <td><%= teacher.qualification?.degree || '—' %></td>
+                  </tr>
+                  <tr>
+                    <th class="bg-light">Field</th>
+                    <td><%= teacher.qualification?.field || '—' %></td>
+                  </tr>
+                  <tr>
+                    <th class="bg-light">Institution</th>
+                    <td><%= teacher.qualification?.institution || '—' %></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="fw-bold mt-4 mb-2">Subjects</h5>
+              <div class="mb-4">
+                <% if (teacher.subjects?.length) { %>
+                  <% teacher.subjects.forEach(sub => { %>
+                    <span class="badge bg-primary fs-6 me-1 mb-1 text-capitalize">
+                      <%= sub %>
+                    </span>
+                  <% }) %>
+                <% } else { %>
+                  <span class="text-muted">—</span>
+                <% } %>
+              </div>
+             <div class="row g-2 mt-4 justify-content-center">
+  <div class="col-md-3 col-12">
+    <a href="/admin/viewteachers" class="btn btn-secondary btn-lg w-100">Back</a>
+  </div>
+  <div class="col-md-3 col-12">
+    <a href="/admin/teachers/history/<%= teacher._id %>" class="btn btn-success btn-lg w-100">History</a>
+  </div>
+  <div class="col-md-3 col-12">
+    <a href="/admin/teachers/salary/<%= teacher._id %>" class="btn btn-primary btn-lg w-100">Salary</a>
+  </div>
+  <div class="col-md-3 col-12">
+    <a href="/admin/teachers/edit/<%= teacher._id %>" class="btn btn-warning btn-lg w-100">Edit</a>
+  </div>
+</div>
+
           </div>
         </div>
       </div>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+  </script>
 </body>
 </html>
