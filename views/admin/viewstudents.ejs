@@ -79,7 +79,7 @@
                           <td>
                             <%= s.standard %>
                           </td>
-                          <td>
+                          <td class="<%=s?.remainingHours < 0 ? 'text-danger' : 'text-dark' %>">
                             <%= s?.remainingHours ? s.remainingHours + ' hrs' : '—' %>
                           </td>
 
