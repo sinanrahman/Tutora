@@ -43,8 +43,10 @@ const {
 	getUpdateTeacher,
 	addUpdateTeacher,
 	removeUpdateTeacher,
-	viewFinance,
 	addFinance,
+	postAddFinance,
+	viewFinance,
+	viewFinanceDetails,
 	viewSalary,
 	addSalary,
 	//invoice
@@ -213,16 +215,40 @@ router.get(
 	authorize('ADMIN'),
 	removeUpdateTeacher
 );
-// ==========================================
-//        FINANCE ROUTES
-// ==========================================
-router
-	.route('/viewfinance')
-	.get(protect, setSidebarMenu, authorize('ADMIN'),viewFinance);
 
-router
-	.route('/addfinance')
-	.get(protect, setSidebarMenu, authorize('ADMIN'),addFinance);
+router.get(
+  "/viewfinance",
+  protect,
+  setSidebarMenu,
+  authorize('ADMIN'),
+  viewFinance
+);
+
+router.get(
+  "/addfinance",
+  protect,
+  setSidebarMenu,
+  authorize('ADMIN'),
+  addFinance
+);
+
+router.post(
+  "/addfinance",
+  protect,
+  setSidebarMenu,
+  authorize('ADMIN'),
+  postAddFinance
+);
+
+router.get(
+  "/finance/:id",
+  protect,
+  setSidebarMenu,
+  authorize('ADMIN'),
+  viewFinanceDetails
+);
+
+
 
 router
 	.route('/teachers/salary/:id')

@@ -19,7 +19,7 @@
   <!-- Mobile Topbar -->
   <div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
     <div class="d-flex align-items-center justify-content-between px-3" style="height:60px;">
-            <img src="/image/logo.png" alt="Logo" class="mobile-logo-img">
+      <img src="/image/logo.png" alt="Logo" class="mobile-logo-img">
 
       <button class="btn btn-light" onclick="toggleSidebar()">
         <i class="bi bi-list fs-4"></i>
@@ -29,108 +29,107 @@
 
   <!-- Navbar + Sidebar -->
   <%- include('partials/navbar') %>
-  <%- include('../partials/sidebar') %>
+    <%- include('../partials/sidebar') %>
 
-  <!-- MAIN CONTENT -->
-  <div class="main-content p-5">
-    <div class="card shadow-sm border-0">
+      <!-- MAIN CONTENT -->
+      <div class="main-content p-5">
+        <div class="card shadow-sm border-0">
 
-      <!-- Breadcrumb -->
-      <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
-        <ol class="breadcrumb p-3 mb-0">
-          <li class="breadcrumb-item">
-            <a href="/admin/Dashboard">Home</a>
-          </li>
-          <li class="breadcrumb-item">
-            <a href="/admin/finance">Finance</a>
-          </li>
-          <li class="breadcrumb-item active" aria-current="page">
-            Add Finance
-          </li>
-        </ol>
-      </nav>
+          <!-- Breadcrumb -->
+          <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+            <ol class="breadcrumb p-3 mb-0">
+              <li class="breadcrumb-item">
+                <a href="/admin/Dashboard">Home</a>
+              </li>
+              <li class="breadcrumb-item">
+                <a href="/admin/viewfinance">Finance</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">
+                Add Finance
+              </li>
+            </ol>
+          </nav>
 
-      <div class="card-body">
+          <div class="card-body">
 
-        <!-- Heading -->
-        <h3 class="fw-bold mb-4 text-center heading">
-          ADD FINANCE TRANSACTION
-        </h3>
+            <!-- Heading -->
+            <h3 class="fw-bold mb-4 text-center heading">
+              ADD FINANCE TRANSACTION
+            </h3>
 
-        <!-- Add Finance Form -->
-        <form action="/admin/addfinance" method="post">
-          <div class="row g-3">
+            <!-- Add Finance Form -->
+            <form action="/admin/addfinance" method="post">
+              <div class="row g-3">
 
-            <div class="col-md-6">
-              <label class="form-label">Transaction ID</label>
-              <input type="text" class="form-control" name="transactionId"
-                     placeholder="TXN001" required>
-            </div>
+                <div class="col-md-6">
+                  <label class="form-label">Transaction ID</label>
+                  <input type="text" class="form-control" name="transactionId" placeholder="TXN001" required>
+                </div>
 
-            <div class="col-md-6">
-              <label class="form-label">Transaction Type</label>
-              <select class="form-select" name="type" required>
-                <option value="">Select Type</option>
-                <option value="credit">Credit</option>
-                <option value="debit">Debit</option>
-              </select>
-            </div>
+                <div class="col-md-6">
+                  <label class="form-label">Transaction Type</label>
+                  <select class="form-select" name="type" required>
+                    <option value="">Select Type</option>
+                    <option value="CREDIT">Credit</option>
+                    <option value="DEBIT">Debit</option>
+                  </select>
 
-            <div class="col-md-6">
-              <label class="form-label">Amount (₹)</label>
-              <input type="number" class="form-control" name="amount"
-                     placeholder="Enter amount" required>
-            </div>
+                </div>
 
-            <div class="col-md-6">
-              <label class="form-label">Date</label>
-              <input type="date" class="form-control" name="date" required>
-            </div>
+                <div class="col-md-6">
+                  <label class="form-label">Amount (₹)</label>
+                  <input type="number" class="form-control" name="amount" placeholder="Enter amount" required>
+                </div>
 
-            <div class="col-12">
-              <label class="form-label">Description</label>
-              <textarea class="form-control" name="description" rows="3"
-                        placeholder="Enter transaction description" required></textarea>
-            </div>
+                <div class="col-md-6">
+                  <label class="form-label">Date</label>
+                  <input type="date" class="form-control" name="date" required>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label">Description</label>
+                  <textarea class="form-control" name="description" rows="3" placeholder="Enter transaction description"
+                    required></textarea>
+                </div>
+
+              </div>
+
+              <!-- Buttons -->
+              <div class="d-flex justify-content-end gap-2 mt-4">
+               <a href="/admin/finance" class="btn btn-secondary"> Cancel</a>
+
+                <button type="submit" class="btn btn-primary">
+                  Save Transaction
+                </button>
+              </div>
+            </form>
 
           </div>
-
-          <!-- Buttons -->
-          <div class="d-flex justify-content-end gap-2 mt-4">
-            <a href="/admin/viewfinance" class="btn btn-secondary">
-              Cancel
-            </a>
-            <button type="submit" class="btn btn-primary">
-              Save Transaction
-            </button>
-          </div>
-        </form>
-
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('active');
-    }
+      <!-- Scripts -->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+      <script>
+        function toggleSidebar() {
+          document.getElementById('sidebar').classList.toggle('active');
+        }
 
-    document.addEventListener('click', function (e) {
-      const sidebar = document.getElementById('sidebar');
-      const toggleBtn = document.querySelector('.bi-list')?.parentElement;
+        document.addEventListener('click', function (e) {
+          const sidebar = document.getElementById('sidebar');
+          const toggleBtn = document.querySelector('.bi-list')?.parentElement;
 
-      if (
-        window.innerWidth < 768 &&
-        sidebar.classList.contains('active') &&
-        !sidebar.contains(e.target) &&
-        !toggleBtn?.contains(e.target)
-      ) {
-        sidebar.classList.remove('active');
-      }
-    });
-  </script>
+          if (
+            window.innerWidth < 768 &&
+            sidebar.classList.contains('active') &&
+            !sidebar.contains(e.target) &&
+            !toggleBtn?.contains(e.target)
+          ) {
+            sidebar.classList.remove('active');
+          }
+        });
+      </script>
 
 </body>
+
 </html>

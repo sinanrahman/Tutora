@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Transaction Details</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .finance-wrapper {
+      max-width: 520px;
+      margin: 80px auto 40px auto;
+      padding: 0 15px;
+    }
+
+    .finance-card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .mobile-logo-img {
+      height: 40px;
+        width: auto;
+    }
+
+    .mobile-topbar {
+      z-index: 1100;
+    }
+
+    @media (max-width: 768px) {
+      .finance-wrapper {
+        margin-top: 140px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Mobile Topbar -->
+  <div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
+    <div class="d-flex align-items-center justify-content-between px-3" style="height: 60px">
+      <img src="/image/logo.png" alt="Logo" class="mobile-logo-img" />
+
+      <button class="btn btn-light" onclick="toggleSidebar()">
+        <i class="bi bi-list fs-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Navbar & Sidebar -->
+  <%- include('partials/navbar') %>
+  <%- include('../partials/sidebar') %>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <div class="finance-wrapper">
+              <nav style="--bs-breadcrumb-divider:'>'; ">
+        <ol class="breadcrumb p-3 mb-0">
+          <li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
+          <li class="breadcrumb-item active">Finance</li>
+        </ol>
+      </nav>
+
+      <div class="card border-0 finance-card">
+        
+
+        <div class="card-header bg-dark text-white text-center">
+          <h5 class="mb-0">Transaction Details</h5>
+        </div>
+
+        <div class="card-body px-4 py-4">
+
+          <p>
+            <strong>Transaction ID:</strong><br>
+            <span class="text-muted"><%= transaction.id %></span>
+          </p>
+
+          <p>
+            <strong>Type:</strong><br>
+            <span class="badge <%= transaction.transactionType === 'CREDIT' ? 'bg-success' : 'bg-danger' %>">
+              <%= transaction.transactionType %>
+            </span>
+          </p>
+
+          <p>
+            <strong>Amount:</strong><br>
+            <span class="fw-bold fs-5 text-success">₹ <%= transaction.amount %></span>
+          </p>
+
+          <p>
+            <strong>Description:</strong><br>
+            <span class="text-muted"><%= transaction.description %></span>
+          </p>
+
+          <p>
+            <strong>Date:</strong><br>
+            <span class="text-muted"><%= transaction.createdAt.toDateString() %></span>
+          </p>
+
+        </div>
+
+        <div class="card-footer bg-transparent border-0 text-center pb-4">
+          <a href="/admin/viewfinance" class="btn btn-outline-dark px-4">
+            Back to Finance
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar')?.classList.toggle('active');
+    }
+
+    document.addEventListener('click', function (e) {
+      const sidebar = document.getElementById('sidebar');
+      const toggleBtn = document.querySelector('.bi-list')?.parentElement;
+
+      if (
+        window.innerWidth < 768 &&
+        sidebar &&
+        sidebar.classList.contains('active') &&
+        !sidebar.contains(e.target) &&
+        !toggleBtn?.contains(e.target)
+      ) {
+        sidebar.classList.remove('active');
+      }
+    });
+  </script>
+
+</body>
+</html>
