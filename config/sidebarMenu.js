@@ -5,6 +5,7 @@ module.exports = {
 		{ key: 'coordinators', label: 'Coordinators', url: '/admin/viewcoordinators' },
 		{ key: 'teachers', label: 'Teachers', url: '/admin/viewteachers' },
 		{ key: 'finance', label: 'Finance', url: '/admin/viewfinance' },
+		{ key: 'invoice', label: 'Invoice', url: '/admin/addinvoice' },
 	],
 
 	COORDINATOR: [
