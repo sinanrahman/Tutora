@@ -539,7 +539,10 @@ exports.postAddPackage = async (req, res) => {
 
 		await Student.findByIdAndUpdate(
 			req.params.studentId,
-			{
+			{   
+                $inc:{
+					remainingHours: Number(hours) 
+				},
 				$set: {
 					package: {
 						hours,
