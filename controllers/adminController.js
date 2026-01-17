@@ -522,6 +522,49 @@ exports.studentSessionHistory = async (req, res) => {
     }
 };
 
+// ================= PACKAGE =================
+
+ //Add Package Page
+exports.addPackage = async (req, res) => {
+	const student = await Student.findById(req.params.studentId);
+
+	res.render('admin/addpackage', {
+		student,
+		activePage: 'package'
+	});
+};
+exports.postAddPackage = async (req, res) => {
+	try {
+		const { hours, amount, description, startDate, endDate, paymentDate } = req.body;
+
+		await Student.findByIdAndUpdate(
+			req.params.studentId,
+			{
+				$set: {
+					package: {
+						hours,
+						amount,
+						description,
+						startDate,
+						endDate,
+						paymentDate
+					}
+				}
+			},
+			{
+				new: true,
+				runValidators: false 
+			}
+		);
+		res.redirect(`/admin/viewstudentdetails/${req.params.studentId}`);
+
+	} catch (error) {
+		console.error(error);
+		res.status(500).send('Error adding package');
+	}
+};
+
+
 //      VIEW TEACHER SESSION HISTORY
 exports.teacherSessionHistory = async (req, res) => {
     try {

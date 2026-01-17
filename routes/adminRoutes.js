@@ -18,6 +18,8 @@ const {
 	editStudentPage,
 	updateStudent,
 	studentSessionHistory,
+	addPackage,
+	postAddPackage,
 	// Coordinators
 	addCoordinators,
 	postAddCoordinator,
@@ -91,6 +93,14 @@ router
 router
 	.route('/students/history/:id')
 	.get(protect, setSidebarMenu, authorize('ADMIN'), studentSessionHistory);
+
+//              PACKAGE ROUTES
+
+router
+	.route('/addpackage/:studentId')
+	.get(protect, setSidebarMenu, authorize('ADMIN'), addPackage)
+	.post(protect, setSidebarMenu, authorize('ADMIN'), postAddPackage);
+
 
 // ==========================================
 //            COORDINATOR ROUTES
@@ -215,6 +225,8 @@ router
 router
 	.route('/teachers/salary/:id/add')
 	.get(protect, setSidebarMenu, authorize('ADMIN'),addSalary);
+
+
 
 
 module.exports = router;
