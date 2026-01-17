@@ -43,8 +43,10 @@ const {
 	getUpdateTeacher,
 	addUpdateTeacher,
 	removeUpdateTeacher,
-	viewFinance,
 	addFinance,
+	postAddFinance,
+	viewFinance,
+	viewFinanceDetails,
 	viewSalary,
 	addSalary,
 } = require('../controllers/adminController');
@@ -210,13 +212,39 @@ router.get(
 	removeUpdateTeacher
 );
 
-router
-	.route('/viewfinance')
-	.get(protect, setSidebarMenu, authorize('ADMIN'),viewFinance);
+router.get(
+  "/viewfinance",
+  protect,
+  setSidebarMenu,
+  authorize('ADMIN'),
+  viewFinance
+);
 
-router
-	.route('/addfinance')
-	.get(protect, setSidebarMenu, authorize('ADMIN'),addFinance);
+router.get(
+  "/addfinance",
+  protect,
+  setSidebarMenu,
+  authorize('ADMIN'),
+  addFinance
+);
+
+router.post(
+  "/addfinance",
+  protect,
+  setSidebarMenu,
+  authorize('ADMIN'),
+  postAddFinance
+);
+
+router.get(
+  "/finance/:id",
+  protect,
+  setSidebarMenu,
+  authorize('ADMIN'),
+  viewFinanceDetails
+);
+
+
 
 router
 	.route('/teachers/salary/:id')

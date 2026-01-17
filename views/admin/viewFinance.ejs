@@ -9,18 +9,43 @@
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
-  <!-- DataTables -->
   <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css">
 
-  <!-- Shared Admin CSS -->
-  <link rel="stylesheet" href="/css/admin/viewstudents.css">
+  <style>
+    /* Mobile topbar */
+    .mobile-logo-img {
+      height: 40px;
+      width: auto;
+    }
+
+    .mobile-topbar {
+      z-index: 1100;
+    }
+
+    /* Adjust main content to avoid overlap with mobile topbar */
+    .main-content {
+      margin-top: 70px; /* height of mobile topbar */
+    }
+
+    /* Heading style */
+    .heading {
+      color: #870216;
+    }
+
+    /* Table action button for mobile */
+    @media (max-width: 767px) {
+      .btn-block {
+        display: block;
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 
 <body class="bg-light">
 
   <!-- Mobile Topbar -->
-  <div class="d-md-none mobile-topbar fixed-top bg-light ">
+  <div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
     <div class="d-flex align-items-center justify-content-between px-3" style="height:60px;">
       <img src="/image/logo.png" alt="Logo" class="mobile-logo-img">
       <button class="btn btn-light" onclick="toggleSidebar()">
@@ -29,16 +54,16 @@
     </div>
   </div>
 
+  <!-- Navbar & Sidebar -->
   <%- include('partials/navbar') %>
   <%- include('../partials/sidebar') %>
 
   <!-- MAIN CONTENT -->
-  <div class="main-content p-5">
+  <div class="main-content p-3 p-md-5">
 
     <div class="card shadow-sm border-0">
 
-      <!-- Breadcrumb -->
-      <nav style="--bs-breadcrumb-divider:'>';">
+      <nav style="--bs-breadcrumb-divider:'>'; ">
         <ol class="breadcrumb p-3 mb-0">
           <li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
           <li class="breadcrumb-item active">Finance</li>
@@ -47,72 +72,50 @@
 
       <div class="card-body">
 
-        <!-- Heading + Button -->
-        <div class="d-flex flex-column align-items-center mb-3">
-  <h3 class="fw-bold fs-2 heading mb-3" style="color:#870216;">FINANCE</h3>
-
-  <div class="d-flex gap-2 flex-wrap justify-content-center">
-    <a href="/admin/addfinance" class="btn btn-success btn-sm">
-      <i class="bi bi-plus-circle"></i> Add Transaction
-    </a>
-  </div>
+<div class="d-flex flex-column align-items-center mb-3 gap-2 text-center">
+  <h3 class="fw-bold fs-4 heading mb-0">FINANCE</h3>
+  <a href="/admin/addfinance" class="btn btn-success btn-sm">
+    <i class="bi bi-plus-circle"></i> Add Transaction
+  </a>
 </div>
 
         <!-- Table -->
         <div class="table-responsive">
-          <table class="table table-hover table-striped" id="financeTable">
+          <table class="table table-hover table-striped table-sm" id="financeTable">
             <thead class="table-light">
               <tr>
                 <th>Sl No</th>
                 <th>Transaction ID</th>
                 <th>Type</th>
                 <th>Amount</th>
-                <th>Description</th>
+                <th>Action</th>
               </tr>
             </thead>
-
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>TXN001</td>
-                <td>
-                  <span class="badge bg-success">Credit</span>
-                </td>
-                <td>₹ 25,000</td>
-                <td>Student course fee received</td>
-              </tr>
+              <% if (transactions.length === 0) { %>
+                <tr>
+                  <td colspan="5" class="text-center text-muted">No transactions found</td>
+                </tr>
+              <% } %>
 
-              <tr>
-                <td>2</td>
-                <td>TXN002</td>
-                <td>
-                  <span class="badge bg-danger">Debit</span>
-                </td>
-                <td>₹ 5,000</td>
-                <td>Electricity bill payment</td>
-              </tr>
-
-              <tr>
-                <td>3</td>
-                <td>TXN003</td>
-                <td>
-                  <span class="badge bg-success">Credit</span>
-                </td>
-                <td>₹ 15,000</td>
-                <td>January tuition fees collected</td>
-              </tr>
-
-              <tr>
-                <td>4</td>
-                <td>TXN004</td>
-                <td>
-                  <span class="badge bg-danger">Debit</span>
-                </td>
-                <td>₹ 3,000</td>
-                <td>Office maintenance expense</td>
-              </tr>
+              <% transactions.forEach((t, index) => { %>
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td><%= t.id %></td>
+                  <td>
+                    <span class="badge <%= t.transactionType === 'CREDIT' ? 'bg-success' : 'bg-danger' %>">
+                      <%= t.transactionType %>
+                    </span>
+                  </td>
+                  <td>₹ <%= t.amount %></td>
+                  <td>
+                    <a href="/admin/finance/<%= t._id %>" class="btn btn-primary btn-sm w-100 w-md-auto">
+                      View
+                    </a>
+                  </td>
+                </tr>
+              <% }) %>
             </tbody>
-
           </table>
         </div>
 
@@ -126,8 +129,14 @@
   <script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
 
   <script>
-    new DataTable('#financeTable');
+    // Initialize DataTable with responsive
+    new DataTable('#financeTable', {
+      responsive: true,
+      pageLength: 10,
+      lengthChange: false
+    });
 
+    // Mobile sidebar toggle
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('active');
     }
@@ -146,6 +155,6 @@
       }
     });
   </script>
-
 </body>
+
 </html>

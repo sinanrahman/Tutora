@@ -8,6 +8,7 @@ const Coordinator = require('../models/Coordinator');
 const Teacher = require('../models/Teacher');
 const Student = require('../models/Student');
 const Session = require('../models/Session');
+const Transaction = require("../models/Transaction");
 
 //      RENDER ADMIN DASHBOARD
 exports.dashboard = async (req, res) => {
@@ -638,14 +639,65 @@ exports.removeUpdateTeacher = async (req, res) => {
     }
 };
 
-//financeee
-exports.viewFinance = (req, res) => {
-    return res.render('admin/viewFinance', { activePage: 'finance' })
-}
 
+/* VIEW FINANCE */
+exports.viewFinance = async (req, res) => {
+  try {
+    const transactions = await Transaction.find().sort({ createdAt: -1 });
+
+    res.render("admin/viewFinance", {
+      activePage: "finance",
+      transactions
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error loading finance data");
+  }
+};
+
+/* ADD FINANCE PAGE */
 exports.addFinance = (req, res) => {
-    return res.render('admin/addFinance', { activePage: 'finance' })
-}
+  res.render("admin/addFinance", { activePage: "finance" });
+};
+
+/* SAVE FINANCE */
+exports.postAddFinance = async (req, res) => {
+  try {
+    const { transactionId, type, amount, description } = req.body;
+
+    await Transaction.create({
+      id: transactionId,
+      transactionType: type.toUpperCase(), // CREDIT / DEBIT
+      amount,
+      description
+    });
+
+    res.redirect("/admin/finance");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error saving transaction");
+  }
+};
+
+exports.viewFinanceDetails = async (req, res) => {
+  try {
+    const transaction = await Transaction.findById(req.params.id);
+
+    if (!transaction) {
+      return res.status(404).send("Transaction not found");
+    }
+
+    res.render("admin/viewFinanceDetails", {
+      activePage: "finance",
+      transaction
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error loading transaction details");
+  }
+};
+
+
 
 exports.viewSalary = async (req, res) => {
     const teacherId = req.params.id;
