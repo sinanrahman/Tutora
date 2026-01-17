@@ -49,6 +49,10 @@ const {
 	viewFinanceDetails,
 	viewSalary,
 	addSalary,
+	//invoice
+	getInvoicePage,
+	addInvoice,
+	downloadInvoicePDF
 } = require('../controllers/adminController');
 
 // ==========================================
@@ -254,7 +258,13 @@ router
 	.route('/teachers/salary/:id/add')
 	.get(protect, setSidebarMenu, authorize('ADMIN'),addSalary);
 
-
-
-
+// ==========================================
+//        INVOICE ROUTES
+// ==========================================
+router
+	.route('/addinvoice')
+	.get(protect,setSidebarMenu,authorize('ADMIN'),getInvoicePage)
+	.post(protect,setSidebarMenu,authorize('ADMIN'),addInvoice)
+// Add this line to your routes file
+router.get('/invoice/download/:id',protect,authorize('ADMIN'),downloadInvoicePDF);
 module.exports = router;

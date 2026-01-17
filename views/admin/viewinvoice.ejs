@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Invoice #<%= newInvoice.id %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      background: #eef3fb;
+      font-family: 'Inter', sans-serif;
+      color: #1f2937;
+    }
+
+    .page {
+      padding: 40px 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .invoice-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 20px;
+      padding: 32px 24px 140px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      position: relative;
+    }
+
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      width: 90px;
+      margin-bottom: 10px;
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1d9bf0;
+      letter-spacing: 1px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 20px 0 6px;
+    }
+
+    .date {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 15px;
+      padding: 10px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .label {
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .value {
+      font-weight: 600;
+    }
+
+    .section {
+      margin-top: 24px;
+    }
+
+    .section-title {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .description {
+      font-size: 14px;
+      color: #4b5563;
+      line-height: 1.5;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 15px;
+    }
+
+    .total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 18px;
+    }
+
+    .paid-seal {
+      display: flex;
+      justify-content: center;
+      margin: 28px 0 24px 70%;
+    }
+
+    .paid-seal img {
+      width: 110px;
+      height: auto;
+      transform: rotate(-12deg);
+      opacity: 0.95;
+    }
+
+
+
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .page {
+        padding: 0;
+      }
+
+      .invoice-card {
+        box-shadow: none;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page">
+    <div class="invoice-card">
+
+      <div class="header">
+        <img src="/image/logo.png" class="logo" />
+
+        <h1>Invoice</h1>
+        <div class="date">
+          <%= new Date(newInvoice.date).toLocaleDateString('en-IN', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }) %>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="label">Invoice ID</span>
+        <span class="value">#<%= newInvoice.id %></span>
+      </div>
+
+      <div class="row">
+        <span class="label">Student ID</span>
+        <span class="value"><%= newInvoice.studentId || 'N/A' %></span>
+      </div>
+
+      <% if(newInvoice.description) { %>
+      <div class="section">
+        <div class="section-title">Description</div>
+        <div class="description">
+          <%= newInvoice.description %>
+        </div>
+      </div>
+      <% } %>
+
+      <div class="section">
+        <div class="section-title">Items</div>
+
+        <% if(newInvoice.item && newInvoice.item.length) { %>
+        <% newInvoice.item.forEach(item => { %>
+        <div class="item">
+          <span><%= item.type || 'Miscellaneous' %></span>
+          <span>₹<%= Number(item.amount).toFixed(2) %></span>
+        </div>
+        <% }) %>
+        <% } else { %>
+        <div class="description">No items listed</div>
+        <% } %>
+
+        <div class="total">
+          <span>Total</span>
+          <span>₹<%= Number(newInvoice.amount).toFixed(2) %></span>
+        </div>
+      </div>
+
+      <% if (newInvoice.paid) { %>
+      <div class="paid-seal">
+        <img src="/image/paid.webp" alt="Paid Seal">
+      </div>
+      <% } %>
+
+      <div class="mt-4 no-print">
+        <div class="d-flex justify-content-center gap-3">
+          <a href="/admin/addinvoice" class="btn btn-outline-secondary px-4">
+            <i class="bi bi-arrow-left"></i> Back
+          </a>
+
+          <a href="/admin/invoice/download/<%= newInvoice.id %>" class="btn btn-primary px-4" style="background-color: #023c87; border-color: #027e87;">
+            <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download PDF
+          </a>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+
+</body>
+
+</html>

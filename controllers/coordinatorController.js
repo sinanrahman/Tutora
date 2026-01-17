@@ -208,12 +208,17 @@ exports.approveSession = async (req, res) => {
             // Keeping JSON here as this is likely an API/AJAX call
             return res.status(404).json({ error: 'Session not found' });
         }
-
         const duration = Number(durationInHours);
+
+       
         if (isNaN(duration) || duration < 0) {
             return res.status(400).json({ error: 'Invalid duration' });
         }
-
+         await Student.findByIdAndUpdate(session.student,{
+            $inc:{
+                remainingHours:-duration
+            }
+        })
         session.durationInHours = duration;
         session.status = 'APPROVED';
         await session.save();

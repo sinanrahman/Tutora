@@ -79,8 +79,8 @@
                           <td>
                             <%= s.standard %>
                           </td>
-                          <td>
-                            <%= s.package?.hours ? s.package.hours + ' hrs' : '—' %>
+                          <td class="<%=s?.remainingHours < 0 ? 'text-danger' : 'text-dark' %>">
+                            <%= s?.remainingHours ? s.remainingHours + ' hrs' : '—' %>
                           </td>
 
                           <td>
