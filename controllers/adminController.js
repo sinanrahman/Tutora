@@ -8,6 +8,7 @@ const Coordinator = require('../models/Coordinator');
 const Teacher = require('../models/Teacher');
 const Student = require('../models/Student');
 const Session = require('../models/Session');
+const Invoice = require('../models/Invoice')
 
 //      RENDER ADMIN DASHBOARD
 exports.dashboard = async (req, res) => {
@@ -617,3 +618,95 @@ exports.addSalary = async (req, res) => {
 
     return res.render('admin/addSalary', { activePage: 'teachers', teachers })
 }
+
+// ==========================================
+//        INVOICE CONTROLLERS
+// ==========================================
+
+//      RENDER INVOICE PAGE
+exports.getInvoicePage = async(req,res) => {
+    try{
+        return res.render('admin/addinvoice',{activePage:'invoice'})
+    }catch(e){
+        console.log(e)
+        return res.send(e)
+    }
+}
+// Example Controller Logic
+exports.addInvoice = async (req, res) => {
+  try {
+    const { id, studentId, amount, date, paid, description, items } = req.body;
+
+    // 'items' might come in as an array or object depending on parser.
+    // Ensure it is an array for the schema
+    const itemArray = Array.isArray(items) ? items : Object.values(items);
+
+    const newInvoice = new Invoice({
+      id,
+      studentId,
+      amount, // Calculated by JS, verified here
+      item: itemArray, // Maps to your schema structure
+      description,
+      date,
+      paid
+    });
+
+    await newInvoice.save();
+    return res.render('admin/viewinvoice',{newInvoice,activePage:'invoice'});
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error creating invoice");
+  }
+};
+
+const puppeteer = require('puppeteer');
+const ejs = require('ejs');
+const path = require('path');
+
+exports.downloadInvoicePDF = async (req, res) => {
+  try {
+    const invoiceId = req.params.id;
+    const invoice = await Invoice.findOne({ id: invoiceId });
+
+    if (!invoice) {
+      return res.status(404).send("Invoice not found");
+    }
+
+    // 1. Render EJS
+    const templatePath = path.join(__dirname, '../views/admin/viewinvoice.ejs');
+    const html = await ejs.renderFile(templatePath, { newInvoice: invoice });
+
+    // 2. Launch Puppeteer
+    const browser = await puppeteer.launch({ 
+        headless: 'new',
+        args: ['--no-sandbox'] 
+    });
+    const page = await browser.newPage();
+
+    // 3. Set Content
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+    await page.emulateMediaType('print');
+
+    // 4. Generate PDF Buffer
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '20px', bottom: '20px' }
+    });
+
+    await browser.close();
+
+    // 5. Force Download (Strict Headers)
+    // "attachment" forces download. "inline" would show preview.
+    // Quotes around the filename are important!
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="invoice-${invoiceId}.pdf"`);
+    res.setHeader('Content-Length', pdfBuffer.length);
+
+    res.send(pdfBuffer);
+
+  } catch (err) {
+    console.error("PDF Generation Error:", err);
+    res.status(500).send("Error generating PDF");
+  }
+};
