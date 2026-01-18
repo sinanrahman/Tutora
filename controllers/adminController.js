@@ -11,6 +11,11 @@ const Session = require('../models/Session');
 const Transaction = require("../models/Transaction");
 const Invoice = require('../models/Invoice')
 
+const puppeteer = require('puppeteer');
+const ejs = require('ejs');
+const path = require('path');
+const fs = require('fs'); // Import File System
+
 //      RENDER ADMIN DASHBOARD
 exports.dashboard = async (req, res) => {
     try {
@@ -757,9 +762,7 @@ exports.addInvoice = async (req, res) => {
   }
 };
 
-const puppeteer = require('puppeteer');
-const ejs = require('ejs');
-const path = require('path');
+
 
 exports.downloadInvoicePDF = async (req, res) => {
   try {
@@ -770,22 +773,55 @@ exports.downloadInvoicePDF = async (req, res) => {
       return res.status(404).send("Invoice not found");
     }
 
-    // 1. Render EJS
-    const templatePath = path.join(__dirname, '../views/admin/viewinvoice.ejs');
-    const html = await ejs.renderFile(templatePath, { newInvoice: invoice });
+    // --- 1. IMAGE CONVERSION FUNCTION (With Debugging) ---
+    const imageToBase64 = (filename) => {
+        try {
+            // "process.cwd()" gets the root folder of your project
+            // We assume your images are in: YourProject/public/image/filename
+            const filePath = path.join(process.cwd(), 'static', 'image', filename);
+            
+            // DEBUG: Print the path to your console so you can check if it is right
+            console.log("Looking for image at:", filePath); 
 
-    // 2. Launch Puppeteer
+            if (!fs.existsSync(filePath)) {
+                console.error("File does not exist at path:", filePath);
+                return null;
+            }
+
+            const bitmap = fs.readFileSync(filePath);
+            // Check extension to set correct mimetype (png or webp)
+            const ext = path.extname(filePath).substring(1); 
+            return `data:image/${ext};base64,${bitmap.toString('base64')}`;
+        } catch (err) {
+            console.error("Error converting image:", err);
+            return null;
+        }
+    };
+
+    // --- 2. GET IMAGES ---
+    // Pass only the filename, not the full '/image/...' path
+    const logoBase64 = imageToBase64('logo.png'); 
+    const paidBase64 = imageToBase64('paid.webp');
+
+    // --- 3. RENDER EJS ---
+    const templatePath = path.join(__dirname, '../views/admin/viewinvoice.ejs');
+    
+    const html = await ejs.renderFile(templatePath, { 
+        newInvoice: invoice,
+        logoSrc: logoBase64, 
+        paidSrc: paidBase64   
+    });
+
+    // --- 4. PUPPETEER ---
     const browser = await puppeteer.launch({ 
         headless: 'new',
         args: ['--no-sandbox'] 
     });
     const page = await browser.newPage();
 
-    // 3. Set Content
     await page.setContent(html, { waitUntil: 'networkidle0' });
     await page.emulateMediaType('print');
 
-    // 4. Generate PDF Buffer
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
@@ -794,13 +830,9 @@ exports.downloadInvoicePDF = async (req, res) => {
 
     await browser.close();
 
-    // 5. Force Download (Strict Headers)
-    // "attachment" forces download. "inline" would show preview.
-    // Quotes around the filename are important!
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="invoice-${invoiceId}.pdf"`);
     res.setHeader('Content-Length', pdfBuffer.length);
-
     res.send(pdfBuffer);
 
   } catch (err) {

@@ -140,6 +140,11 @@
         box-shadow: none;
         border-radius: 0;
       }
+      
+      /* --- ADD THIS RULE BELOW --- */
+      .no-print {
+        display: none !important;
+      }
     }
   </style>
 </head>
@@ -150,8 +155,8 @@
     <div class="invoice-card">
 
       <div class="header">
-        <img src="/image/logo.png" class="logo" />
-
+        <!-- <img src="/image/logo.png" class="logo" /> -->
+<img src="<%= (typeof logoSrc !== 'undefined' && logoSrc) ? logoSrc : '/image/logo.png' %>" class="logo" />
         <h1>Invoice</h1>
         <div class="date">
           <%= new Date(newInvoice.date).toLocaleDateString('en-IN', {
@@ -203,7 +208,8 @@
 
       <% if (newInvoice.paid) { %>
       <div class="paid-seal">
-        <img src="/image/paid.webp" alt="Paid Seal">
+        <!-- <img src="/image/paid.webp" alt="Paid Seal"> -->
+        <img src="<%= (typeof paidSrc !== 'undefined' && paidSrc) ? paidSrc : '/image/paid.webp' %>" alt="Paid Seal">
       </div>
       <% } %>
 

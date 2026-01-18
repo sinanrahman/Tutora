@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 const studentSchema = new mongoose.Schema(
 	{
+		studentId: { 
+            type: String, 
+            unique: true,
+            // Not 'required' initially, so we can backfill existing docs without errors
+        },
 		fullName: {
 			type: String,
 			required: true,
@@ -26,8 +31,8 @@ const studentSchema = new mongoose.Schema(
 		},
 		remainingHours: {
 			type: Number,
-			default: 120,
 			required: true,
+			default: 0,
 		},
 		standard: {
 			type: String,
@@ -44,7 +49,7 @@ const studentSchema = new mongoose.Schema(
 		},
 		lastDate: {
 			type: Date,
-			required: true
+			// required: true
 		},
 		package: {
 			hours: {
@@ -78,4 +83,28 @@ const studentSchema = new mongoose.Schema(
 		timestamps: true,
 	}
 )
+
+// PRE-SAVE HOOK: Automatically assign studentId for NEW students
+studentSchema.post('save', async function (next) {
+    // Only run this if studentId is missing
+    if (!this.studentId) {
+        // Find the last student with a studentId, sorting by descending order
+        const lastStudent = await this.constructor.findOne({ studentId: { $exists: true } }).sort({ studentId: -1 });
+        
+        let nextNum = 1;
+        if (lastStudent && lastStudent.studentId) {
+            // Extract the number from "S_001" -> 1
+            const lastIdNum = parseInt(lastStudent.studentId.replace('S_', ''), 10);
+            nextNum = lastIdNum + 1;
+        }
+
+        // Pad with zeros: 
+        // If 1 -> "001"
+        // If 1000 -> "1000" (padStart respects string length if it's already longer than 3)
+        const paddedNum = nextNum.toString().padStart(3, '0');
+        this.studentId = `S_${paddedNum}`;
+    }
+    // next();
+});
+
 module.exports = mongoose.model('Student', studentSchema);

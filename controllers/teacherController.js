@@ -66,7 +66,7 @@ exports.addSessionPage = async (req, res) => {
             teacher,
             student,
             selectedStudentId,
-            activePage: 'sessions',
+            activePage: 'dashboard',
         });
     } catch (err) {
         console.error(err);

@@ -16,5 +16,6 @@ module.exports = {
 	TEACHER: [
 		{ key: 'dashboard', label: 'Dashboard', url: '/teacher/dashboard' },
 		{ key: 'sessions', label: 'Session List', url: '/teacher/sessions' },
+		{ key: 'teacherProfile', label: 'Teacher Profile', url: '/teacher/profile' },
 	],
 };
