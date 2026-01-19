@@ -53,7 +53,10 @@ const {
 	//invoice
 	getInvoicePage,
 	addInvoice,
-	downloadInvoicePDF
+	downloadInvoicePDF,
+	viewInvoiceList,
+	viewInvoicePDF,
+	updateInvoiceStatus
 } = require('../controllers/adminController');
 
 // ==========================================
@@ -269,4 +272,17 @@ router
 	.post(protect,setSidebarMenu,authorize('ADMIN'),addInvoice)
 // Add this line to your routes file
 router.get('/invoice/download/:id',protect,authorize('ADMIN'),downloadInvoicePDF)
+
+router
+.route('/viewinvoicelist')
+.get(protect,setSidebarMenu,authorize('ADMIN'),viewInvoiceList)
+
+router
+	.route('/viewinvoice/:id')
+	.get(protect,setSidebarMenu,authorize('ADMIN'),viewInvoicePDF)
+
+router
+.route('/invoice/updatestatus/:id')
+.post(protect,setSidebarMenu,authorize('ADMIN'),updateInvoiceStatus);
+
 module.exports = router;
