@@ -103,7 +103,7 @@
               <% transactions.forEach((t, index) => { %>
               <tr>
                 <td><%= index + 1 %></td>
-                <td><%= t.id %></td>
+                <td><%= t.transactionId %></td>
                 <td>
                   <span class="badge <%= t.transactionType === 'CREDIT' ? 'bg-success' : 'bg-danger' %>">
                     <%= t.transactionType %>

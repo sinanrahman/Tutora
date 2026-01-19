@@ -674,10 +674,9 @@ exports.addFinance = (req, res) => {
 /* SAVE FINANCE */
 exports.postAddFinance = async (req, res) => {
   try {
-    const { transactionId, type, amount, description } = req.body;
+    const { type, amount, description } = req.body;
 
     await Transaction.create({
-      id: transactionId,
       transactionType: type.toUpperCase(), // CREDIT / DEBIT
       amount,
       description

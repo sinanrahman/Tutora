@@ -61,12 +61,12 @@
             <form action="/admin/addfinance" method="post">
               <div class="row g-3">
 
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                   <label class="form-label">Transaction ID</label>
-                  <input type="text" class="form-control" name="transactionId" placeholder="TXN001" required>
-                </div>
+                  <input type="text" class="form-control" name="transactionId" placeholder="TXN001" hidden>
+                </div> -->
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <label class="form-label">Transaction Type</label>
                   <select class="form-select" name="type" required>
                     <option value="">Select Type</option>
@@ -76,12 +76,12 @@
 
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <label class="form-label">Amount (₹)</label>
                   <input type="number" class="form-control" name="amount" placeholder="Enter amount" required>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <label class="form-label">Date</label>
                   <input type="date" class="form-control" name="date" required>
                 </div>
