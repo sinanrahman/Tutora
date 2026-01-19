@@ -820,7 +820,7 @@ exports.getInvoicePage = async(req,res) => {
 // Example Controller Logic
 exports.addInvoice = async (req, res) => {
   try {
-    const { id, studentId, amount, date, paid, description, items } = req.body;
+    const { id, studentId,studentName, amount, date, paid, description, items } = req.body;
 
     // 'items' might come in as an array or object depending on parser.
     // Ensure it is an array for the schema
@@ -829,6 +829,7 @@ exports.addInvoice = async (req, res) => {
     const newInvoice = new Invoice({
       id,
       studentId,
+      studentName,
       amount, // Calculated by JS, verified here
       item: itemArray, // Maps to your schema structure
       description,
@@ -862,8 +863,6 @@ exports.downloadInvoicePDF = async (req, res) => {
             // We assume your images are in: YourProject/public/image/filename
             const filePath = path.join(process.cwd(), 'static', 'image', filename);
             
-            // DEBUG: Print the path to your console so you can check if it is right
-            console.log("Looking for image at:", filePath); 
 
             if (!fs.existsSync(filePath)) {
                 console.error("File does not exist at path:", filePath);
