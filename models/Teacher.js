@@ -88,7 +88,7 @@ teacherSchema.pre('save', async function () {
 	this.password = await bcrypt.hash(this.password, 10);
 });
 
-teacherSchema.post('save', async function (next) {
+teacherSchema.pre('save', async function (next) {
     if (!this.teacherId) {
         const lastDoc = await this.constructor.findOne({ teacherId: { $exists: true } }).sort({ teacherId: -1 });
         let nextNum = 1;
@@ -98,10 +98,8 @@ teacherSchema.post('save', async function (next) {
             nextNum = lastIdNum + 1;
         }
 
-        // Handles T_001 -> T_1000 automatically
         this.teacherId = `T_${nextNum.toString().padStart(3, '0')}`;
     }
-    // next();
 });
 
 module.exports = mongoose.model('Teacher', teacherSchema);

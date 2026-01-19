@@ -61,7 +61,7 @@
                 <tr>
                   <td class="text-center fw-semibold"><%= index + 1 %></td>
                   <td class="fw-semibold"><%= teacher.fullName %></td>
-                  <td class="small text-muted"><%= teacher._id %></td>
+                  <td class="small text-muted"><%= teacher.teacherId %></td>
                   <td>
                     <% teacher.subjects?.forEach(sub => { %>
                       <span class="badge bg-light text-dark border me-1 mb-1"><%= sub %></span>

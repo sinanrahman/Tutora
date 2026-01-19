@@ -55,7 +55,7 @@ coordinatorSchema.pre('save', async function () {
     this.password = await bcrypt.hash(this.password, 10);
 });
 
-coordinatorSchema.post('save', async function (next) {
+coordinatorSchema.pre('save', async function (next) {
     if (!this.coordinatorId) {
         const lastDoc = await this.constructor.findOne({ coordinatorId: { $exists: true } }).sort({ coordinatorId: -1 });
         let nextNum = 1;
@@ -67,7 +67,6 @@ coordinatorSchema.post('save', async function (next) {
 
         this.coordinatorId = `C_${nextNum.toString().padStart(3, '0')}`;
     }
-    // next();
 });
 
 module.exports = mongoose.model('Coordinator', coordinatorSchema);

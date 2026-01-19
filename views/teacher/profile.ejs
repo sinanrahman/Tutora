@@ -273,12 +273,67 @@
 									<p>₹ <%= teacher.hourlyRate %></p>
 								</div>
 							</div>
+							
 
 							<div class="col-md-6">
 								<div class="info-section">
 									<label>Status</label>
 									<span class="badge bg-success"><%= teacher.status %></span>
 								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="info-section" id="pending_salary">
+									<label>View Pending Salary</label>
+							<button class="badge bg-success" onclick="togglePendingSalary()">Pending Salary</button>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row g-4">
+							<div class="col-md-8 offset-2">
+								<h3 class="fw-bolder bg-light mt-5 text-primary d-flex justify-content-between align-items-center px-2">
+  <span>My Received Salary</span>
+  <span class="fs-5 text-dark">Total: <%= allPaidSalary %></span>
+</h3>
+        <!-- Salary Table -->
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light text-center">
+              <tr>
+                <th>#</th>
+                <th>Description</th>
+                <th>Amount (₹)</th>
+                <th>Paid Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <!-- Example Static Row -->
+
+              <%allSalary.forEach((salary,i)=>{%>
+                <tr class="text-center">
+                <td><%=i+1%></td>
+                <td><%=salary.description%></td>
+                <td><%=salary.amount%></td>
+                <td><%= salary?.paidDate ? new Date(salary.paidDate).toLocaleDateString('en-US') : '—' %></td>
+                <td><span class="bg-success badge">paid</span></td>
+                <td>
+                  <button class="btn btn-sm btn-primary">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-sm btn-danger">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <%})%>
+
+
+            </tbody>
+          </table>
+        </div>
 							</div>
 						</div>
 					</div>
@@ -317,6 +372,50 @@
 				sidebar.classList.remove('active');
 			}
 		});
+
+		let showPendingSalary = document.getElementById('pending_salary')
+		let flag = false
+		function togglePendingSalary(){
+			flag = !flag
+			
+			if(flag){
+				showPendingSalary.innerHTML =	`
+			<div class="row bg-light" style="border-radius: 10px;">
+
+					<div class="col-md-4 mt-4">
+						<div class="info-section">
+							<label>For Duration</label>
+							<p><%= totalDuration %> hours</p>
+						</div>
+					</div>
+								
+					<div class="col-md-4 mt-4">
+						<div class="info-section">
+							<label>Pending Salary</label>
+							<p>₹ <%= pendingSalary %></p>
+						</div>
+					</div>
+									
+					<div class="col-md-4 mt-4">
+						<div class="info-section btn-outline-danger btn" onClick="togglePendingSalary()">
+							<label class="text-center">Close</label>
+							<p class="text-center">X</p>
+						</div>
+					</div>
+
+			</div>
+			`
+			}
+			else{
+				showPendingSalary.innerHTML = `
+				
+				<label>View Pending Salary</label>
+							<button class="badge bg-success" onclick="togglePendingSalary()">Pending Salary</button>
+				
+				`
+			}
+			
+		}
 	</script>
   </body>
 </html>

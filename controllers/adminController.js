@@ -15,6 +15,8 @@ const puppeteer = require('puppeteer');
 const ejs = require('ejs');
 const path = require('path');
 const fs = require('fs'); // Import File System
+const Salary = require('../models/Salary');
+const mongoose = require('mongoose')
 
 //      RENDER ADMIN DASHBOARD
 exports.dashboard = async (req, res) => {
@@ -711,16 +713,96 @@ exports.viewFinanceDetails = async (req, res) => {
 exports.viewSalary = async (req, res) => {
     const teacherId = req.params.id;
     const teacher = await Teacher.findById(teacherId);
+    const allSalary = await Salary.find({teacherId})
+    let allPaidSalary = await Salary.aggregate([
+        {
+            // 1. Filter: Find approved sessions for this teacher
+            $match: {
+                teacherId: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+            }
+        },
+        {
+            // 2. Calculate: Multiply duration * rate for each doc, then sum them all
+            $group: {
+                _id: null, // We want one single result, not groups
+                totalPaid:{
+                    $sum:'$amount'
+                }
+            }
+        }
+    ])
+    // result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
+    allPaidSalary = allPaidSalary.length > 0 ? allPaidSalary[0].totalPaid : 0;
 
-    return res.render('admin/viewSalary', { activePage: 'teachers', teacher })
+    return res.render('admin/viewSalary', { activePage: 'teachers', teacher,allSalary,allPaidSalary })
 }
 
-exports.addSalary = async (req, res) => {
+exports.getAddSalary = async (req, res) => {
     const teacherId = req.params.id;
-    const teachers = await Teacher.findById(teacherId);
+    const teacher = await Teacher.findById(teacherId);
 
-    return res.render('admin/addSalary', { activePage: 'teachers', teachers })
+     const result = await Session.aggregate([
+        {
+            // 1. Filter: Find approved sessions for this teacher
+            $match: {
+                teacher: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+                status: 'APPROVED'
+            }
+        },
+        {
+            // 2. Calculate: Multiply duration * rate for each doc, then sum them all
+            $group: {
+                _id: null, // We want one single result, not groups
+                totalEarnings: { 
+                    $sum: { $multiply: ["$durationInHours", teacher.hourlyRate] } 
+                },
+                totalDuration:{
+                    $sum:'$durationInHours'
+                }
+            }
+        }
+    ]);
+    let allPaidSalary = await Salary.aggregate([
+        {
+            // 1. Filter: Find approved sessions for this teacher
+            $match: {
+                teacherId: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+            }
+        },
+        {
+            // 2. Calculate: Multiply duration * rate for each doc, then sum them all
+            $group: {
+                _id: null, // We want one single result, not groups
+                totalPaid:{
+                    $sum:'$amount'
+                }
+            }
+        }
+    ])
+    // result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
+    allPaidSalary = allPaidSalary.length > 0 ? allPaidSalary[0].totalPaid : 0;
+    let finalAmount = result.length > 0 ? result[0].totalEarnings : 0;
+    // const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
+    finalAmount = finalAmount - allPaidSalary
+    return res.render('admin/addSalary', { activePage: 'teachers', teacher,finalAmount,})
 }
+
+exports.addSalary = async(req,res)=>{
+    try{
+        const { teacherId, amount, description, paidDate} = req.body
+        await Salary.create({
+            teacherId,
+            amount,
+            description,
+            paidDate
+        })
+        return res.redirect(`/admin/teachers/salary/${teacherId}`)
+    }catch(e){
+        console.log(e)
+        return res.render('auth/pageNotFound', { msg: 'Server Error: Unable to add salary' });
+    }
+}
+
 
 // ==========================================
 //        INVOICE CONTROLLERS

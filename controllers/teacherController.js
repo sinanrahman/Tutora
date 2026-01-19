@@ -1,8 +1,10 @@
 const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
+const Salary = require('../models/Salary')
 const Session = require('../models/Session');
 const fileUploadToCloudinary = require('../utils/cloudinaryUpload');
 const cloudinary = require('../config/cloudinary');
+const mongoose = require('mongoose')
 
 //      RENDER TEACHER DASHBOARD
 exports.teacherDashboard = async (req, res) => {
@@ -77,16 +79,74 @@ exports.addSessionPage = async (req, res) => {
 //      RENDER TEACHER PROFILE
 exports.teacherProfilePage = async (req, res) => {
     try {
-        const teacher = await Teacher.findById(req.user.id);
+        const teacherId = req.user.id
+        const teacher = await Teacher.findById(teacherId);
 
         if (!teacher) {
             return res.render('auth/pageNotFound', { msg: 'Error: Teacher profile not found' });
         }
 
+        //      PENDING SALARY CALCULATIONS
+        // const allApprovedSessionsOfTeacher = await Session.find({teacher:teacherId,status:'APPROVED'}) 
+
+        const result = await Session.aggregate([
+    {
+        // 1. Filter: Find approved sessions for this teacher
+        $match: {
+            teacher: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+            status: 'APPROVED'
+        }
+    },
+    {
+        // 2. Calculate: Multiply duration * rate for each doc, then sum them all
+        $group: {
+            _id: null, // We want one single result, not groups
+            totalEarnings: { 
+                $sum: { $multiply: ["$durationInHours", teacher.hourlyRate] } 
+            },
+            totalDuration:{
+                $sum:'$durationInHours'
+            }
+        }
+    }
+]);
+let allPaidSalary = await Salary.aggregate([
+        {
+            // 1. Filter: Find approved sessions for this teacher
+            $match: {
+                teacherId: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+            }
+        },
+        {
+            // 2. Calculate: Multiply duration * rate for each doc, then sum them all
+            $group: {
+                _id: null, // We want one single result, not groups
+                totalPaid:{
+                    $sum:'$amount'
+                }
+            }
+        }
+    ])
+    // result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
+    allPaidSalary = allPaidSalary.length > 0 ? allPaidSalary[0].totalPaid : 0;
+    let finalAmount = result.length > 0 ? result[0].totalEarnings : 0;
+    // const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
+    finalAmount = finalAmount - allPaidSalary
+// result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
+// const finalAmount = result.length > 0 ? result[0].totalEarnings : 0;
+const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
+const allSalary = await Salary.find({teacherId})
+console.log("Total Earnings:", finalAmount);
+
+
         return res.render('teacher/profile', {
             user: teacher,
             teacher,
             activePage: 'profile',
+            pendingSalary: finalAmount,
+            totalDuration,
+            allSalary,
+            allPaidSalary
         });
     } catch (err) {
         console.error(err);
@@ -169,3 +229,12 @@ exports.updateProfilePic = async (req, res) => {
         return res.render('auth/pageNotFound', { msg: 'Error: Unable to update profile picture' });
     }
 };
+
+// exports.pendingSalaryCalculator = async(req,res){
+//     try{
+//         const 
+//     }catch(e){
+//         console.log(e)
+//         return res.render('auth/pageNotFound', { msg: 'Error while calculating teacher salary' })
+//     }
+// }
