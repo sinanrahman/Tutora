@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const studentSchema = new mongoose.Schema(
 	{
+		studentId: { 
+            type: String, 
+            unique: true,
+        },
 		fullName: {
 			type: String,
 			required: true,
@@ -26,8 +30,8 @@ const studentSchema = new mongoose.Schema(
 		},
 		remainingHours: {
 			type: Number,
-			default: 120,
 			required: true,
+			default: 0,
 		},
 		standard: {
 			type: String,
@@ -78,4 +82,19 @@ const studentSchema = new mongoose.Schema(
 		timestamps: true,
 	}
 )
+
+studentSchema.pre('save', async function (next) {
+    if (!this.studentId) {
+        const lastStudent = await this.constructor.findOne({ studentId: { $exists: true } }).sort({ studentId: -1 });
+        
+        let nextNum = 1;
+        if (lastStudent && lastStudent.studentId) {
+            const lastIdNum = parseInt(lastStudent.studentId.replace('S_', ''), 10);
+            nextNum = lastIdNum + 1;
+        }
+        const paddedNum = nextNum.toString().padStart(3, '0');
+        this.studentId = `S_${paddedNum}`;
+    }
+});
+
 module.exports = mongoose.model('Student', studentSchema);

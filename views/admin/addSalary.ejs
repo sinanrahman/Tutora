@@ -107,20 +107,14 @@
         </h3>
 
         <!-- Salary Form -->
-        <form action="/admin/salary/add" method="POST" class="row g-3">
+        <form action="/admin/teachers/salary/<%=teacher._id%>/add" method="POST" class="row g-3">
 
+          <!-- Teacher _Id -->
+            <input type="text" name="teacherId" class="form-control" value="<%=teacher._id%>"hidden>
           <!-- Teacher -->
           <div class="col-md-6">
-            <label class="form-label fw-semibold">Teacher</label>
-            <select name="teacherId" class="form-select" required>
-              <option value="">Select Teacher</option>
-
-          
-
-              <!-- Static Example -->
-              <option value="1">Rahul Sharma</option>
-              <option value="2">Anita Verma</option>
-            </select>
+            <label class="form-label fw-semibold text-muted">Teacher Name</label>
+            <input type="text" name="fullName" class="form-control" value="<%=teacher.fullName%>" disabled>
           </div>
 
           <!-- Paid Date -->
@@ -131,9 +125,23 @@
 
           <!-- Amount -->
           <div class="col-md-6">
-            <label class="form-label fw-semibold">Amount (₹)</label>
-            <input type="number" name="amount" class="form-control" placeholder="Enter salary amount" required>
-          </div>
+  <label class="form-label fw-semibold">Amount (₹)</label>
+  
+  <input 
+    type="number" 
+    name="amount" 
+    id="salaryInput"
+    class="form-control" 
+    placeholder="Enter salary amount" 
+    required
+    max="<%= finalAmount %>"
+    oninput="validateAmount(this)"
+  >
+  
+  <div class="form-text text-success">
+    <i class="bi bi-info-circle"></i> Max payable: ₹<%= finalAmount %>
+  </div>
+</div>
 
           <!-- Description -->
           <div class="col-md-6">
@@ -166,6 +174,17 @@
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('active');
     }
+    function validateAmount(input) {
+    // Get the maximum value allowed (from the max attribute set by EJS)
+    const maxVal = parseFloat(input.getAttribute('max')) || 0;
+    const currentVal = parseFloat(input.value);
+
+    // If user enters a number higher than max, reset it to max
+    if (currentVal > maxVal) {
+      input.value = maxVal;
+      alert(`Amount cannot exceed the total pending earnings of ₹${maxVal}`);
+    }
+  }
   </script>
 
 </body>

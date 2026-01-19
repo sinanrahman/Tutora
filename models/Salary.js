@@ -16,6 +16,10 @@ const salarySchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    paidDate:{
+      type:Date,
+      required:true
+    }
   },
   { timestamps: true }
 );

@@ -11,6 +11,13 @@ const Session = require('../models/Session');
 const Transaction = require("../models/Transaction");
 const Invoice = require('../models/Invoice')
 
+const puppeteer = require('puppeteer');
+const ejs = require('ejs');
+const path = require('path');
+const fs = require('fs'); // Import File System
+const Salary = require('../models/Salary');
+const mongoose = require('mongoose')
+
 //      RENDER ADMIN DASHBOARD
 exports.dashboard = async (req, res) => {
     try {
@@ -706,16 +713,96 @@ exports.viewFinanceDetails = async (req, res) => {
 exports.viewSalary = async (req, res) => {
     const teacherId = req.params.id;
     const teacher = await Teacher.findById(teacherId);
+    const allSalary = await Salary.find({teacherId})
+    let allPaidSalary = await Salary.aggregate([
+        {
+            // 1. Filter: Find approved sessions for this teacher
+            $match: {
+                teacherId: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+            }
+        },
+        {
+            // 2. Calculate: Multiply duration * rate for each doc, then sum them all
+            $group: {
+                _id: null, // We want one single result, not groups
+                totalPaid:{
+                    $sum:'$amount'
+                }
+            }
+        }
+    ])
+    // result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
+    allPaidSalary = allPaidSalary.length > 0 ? allPaidSalary[0].totalPaid : 0;
 
-    return res.render('admin/viewSalary', { activePage: 'teachers', teacher })
+    return res.render('admin/viewSalary', { activePage: 'teachers', teacher,allSalary,allPaidSalary })
 }
 
-exports.addSalary = async (req, res) => {
+exports.getAddSalary = async (req, res) => {
     const teacherId = req.params.id;
-    const teachers = await Teacher.findById(teacherId);
+    const teacher = await Teacher.findById(teacherId);
 
-    return res.render('admin/addSalary', { activePage: 'teachers', teachers })
+     const result = await Session.aggregate([
+        {
+            // 1. Filter: Find approved sessions for this teacher
+            $match: {
+                teacher: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+                status: 'APPROVED'
+            }
+        },
+        {
+            // 2. Calculate: Multiply duration * rate for each doc, then sum them all
+            $group: {
+                _id: null, // We want one single result, not groups
+                totalEarnings: { 
+                    $sum: { $multiply: ["$durationInHours", teacher.hourlyRate] } 
+                },
+                totalDuration:{
+                    $sum:'$durationInHours'
+                }
+            }
+        }
+    ]);
+    let allPaidSalary = await Salary.aggregate([
+        {
+            // 1. Filter: Find approved sessions for this teacher
+            $match: {
+                teacherId: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+            }
+        },
+        {
+            // 2. Calculate: Multiply duration * rate for each doc, then sum them all
+            $group: {
+                _id: null, // We want one single result, not groups
+                totalPaid:{
+                    $sum:'$amount'
+                }
+            }
+        }
+    ])
+    // result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
+    allPaidSalary = allPaidSalary.length > 0 ? allPaidSalary[0].totalPaid : 0;
+    let finalAmount = result.length > 0 ? result[0].totalEarnings : 0;
+    // const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
+    finalAmount = finalAmount - allPaidSalary
+    return res.render('admin/addSalary', { activePage: 'teachers', teacher,finalAmount,})
 }
+
+exports.addSalary = async(req,res)=>{
+    try{
+        const { teacherId, amount, description, paidDate} = req.body
+        await Salary.create({
+            teacherId,
+            amount,
+            description,
+            paidDate
+        })
+        return res.redirect(`/admin/teachers/salary/${teacherId}`)
+    }catch(e){
+        console.log(e)
+        return res.render('auth/pageNotFound', { msg: 'Server Error: Unable to add salary' });
+    }
+}
+
 
 // ==========================================
 //        INVOICE CONTROLLERS
@@ -757,9 +844,7 @@ exports.addInvoice = async (req, res) => {
   }
 };
 
-const puppeteer = require('puppeteer');
-const ejs = require('ejs');
-const path = require('path');
+
 
 exports.downloadInvoicePDF = async (req, res) => {
   try {
@@ -770,22 +855,55 @@ exports.downloadInvoicePDF = async (req, res) => {
       return res.status(404).send("Invoice not found");
     }
 
-    // 1. Render EJS
-    const templatePath = path.join(__dirname, '../views/admin/viewinvoice.ejs');
-    const html = await ejs.renderFile(templatePath, { newInvoice: invoice });
+    // --- 1. IMAGE CONVERSION FUNCTION (With Debugging) ---
+    const imageToBase64 = (filename) => {
+        try {
+            // "process.cwd()" gets the root folder of your project
+            // We assume your images are in: YourProject/public/image/filename
+            const filePath = path.join(process.cwd(), 'static', 'image', filename);
+            
+            // DEBUG: Print the path to your console so you can check if it is right
+            console.log("Looking for image at:", filePath); 
 
-    // 2. Launch Puppeteer
+            if (!fs.existsSync(filePath)) {
+                console.error("File does not exist at path:", filePath);
+                return null;
+            }
+
+            const bitmap = fs.readFileSync(filePath);
+            // Check extension to set correct mimetype (png or webp)
+            const ext = path.extname(filePath).substring(1); 
+            return `data:image/${ext};base64,${bitmap.toString('base64')}`;
+        } catch (err) {
+            console.error("Error converting image:", err);
+            return null;
+        }
+    };
+
+    // --- 2. GET IMAGES ---
+    // Pass only the filename, not the full '/image/...' path
+    const logoBase64 = imageToBase64('logo.png'); 
+    const paidBase64 = imageToBase64('paid.webp');
+
+    // --- 3. RENDER EJS ---
+    const templatePath = path.join(__dirname, '../views/admin/viewinvoice.ejs');
+    
+    const html = await ejs.renderFile(templatePath, { 
+        newInvoice: invoice,
+        logoSrc: logoBase64, 
+        paidSrc: paidBase64   
+    });
+
+    // --- 4. PUPPETEER ---
     const browser = await puppeteer.launch({ 
         headless: 'new',
         args: ['--no-sandbox'] 
     });
     const page = await browser.newPage();
 
-    // 3. Set Content
     await page.setContent(html, { waitUntil: 'networkidle0' });
     await page.emulateMediaType('print');
 
-    // 4. Generate PDF Buffer
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
@@ -794,13 +912,9 @@ exports.downloadInvoicePDF = async (req, res) => {
 
     await browser.close();
 
-    // 5. Force Download (Strict Headers)
-    // "attachment" forces download. "inline" would show preview.
-    // Quotes around the filename are important!
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="invoice-${invoiceId}.pdf"`);
     res.setHeader('Content-Length', pdfBuffer.length);
-
     res.send(pdfBuffer);
 
   } catch (err) {

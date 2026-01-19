@@ -83,7 +83,7 @@
 									<tr>
 										<td> <%= i + 1 %> </td>
 										<td> <%= t.fullName %> </td>
-										<td> <%= t._id %> </td>
+										<td> <%= t.teacherId %> </td>
 										<td> <%= t.subjects %> </td>
 										<td>
 											<a href="/coordinator/update-teacher/<%= studentId %>/remove/<%= t._id %>" class="btn btn-danger btn-sm"> Remove </a>
@@ -122,7 +122,7 @@
 										<%= teacher.fullName %>
 									</td>
 									<td>
-										<%= teacher._id %>
+										<%= teacher.teacherId %>
 									</td>
 									<td>
 										<%= teacher.subjects %>

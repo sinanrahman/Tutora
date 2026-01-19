@@ -69,3 +69,4 @@ exports.approveSession = async (req, res) => {
         return res.render('auth/pageNotFound', { msg: 'Error: Session approval failed' });
     }
 };
+

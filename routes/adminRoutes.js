@@ -48,6 +48,7 @@ const {
 	viewFinance,
 	viewFinanceDetails,
 	viewSalary,
+	getAddSalary,
 	addSalary,
 	//invoice
 	getInvoicePage,
@@ -252,11 +253,12 @@ router.get(
 
 router
 	.route('/teachers/salary/:id')
-	.get(protect, setSidebarMenu, authorize('ADMIN'),viewSalary);
+	.get(protect, setSidebarMenu, authorize('ADMIN'),viewSalary)
 
 router
 	.route('/teachers/salary/:id/add')
-	.get(protect, setSidebarMenu, authorize('ADMIN'),addSalary);
+	.get(protect, setSidebarMenu, authorize('ADMIN'),getAddSalary)
+	.post(protect,setSidebarMenu,authorize('ADMIN'),addSalary)
 
 // ==========================================
 //        INVOICE ROUTES
@@ -266,5 +268,5 @@ router
 	.get(protect,setSidebarMenu,authorize('ADMIN'),getInvoicePage)
 	.post(protect,setSidebarMenu,authorize('ADMIN'),addInvoice)
 // Add this line to your routes file
-router.get('/invoice/download/:id',protect,authorize('ADMIN'),downloadInvoicePDF);
+router.get('/invoice/download/:id',protect,authorize('ADMIN'),downloadInvoicePDF)
 module.exports = router;

@@ -1,4 +1,19 @@
 <style>
+	a,a:visited,a:active{
+		text-decoration: none;
+		color: #000;
+	}
+	img{
+		border-radius: 50%;
+		width: 75px;
+		height: 75px;
+		object-fit: cover;
+	}
+	.panel__heading{
+		text-transform: capitalize;
+		color: black !important;
+		font-size: 1.379rem;
+	}
 	#sidebar {
 		width: 220px;
 		padding-top: 100px;
@@ -65,6 +80,8 @@
 
 <nav id="sidebar" class="p-3 d-flex flex-column justify-content-between">
 	<ul class="nav flex-column">
+	<h6 class="fw-bold my-4 justify-content-center d-flex panel__heading"> <%=roleCapitalized%> Panel</h6>
+
 		<% if (menu && menu.length > 0) { %> <% menu.forEach(item => { %>
 		<li class="nav-item mb-2 border rounded <%= activePage === item.key ? 'active' : '' %>">
 			<a href="<%= item.url %>" class="nav-link"><%= item.label %></a>
@@ -73,12 +90,23 @@
 	</ul>
 
 	<div>
-		<div class="text-center mb-3">
+		<a href="/teacher/profile">
+
+			<div class="text-center mb-3">
+
+				<%if(dp){%>
+					<img src="<%=dp%>" alt="">
+				<%}else{%>
 			<i class="bi bi-person-circle fs-2"></i>
+					
+					<%}%>
+
 			<h6 class="mt-2 mb-0 text-dark">
 				<%= (typeof admin !== 'undefined' ? admin.username : user?.fullName) || 'Guest' %>
 			</h6>
 		</div>
+
+		</a>
 
 		<button class="btn btn-outline-dark w-100" data-bs-toggle="modal" data-bs-target="#logoutModal">
 			Logout

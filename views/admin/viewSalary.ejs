@@ -112,28 +112,36 @@
           </a>
         </div>
 
+
+
+        <h3 class="fw-bolder bg-light mt-5 text-secondary d-flex justify-content-between align-items-center">
+  <span>Name: <span class="text-primary"><%= teacher.fullName %></span></span>
+  <span>Total: <%= allPaidSalary %></span>
+</h3>
         <!-- Salary Table -->
         <div class="table-responsive">
           <table class="table table-bordered table-hover align-middle">
             <thead class="table-light text-center">
               <tr>
                 <th>#</th>
-                <th>Teacher Name</th>
                 <th>Description</th>
                 <th>Amount (₹)</th>
                 <th>Paid Date</th>
+                <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
 
             <tbody>
               <!-- Example Static Row -->
-              <tr class="text-center">
-                <td>1</td>
-                <td>Rahul Sharma</td>
-                <td>January Salary</td>
-                <td>₹ 25,000</td>
-                <td>15 Jan 2026</td>
+
+              <%allSalary.forEach((salary,i)=>{%>
+                <tr class="text-center">
+                <td><%=i+1%></td>
+                <td><%=salary.description%></td>
+                <td><%=salary.amount%></td>
+                <td><%= salary?.paidDate ? new Date(salary.paidDate).toLocaleDateString('en-US') : '—' %></td>
+                <td><span class="bg-success badge">paid</span></td>
                 <td>
                   <button class="btn btn-sm btn-primary">
                     <i class="bi bi-pencil"></i>
@@ -143,6 +151,8 @@
                   </button>
                 </td>
               </tr>
+              <%})%>
+
 
             </tbody>
           </table>
