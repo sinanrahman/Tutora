@@ -12,6 +12,15 @@
 	<body>
 		<%-include('../partials/coordinatorNavbar') %>
     <%- include('../partials/sidebar') %>
+    <div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
+			<div class="d-flex align-items-center justify-content-between px-3" style="height: 60px">
+				<img src="/image/logo.png" alt="Logo" class="mobile-logo-img" />
+
+				<button class="btn btn-light" onclick="toggleSidebar()">
+					<i class="bi bi-list fs-4"></i>
+				</button>
+			</div>
+		</div>
 
     <main class="main-content">
         <div class="container-fluid py-5">
@@ -84,6 +93,24 @@
   </div>
 
     </main>
+<script>
+  	function toggleSidebar() {
+			document.getElementById('sidebar').classList.toggle('active');
+		}
 
+		document.addEventListener('click', function (e) {
+			const sidebar = document.getElementById('sidebar');
+			const toggleBtn = document.querySelector('.bi-list')?.parentElement;
+
+			if (
+				window.innerWidth < 768 &&
+				sidebar.classList.contains('active') &&
+				!sidebar.contains(e.target) &&
+				!toggleBtn?.contains(e.target)
+			) {
+				sidebar.classList.remove('active');
+			}
+		});
+</script>
 </body>
 </html>
