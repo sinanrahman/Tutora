@@ -136,13 +136,12 @@ let allPaidSalary = await Salary.aggregate([
 // const finalAmount = result.length > 0 ? result[0].totalEarnings : 0;
 const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
 const allSalary = await Salary.find({teacherId})
-console.log("Total Earnings:", finalAmount);
 
 
         return res.render('teacher/profile', {
             user: teacher,
             teacher,
-            activePage: 'profile',
+             activePage: 'teacherProfile',
             pendingSalary: finalAmount,
             totalDuration,
             allSalary,
@@ -238,3 +237,70 @@ exports.updateProfilePic = async (req, res) => {
 //         return res.render('auth/pageNotFound', { msg: 'Error while calculating teacher salary' })
 //     }
 // }
+
+// RENDER PENDING SALARY PAGE
+exports.viewPendingSalaryPage = async (req, res) => {
+  try {
+    const teacherId = req.user.id;
+    const teacher = await Teacher.findById(teacherId);
+
+    // Total Approved Sessions Earnings
+    const result = await Session.aggregate([
+      {
+        $match: {
+          teacher: new mongoose.Types.ObjectId(teacherId),
+          status: 'APPROVED'
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalEarnings: {
+            $sum: { $multiply: ["$durationInHours", teacher.hourlyRate] }
+          },
+          totalDuration: { $sum: "$durationInHours" }
+        }
+      }
+    ]);
+
+    // Total Paid Salary
+    let paid = await Salary.aggregate([
+      {
+        $match: {
+          teacherId: new mongoose.Types.ObjectId(teacherId)
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalPaid: { $sum: "$amount" }
+        }
+      }
+    ]);
+
+    const totalPaid = paid.length > 0 ? paid[0].totalPaid : 0;
+    const totalEarnings = result.length > 0 ? result[0].totalEarnings : 0;
+    const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
+
+    const pendingSalary = totalEarnings - totalPaid;
+const allSalary = await Salary.find({ teacherId }).sort({ paidDate: -1 });
+
+return res.render('teacher/pendingSalary', {
+  user: teacher,
+  teacher,
+  pendingSalary,
+  totalDuration,
+  totalPaid,
+  totalEarnings,
+  allSalary,
+  allPaidSalary: totalPaid,
+  activePage: 'teacherProfile'
+});
+
+  } catch (err) {
+    console.error(err);
+    return res.render('auth/pageNotFound', {
+      msg: 'Error: Unable to load pending salary page'
+    });
+  }
+};
