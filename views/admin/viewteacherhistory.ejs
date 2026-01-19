@@ -23,9 +23,18 @@
       <div class="content-wrapper bg-white rounded-4 shadow-sm p-4">
         <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
           <ol class="breadcrumb mb-3">
-            <li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
-            <li class="breadcrumb-item"><a href="/admin/viewTeachers">Teachers</a></li>
-            <li class="breadcrumb-item active">History</li>
+            <li class="breadcrumb-item">
+              <a href="/admin/Dashboard">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+              <a href="/admin/viewteachers">Teachers</a>
+            </li>
+            <li class="breadcrumb-item active">
+              <a href="/admin/teachers/profile/<%=teacherName._id%>">Teacher Profile</a>
+            </li>
+            <li class="breadcrumb-item active">
+              History
+            </li>
           </ol>
         </nav>
         <h3 class="fw-bold text-center heading mb-4">Teacher Session History</h3>
@@ -57,7 +66,7 @@
           </div>
         </div>
         <div class="mt-4">
-          <a href="/admin/viewTeachers" class="btn btn-secondary">Back</a>
+          <a href="/admin/teachers/profile/<%=teacherName._id%>" class="btn btn-secondary">Back</a>
         </div>
       </div>
     </div>

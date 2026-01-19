@@ -72,104 +72,115 @@
 
   <!-- Navbar & Sidebar -->
   <%- include('partials/navbar') %>
-  <%- include('../partials/sidebar') %>
+    <%- include('../partials/sidebar') %>
 
-  <!-- Mobile Topbar -->
-  <div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
-    <div class="d-flex align-items-center justify-content-between px-3 mobile-topbar-inner">
-      <img src="/image/logo.png" alt="Logo" class="mobile-logo-img">
-      <button class="btn btn-light" onclick="toggleSidebar()">
-        <i class="bi bi-list fs-4"></i>
-      </button>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <div class="main-content">
-    <div class="container-fluid px-3 px-md-4">
-      <div class="card shadow-sm border-0">
-
-        <!-- Breadcrumb -->
-        <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb" class="p-3">
-          <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
-            <li class="breadcrumb-item active">Salary</li>
-          </ol>
-        </nav>
-
-        <!-- Heading -->
-       <div class="card-body">
-
-        <!-- Heading -->
-        <h3 class="fw-bold mb-4 text-center" style="color:#870216;">
-          SALARY DETAILS
-        </h3>
-
-        <!-- Add Salary Button -->
-        <div class="d-flex justify-content-center mb-4">
-          <a href="/admin/teachers/salary/<%= teacher._id %>/add" class="btn btn-success">
-            <i class="bi bi-plus-circle me-1"></i> Add Salary
-          </a>
+      <!-- Mobile Topbar -->
+      <div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
+        <div class="d-flex align-items-center justify-content-between px-3 mobile-topbar-inner">
+          <img src="/image/logo.png" alt="Logo" class="mobile-logo-img">
+          <button class="btn btn-light" onclick="toggleSidebar()">
+            <i class="bi bi-list fs-4"></i>
+          </button>
         </div>
-
-
-
-        <h3 class="fw-bolder bg-light mt-5 text-secondary d-flex justify-content-between align-items-center">
-  <span>Name: <span class="text-primary"><%= teacher.fullName %></span></span>
-  <span>Total: <%= allPaidSalary %></span>
-</h3>
-        <!-- Salary Table -->
-        <div class="table-responsive">
-          <table class="table table-bordered table-hover align-middle">
-            <thead class="table-light text-center">
-              <tr>
-                <th>#</th>
-                <th>Description</th>
-                <th>Amount (₹)</th>
-                <th>Paid Date</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <!-- Example Static Row -->
-
-              <%allSalary.forEach((salary,i)=>{%>
-                <tr class="text-center">
-                <td><%=i+1%></td>
-                <td><%=salary.description%></td>
-                <td><%=salary.amount%></td>
-                <td><%= salary?.paidDate ? new Date(salary.paidDate).toLocaleDateString('en-US') : '—' %></td>
-                <td><span class="bg-success badge">paid</span></td>
-                <td>
-                  <button class="btn btn-sm btn-primary">
-                    <i class="bi bi-pencil"></i>
-                  </button>
-                  <button class="btn btn-sm btn-danger">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </td>
-              </tr>
-              <%})%>
-
-
-            </tbody>
-          </table>
-        </div>
-
       </div>
 
-      </div>
-    </div>
-  </div>
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="container-fluid px-3 px-md-4">
+          <div class="card shadow-sm border-0">
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('active');
-    }
-  </script>
+            <!-- Breadcrumb -->
+            <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+              <ol class="breadcrumb mb-3">
+                <li class="breadcrumb-item">
+                  <a href="/admin/Dashboard">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                  <a href="/admin/viewteachers">Teachers</a>
+                </li>
+                <li class="breadcrumb-item active">
+                  <a href="/admin/teachers/profile/<%=teacher._id%>">Teacher Profile</a>
+
+                </li>
+                <li class="breadcrumb-item active">
+                  Salary
+                </li>
+              </ol>
+            </nav>
+
+            <!-- Heading -->
+            <div class="card-body">
+
+              <!-- Heading -->
+              <h3 class="fw-bold mb-4 text-center" style="color:#870216;">
+                SALARY DETAILS
+              </h3>
+
+              <!-- Add Salary Button -->
+              <div class="d-flex justify-content-center mb-4">
+                <a href="/admin/teachers/salary/<%= teacher._id %>/add" class="btn btn-success">
+                  <i class="bi bi-plus-circle me-1"></i> Add Salary
+                </a>
+              </div>
+
+
+
+              <h3 class="fw-bolder bg-light mt-5 text-secondary d-flex justify-content-between align-items-center">
+                <span>Name: <span class="text-primary">
+                    <%= teacher.fullName %>
+                  </span></span>
+                <span>Total: <%= allPaidSalary %></span>
+              </h3>
+              <!-- Salary Table -->
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                  <thead class="table-light text-center">
+                    <tr>
+                      <th>#</th>
+                      <th>Description</th>
+                      <th>Amount (₹)</th>
+                      <th>Paid Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <!-- Example Static Row -->
+
+                    <%allSalary.forEach((salary,i)=>{%>
+                      <tr class="text-center">
+                        <td>
+                          <%=i+1%>
+                        </td>
+                        <td>
+                          <%=salary.description%>
+                        </td>
+                        <td>
+                          <%=salary.amount%>
+                        </td>
+                        <td>
+                          <%= salary?.paidDate ? new Date(salary.paidDate).toLocaleDateString('en-US') : '—' %>
+                        </td>
+                        <td><span class="bg-success badge">paid</span></td>
+                      </tr>
+                      <%})%>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Bootstrap JS -->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+      <script>
+        function toggleSidebar() {
+          document.getElementById('sidebar').classList.toggle('active');
+        }
+      </script>
 </body>
+
 </html>
