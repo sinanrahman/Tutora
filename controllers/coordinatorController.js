@@ -112,7 +112,7 @@ exports.getStudentProfile = async (req, res) => {
             student,
             coord,
             totalHours,
-            activePage: "student-profile",
+            activePage: "dashboard",
             username: coord.fullName
         });
     } catch (err) {
@@ -240,7 +240,7 @@ exports.getUpdateTeacher = async(req,res) =>{
                                                   .populate('assignedTeachers');
         
         return res.render('coordinator/update-teacher',{
-            activePage:'update-teacher',
+            activePage:"dashboard",
             username:coord.fullName,
             t:teachers,
             assignedTeachers,
