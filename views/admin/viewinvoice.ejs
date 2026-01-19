@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Invoice #<%= newInvoice.id %></title>
+  <title>Invoice #<%= newInvoice?.id %></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -159,7 +159,7 @@
 <img src="<%= (typeof logoSrc !== 'undefined' && logoSrc) ? logoSrc : '/image/logo.png' %>" class="logo" />
         <h1>Invoice</h1>
         <div class="date">
-          <%= new Date(newInvoice.date).toLocaleDateString('en-IN', {
+          <%= new Date(newInvoice?.date).toLocaleDateString('en-IN', {
           year: 'numeric',
           month: 'long',
           day: 'numeric'
@@ -169,19 +169,19 @@
 
       <div class="row">
         <span class="label">Invoice ID</span>
-        <span class="value">#<%= newInvoice.id %></span>
+        <span class="value">#<%= newInvoice?.id %></span>
       </div>
 
       <div class="row">
         <span class="label">Student ID</span>
-        <span class="value"><%= newInvoice.studentId || 'N/A' %></span>
+        <span class="value"><%= newInvoice?.studentId || 'N/A' %></span>
       </div>
 
-      <% if(newInvoice.description) { %>
+      <% if(newInvoice?.description) { %>
       <div class="section">
         <div class="section-title">Description</div>
         <div class="description">
-          <%= newInvoice.description %>
+          <%= newInvoice?.description %>
         </div>
       </div>
       <% } %>
@@ -189,11 +189,11 @@
       <div class="section">
         <div class="section-title">Items</div>
 
-        <% if(newInvoice.item && newInvoice.item.length) { %>
-        <% newInvoice.item.forEach(item => { %>
+        <% if(newInvoice?.item && newInvoice?.item?.length) { %>
+        <% newInvoice?.item?.forEach(item => { %>
         <div class="item">
           <span><%= item.type || 'Miscellaneous' %></span>
-          <span>₹<%= Number(item.amount).toFixed(2) %></span>
+          <span>₹<%= Number(item?.amount).toFixed(2) %></span>
         </div>
         <% }) %>
         <% } else { %>
@@ -202,11 +202,11 @@
 
         <div class="total">
           <span>Total</span>
-          <span>₹<%= Number(newInvoice.amount).toFixed(2) %></span>
+          <span>₹<%= Number(newInvoice?.amount).toFixed(2) %></span>
         </div>
       </div>
 
-      <% if (newInvoice.paid) { %>
+      <% if (newInvoice?.paid) { %>
       <div class="paid-seal">
         <!-- <img src="/image/paid.webp" alt="Paid Seal"> -->
         <img src="<%= (typeof paidSrc !== 'undefined' && paidSrc) ? paidSrc : '/image/paid.webp' %>" alt="Paid Seal">
@@ -215,11 +215,11 @@
 
       <div class="mt-4 no-print">
         <div class="d-flex justify-content-center gap-3">
-          <a href="/admin/addinvoice" class="btn btn-outline-secondary px-4">
+          <a href="/admin/viewinvoicelist" class="btn btn-outline-secondary px-4">
             <i class="bi bi-arrow-left"></i> Back
           </a>
 
-          <a href="/admin/invoice/download/<%= newInvoice.id %>" class="btn btn-primary px-4" style="background-color: #023c87; border-color: #027e87;">
+          <a href="/admin/invoice/download/<%= newInvoice?.id %>" class="btn btn-primary px-4" style="background-color: #023c87; border-color: #027e87;">
             <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download PDF
           </a>
         </div>

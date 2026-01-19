@@ -922,3 +922,31 @@ exports.downloadInvoicePDF = async (req, res) => {
     res.status(500).send("Error generating PDF");
   }
 };
+
+exports.viewInvoiceList=async(req,res)=>{
+    const invoices = await Invoice.find()
+    return res.render('admin/viewInvoiceList',{activePage:'invoice',invoices})
+}
+
+exports.viewInvoicePDF=async(req,res)=>{
+    const invoiceId = req.params.id;
+    const invoice = await Invoice.findOne({ id: invoiceId });
+    return res.render('admin/viewinvoice',{activePage:'invoice',newInvoice:invoice})
+
+}
+
+exports.updateInvoiceStatus = async (req, res) => {
+  try {
+    const { paid } = req.body;
+
+    await Invoice.findByIdAndUpdate(req.params.id, {
+      paid: paid === 'true'
+    });
+
+ console.error("status edited!!");
+    res.redirect('/admin/viewinvoicelist');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to update invoice status');
+  }
+};
