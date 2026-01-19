@@ -126,7 +126,7 @@ exports.updateStudent = async (req, res) => {
     try {
         const studentId = req.params.id;
         await Student.findByIdAndUpdate(studentId, req.body);
-        return res.redirect('/admin/viewstudents');
+        return res.redirect(`/admin/viewstudentdetails/${studentId}`);
     } catch (err) {
         console.log(err);
         return res.render('auth/pageNotFound', { msg: 'Error updating student details' })
@@ -244,7 +244,7 @@ exports.updateCoordinator = async (req, res) => {
     try {
         const id = req.params.id;
         await Coordinator.findByIdAndUpdate(id, req.body);
-        return res.redirect('/admin/viewcoordinators');
+        return res.redirect(`/admin/viewcoordinatordetails/${id}`);
     } catch (err) {
         console.log(err);
         return res.render('auth/pageNotFound', { msg: 'Error updating coordinator' });
@@ -431,7 +431,7 @@ exports.updateTeacher = async (req, res) => {
             teacher.profilePic = await fileUploadToCloudinary(req.files.profilePic);
         }
         await teacher.save();
-        return res.redirect('/admin/viewteachers');
+        return res.redirect(`/admin/teachers/profile/${req.params.id}`);
     } catch (error) {
         console.error('Update Teacher Error:', error);
         return res.render('auth/pageNotFound', { msg: 'Server Error: Unable to update teacher' });
@@ -466,17 +466,17 @@ exports.changeCoordinatorPassword = async (req, res) => {
             return res.redirect('/admin/viewcoordinators');
         }
 
-        const Coordinator = await Coordinator.findById(id).select('+password');
+        const coordinator = await Coordinator.findById(id).select('+password');
 
-        if (!Coordinator) {
+        if (!coordinator) {
             return res.redirect('/admin/viewcoordinators');
         }
 
-        Coordinator.password = password;
-        await Coordinator.save();
+        coordinator.password = password;
+        await coordinator.save();
         console.log('coordinator password changed');
 
-        return res.redirect('/admin/viewcoordinators');
+        return res.redirect(`/admin/coordinators/edit/${id}`);
     } catch (error) {
         console.error('Change password error:', error);
         return res.redirect('/admin/viewcoordinators');
@@ -500,7 +500,7 @@ exports.changeTeacherPassword = async (req, res) => {
         teacher.password = password;
         await teacher.save();
 
-        return res.redirect('/admin/viewteachers');
+        return res.redirect(`/admin/teachers/edit/${id}`);
     } catch (error) {
         console.error('Teacher password change error:', error);
         return res.redirect('/admin/viewteachers');
@@ -523,7 +523,7 @@ exports.studentSessionHistory = async (req, res) => {
         return res.render('admin/viewstudenthistory', {
             ssHistory: studentSessions,
             studentName,
-            activePage: 'student',
+            activePage: 'students',
         });
     } catch (error) {
         console.error('Error fetching session history:', error);
@@ -539,7 +539,7 @@ exports.addPackage = async (req, res) => {
 
 	res.render('admin/addpackage', {
 		student,
-		activePage: 'package'
+		activePage: 'students'
 	});
 };
 exports.postAddPackage = async (req, res) => {
@@ -592,7 +592,7 @@ exports.teacherSessionHistory = async (req, res) => {
         return res.render('admin/viewteacherhistory', {
             tsHistory: teacherSessions,
             teacherName,
-            activePage: 'teacher',
+            activePage: 'teachers',
         });
     } catch (error) {
         console.error('Error fetching session history:', error);
@@ -610,7 +610,7 @@ exports.getUpdateTeacher = async (req, res) => {
             .populate('assignedTeachers');
 
         return res.render('admin/updateTeacher', {
-            activePage: 'update-teacher',
+            activePage: 'students',
             username: coord.fullName,
             t: teachers,
             assignedTeachers,
@@ -683,7 +683,7 @@ exports.postAddFinance = async (req, res) => {
       description
     });
 
-    res.redirect("/admin/finance");
+    res.redirect("/admin/viewfinance");
   } catch (error) {
     console.error(error);
     res.status(500).send("Error saving transaction");
