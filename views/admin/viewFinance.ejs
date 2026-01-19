@@ -89,6 +89,7 @@
                 <th>Transaction ID</th>
                 <th>Type</th>
                 <th>Amount</th>
+                <th>Date</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -109,6 +110,7 @@
                   </span>
                 </td>
                 <td>₹ <%= t.amount %></td>
+                <td><%= t.createdAt.toLocaleDateString() %></td>
                 <td>
                   <a href="/admin/finance/<%= t._id %>" class="btn btn-primary btn-sm w-100 w-md-auto">
                     View

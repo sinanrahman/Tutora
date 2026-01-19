@@ -9,6 +9,9 @@ const invoiceSchema = new mongoose.Schema(
     studentId: {
       type: String
     },
+    studentName: {
+      type: String
+    },
     amount: {
       type: Number,
       required: true,
