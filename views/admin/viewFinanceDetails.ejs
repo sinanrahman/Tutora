@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Transaction Details</title>
@@ -19,6 +20,10 @@
       padding: 0 15px;
     }
 
+    .heading {
+      color: #870216;
+    }
+
     .finance-card {
       background: #ffffff;
       border-radius: 16px;
@@ -27,7 +32,7 @@
 
     .mobile-logo-img {
       height: 40px;
-        width: auto;
+      width: auto;
     }
 
     .mobile-topbar {
@@ -61,20 +66,21 @@
 
   <!-- MAIN CONTENT -->
   <div class="main-content">
-    <div class="finance-wrapper">
-              <nav style="--bs-breadcrumb-divider:'>'; ">
-        <ol class="breadcrumb p-3 mb-0">
+    <nav style="--bs-breadcrumb-divider:'>'; ">
+        <ol class="breadcrumb p-3 mb-0 mt-5">
           <li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
-          <li class="breadcrumb-item active">Finance</li>
+          <li class="breadcrumb-item"><a href="/admin/viewfinance">finance</a></li>
+          <li class="breadcrumb-item active">viewFinance</li>
         </ol>
       </nav>
+    <div class="finance-wrapper">
+      
+
+      <div class="d-flex flex-column align-items-center mb-3 gap-2 text-center">
+        <h3 class="fw-bold fs-4 heading mb-0">Transaction Details</h3>
+      </div>
 
       <div class="card border-0 finance-card">
-        
-
-        <div class="card-header bg-dark text-white text-center">
-          <h5 class="mb-0">Transaction Details</h5>
-        </div>
 
         <div class="card-body px-4 py-4">
 
@@ -106,13 +112,6 @@
           </p>
 
         </div>
-
-        <div class="card-footer bg-transparent border-0 text-center pb-4">
-          <a href="/admin/viewfinance" class="btn btn-outline-dark px-4">
-            Back to Finance
-          </a>
-        </div>
-
       </div>
 
     </div>
@@ -124,7 +123,7 @@
       document.getElementById('sidebar')?.classList.toggle('active');
     }
 
-    document.addEventListener('click', function (e) {
+    document.addEventListener('click', function(e) {
       const sidebar = document.getElementById('sidebar');
       const toggleBtn = document.querySelector('.bi-list')?.parentElement;
 
@@ -141,4 +140,5 @@
   </script>
 
 </body>
+
 </html>

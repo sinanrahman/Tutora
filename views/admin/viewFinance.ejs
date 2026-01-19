@@ -24,7 +24,8 @@
 
     /* Adjust main content to avoid overlap with mobile topbar */
     .main-content {
-      margin-top: 70px; /* height of mobile topbar */
+      margin-top: 70px;
+      /* height of mobile topbar */
     }
 
     /* Heading style */
@@ -72,12 +73,12 @@
 
       <div class="card-body">
 
-<div class="d-flex flex-column align-items-center mb-3 gap-2 text-center">
-  <h3 class="fw-bold fs-4 heading mb-0">FINANCE</h3>
-  <a href="/admin/addfinance" class="btn btn-success btn-sm">
-    <i class="bi bi-plus-circle"></i> Add Transaction
-  </a>
-</div>
+        <div class="d-flex flex-column align-items-center mb-3 gap-2 text-center">
+          <h3 class="fw-bold fs-4 heading mb-0">FINANCE</h3>
+          <a href="/admin/addfinance" class="btn btn-success btn-sm">
+            <i class="bi bi-plus-circle"></i> Add Transaction
+          </a>
+        </div>
 
         <!-- Table -->
         <div class="table-responsive">
@@ -93,27 +94,27 @@
             </thead>
             <tbody>
               <% if (transactions.length === 0) { %>
-                <tr>
-                  <td colspan="5" class="text-center text-muted">No transactions found</td>
-                </tr>
+              <tr>
+                <td colspan="5" class="text-center text-muted">No transactions found</td>
+              </tr>
               <% } %>
 
               <% transactions.forEach((t, index) => { %>
-                <tr>
-                  <td><%= index + 1 %></td>
-                  <td><%= t.id %></td>
-                  <td>
-                    <span class="badge <%= t.transactionType === 'CREDIT' ? 'bg-success' : 'bg-danger' %>">
-                      <%= t.transactionType %>
-                    </span>
-                  </td>
-                  <td>₹ <%= t.amount %></td>
-                  <td>
-                    <a href="/admin/finance/<%= t._id %>" class="btn btn-primary btn-sm w-100 w-md-auto">
-                      View
-                    </a>
-                  </td>
-                </tr>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= t.id %></td>
+                <td>
+                  <span class="badge <%= t.transactionType === 'CREDIT' ? 'bg-success' : 'bg-danger' %>">
+                    <%= t.transactionType %>
+                  </span>
+                </td>
+                <td>₹ <%= t.amount %></td>
+                <td>
+                  <a href="/admin/finance/<%= t._id %>" class="btn btn-primary btn-sm w-100 w-md-auto">
+                    View
+                  </a>
+                </td>
+              </tr>
               <% }) %>
             </tbody>
           </table>
@@ -141,7 +142,7 @@
       document.getElementById('sidebar').classList.toggle('active');
     }
 
-    document.addEventListener('click', function (e) {
+    document.addEventListener('click', function(e) {
       const sidebar = document.getElementById('sidebar');
       const toggleBtn = document.querySelector('.bi-list')?.parentElement;
 
