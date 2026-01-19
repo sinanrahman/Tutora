@@ -92,6 +92,8 @@
 				<nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
       <ol class="breadcrumb p-3">
         <li class="breadcrumb-item "><a href="/teacher/Dashboard">Home</a></li>
+		<% if (selectedStudentId) { %><li class="breadcrumb-item">
+       <a href="/teacher/studentProfile/<%= selectedStudentId %>">Student Profile</a></li><% } %>
         <li class="breadcrumb-item active" aria-current="page">submitSession</li>
       </ol>
     </nav>

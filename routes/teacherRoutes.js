@@ -13,6 +13,7 @@ const {
 	teacherProfilePage,
 	viewStudentProfile,
 	updateProfilePic,
+	  viewPendingSalaryPage,
 } = require('../controllers/teacherController');
 
 //      TEACHER DASHBOARD
@@ -33,5 +34,11 @@ router
 	.get(protect, setSidebarMenu, authorize('TEACHER'), viewStudentProfile);
 
 router.route('/update-dp').post(protect, setSidebarMenu, authorize('TEACHER'), updateProfilePic);
+
+// VIEW PENDING SALARY PAGE
+router
+  .route('/pending-salary')
+  .get(protect, setSidebarMenu, authorize('TEACHER'), viewPendingSalaryPage);
+
 
 module.exports = router;
