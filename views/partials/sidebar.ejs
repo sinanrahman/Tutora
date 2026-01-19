@@ -1,15 +1,17 @@
 <style>
-	a,a:visited,a:active{
+	a,
+	a:visited,
+	a:active {
 		text-decoration: none;
 		color: #000;
 	}
-	img{
+	img {
 		border-radius: 50%;
 		width: 75px;
 		height: 75px;
 		object-fit: cover;
 	}
-	.panel__heading{
+	.panel__heading {
 		text-transform: capitalize;
 		color: black !important;
 		font-size: 1.379rem;
@@ -54,33 +56,34 @@
 		min-height: 100vh;
 	}
 
-	@media (max-width: 768px) {                                                
-  #sidebar {
-	 width: 100%;
-    transform: translateX(-100%);
-  }
+	@media (max-width: 768px) {
+		#sidebar {
+			width: 100%;
+			transform: translateX(-100%);
+		}
 
-  #sidebar.active {
-    transform: translateX(0);
-  }
+		#sidebar.active {
+			transform: translateX(0);
+		}
 
-  .main-content {
-    margin-left: 0;
-    padding: 15px;
-  }
-}
-  @media (max-width: 480px) {
-    #sidebar {
-      width: 100%;
-      height: 100%;
-    }
-}
-  
+		.main-content {
+			margin-left: 0;
+			padding: 15px;
+		}
+	}
+	@media (max-width: 480px) {
+		#sidebar {
+			width: 100%;
+			height: 100%;
+		}
+	}
 </style>
 
 <nav id="sidebar" class="p-3 d-flex flex-column justify-content-between">
 	<ul class="nav flex-column">
-	<h6 class="fw-bold my-4 justify-content-center d-flex panel__heading"> <%=roleCapitalized%> Panel</h6>
+		<h6 class="fw-bold my-4 justify-content-center d-flex panel__heading">
+			<%=roleCapitalized%> Panel
+		</h6>
 
 		<% if (menu && menu.length > 0) { %> <% menu.forEach(item => { %>
 		<li class="nav-item mb-2 border rounded <%= activePage === item.key ? 'active' : '' %>">
@@ -90,23 +93,24 @@
 	</ul>
 
 	<div>
+		
+		<% if (role === 'TEACHER') { %>
 		<a href="/teacher/profile">
+			<% } %>
 
 			<div class="text-center mb-3">
+				<% if (dp) { %>
+				<img src="<%= dp %>" alt="Profile Picture" />
+				<% } else { %>
+				<i class="bi bi-person-circle fs-2"></i>
+				<% } %>
 
-				<%if(dp){%>
-					<img src="<%=dp%>" alt="">
-				<%}else{%>
-			<i class="bi bi-person-circle fs-2"></i>
-					
-					<%}%>
+				<h6 class="mt-2 mb-0 text-dark"><%= user?.fullName || 'Guest' %></h6>
+			</div>
 
-			<h6 class="mt-2 mb-0 text-dark">
-				<%= (typeof admin !== 'undefined' ? admin.username : user?.fullName) || 'Guest' %>
-			</h6>
-		</div>
-
+			<% if (role === 'TEACHER') { %>
 		</a>
+		<% } %>
 
 		<button class="btn btn-outline-dark w-100" data-bs-toggle="modal" data-bs-target="#logoutModal">
 			Logout
