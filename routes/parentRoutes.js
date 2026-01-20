@@ -1,5 +1,5 @@
 const express = require('express');
-const { parentDashboard, viewReport , viewPayment} = require('../controllers/parentController');
+const { parentDashboard, viewReport , viewPayment, viewClassHistory} = require('../controllers/parentController');
 const { setSidebarMenu } = require('../middlewares/sidebarMenu');
 const { authorize } = require('../middlewares/roleMiddleware');
 const { protect } = require('../middlewares/authMiddleware');
@@ -10,11 +10,15 @@ router
     .get(protect,setSidebarMenu,authorize('PARENT'),parentDashboard );
  
 router
-
     .route('/viewreport')
     .get(protect,setSidebarMenu,authorize('PARENT'),viewReport)
 
 router
-    .route('/viewpayment')
-    .get(protect,setSidebarMenu,authorize('PARENT'),viewPayment)
+    .route('/payment')
+  .get(protect,setSidebarMenu,authorize('PARENT'),viewPayment)
+
+router
+    .route('/classhistory')
+    .get(viewClassHistory)
+  
 module.exports = router;
