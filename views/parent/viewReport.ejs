@@ -4,32 +4,20 @@
 		<meta charset="UTF-8" />
 		<title>Student Progress Report</title>
 
-		<link
-			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-			rel="stylesheet"
-		/>
-		<link
-			href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-			rel="stylesheet"
-		/>
-		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-	</head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .heading {
+      color: #870216;
+    }
+  </style>
+</head>
 
 	<body class="bg-light">
 		<%-include('../partials/parentNavbar') %>
     <%- include('../partials/sidebar') %>
-	<div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
-  <div class="d-flex align-items-center justify-content-between px-3" style="height: 60px;">
-    <img src="/image/logo.png" alt="Logo" class="mobile-logo-img">
-    <button
-      class="btn btn-light"
-      onclick="toggleSidebar()"
-    >
-      <i class="bi bi-list fs-4"></i>
-    </button>
-
-  </div>
-</div>
 		<div class="container py-4">
 			<!-- Header -->
 			<div class="d-flex justify-content-between align-items-center mb-4">
@@ -49,154 +37,228 @@
 						<small class="text-muted">Student</small>
 					</div>
 
-					<div class="col-md-3">
-						<h6 class="fw-bold"><%= reports.length ? reports[reports.length - 1].score : 0 %>%</h6>
-						<small class="text-muted">Latest Score</small>
-					</div>
+  <!-- MAIN CONTAINER -->
+  <div class="card rounded-4 shadow-sm p-4">
 
-					<div class="col-md-3">
-						<h6 class="fw-bold text-success"><%= reports.length %></h6>
-						<small class="text-muted">Total Reports</small>
-					</div>
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+          <a href="/dashboard" class="text-decoration-none">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="/students" class="text-decoration-none">Students</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          Progress Report
+        </li>
+      </ol>
+    </nav>
 
-					<div class="col-md-3">
-						<h6 class="fw-bold"><%= reports[0]?.coordinator?.fullName || 'Coordinator' %></h6>
-						<small class="text-muted">Coordinator</small>
-					</div>
-				</div>
-			</div>
+    <!-- Heading -->
+    <div class="text-center mb-4">
+      <h4 class="fw-bold heading mb-1">Student Progress Report</h4>
+      <small class="text-muted">Weekly • Monthly • Yearly Performance</small><br>
+      <span class="badge bg-primary mt-2"><%= new Date().getFullYear() %></span>
+    </div>
 
-			<!-- Chart -->
-			<div class="card rounded-4 shadow-sm p-4 mb-4">
-				<h6 class="fw-bold mb-3">📈 Performance Trend</h6>
-				<canvas id="reportChart" height="120"></canvas>
-			</div>
+    <!-- Student Info -->
+    <div class="card rounded-4 shadow-sm p-4 mb-4">
+      <div class="row text-center gy-3">
 
-			<!-- Tabs -->
-			<ul class="nav nav-pills mb-3">
-				<li class="nav-item">
-					<button class="nav-link active" data-bs-toggle="pill" data-bs-target="#weekly">
-						Weekly
-					</button>
-				</li>
-				<li class="nav-item">
-					<button class="nav-link" data-bs-toggle="pill" data-bs-target="#monthly">Monthly</button>
-				</li>
-				<li class="nav-item">
-					<button class="nav-link" data-bs-toggle="pill" data-bs-target="#yearly">Yearly</button>
-				</li>
-			</ul>
+        <div class="col-md-3">
+          <h6 class="mb-0"><%= student?.fullName || 'Student' %></h6>
+          <small class="text-muted">Student</small>
+        </div>
 
-			<div class="tab-content">
-				<!-- WEEKLY -->
-				<div class="tab-pane fade show active" id="weekly">
-					<div class="card rounded-4 shadow-sm p-4">
-						<% reports.forEach(r => { %>
-						<div class="mb-3">
-							<div class="d-flex justify-content-between">
-								<strong>Week <%= r.week %></strong>
-								<span class="fw-bold"><%= r.score %>%</span>
-							</div>
-							<div class="progress">
-								<div class="progress-bar bg-success" style="width: <%= r.score %>%"></div>
-							</div>
-							<small class="text-muted"><%= r.remarks || 'No remarks' %></small>
-						</div>
-						<% }) %>
-					</div>
-				</div>
+        <div class="col-md-3">
+          <h6 class="fw-bold">
+            <%= reports && reports.length ? reports[reports.length - 1].score : 0 %>%
+          </h6>
+          <small class="text-muted">Latest Score</small>
+        </div>
 
-				<!-- MONTHLY -->
-				<div class="tab-pane fade" id="monthly">
-					<div class="card rounded-4 shadow-sm p-4">
-						<table class="table table-bordered text-center align-middle">
-							<thead class="table-light">
-								<tr>
-									<th>Month</th>
-									<th>Score</th>
-									<th>Remarks</th>
-								</tr>
-							</thead>
-							<tbody>
-								<% reports.forEach(r => { %>
-								<tr>
-									<td><%= r.month %>/<%= r.year %></td>
-									<td><%= r.score %>%</td>
-									<td><%= r.remarks || '—' %></td>
-								</tr>
-								<% }) %>
-							</tbody>
-						</table>
-					</div>
-				</div>
+        <div class="col-md-3">
+          <h6 class="fw-bold text-success">
+            <%= reports ? reports.length : 0 %>
+          </h6>
+          <small class="text-muted">Total Reports</small>
+        </div>
 
-				<!-- YEARLY -->
-				<div class="tab-pane fade" id="yearly">
-					<div class="card rounded-4 shadow-sm p-4">
-						<table class="table table-bordered text-center align-middle">
-							<thead class="table-light">
-								<tr>
-									<th>Year</th>
-									<th>Score</th>
-									<th>Remarks</th>
-								</tr>
-							</thead>
-							<tbody>
-								<% reports.forEach(r => { %>
-								<tr>
-									<td><%= r.year %></td>
-									<td><%= r.score %>%</td>
-									<td><%= r.remarks || '—' %></td>
-								</tr>
-								<% }) %>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
+        <div class="col-md-3">
+          <h6 class="fw-bold">
+            <%= student?.coordinator?.fullName || 'Coordinator' %>
+          </h6>
+          <small class="text-muted">Coordinator</small>
+        </div>
 
-		<script>
-			const labels = <%- labels %>;
-			const scores = <%- scores %>;
+      </div>
+    </div>
 
-			new Chart(document.getElementById('reportChart'), {
-			  type: 'line',
-			  data: {
-			    labels,
-			    datasets: [{
-			      label: 'Score (%)',
-			      data: scores,
-			      borderWidth: 2,
-			      tension: 0.4,
-			      fill: true
-			    }]
-			  },
-			  options: {
-			    plugins: { legend: { display: false } },
-			    scales: { y: { min: 0, max: 100 } }
-			  }
-			});
+    <!-- Chart -->
+    <div class="card rounded-4 shadow-sm p-4 mb-4">
+      <h6 class="fw-bold mb-3">📈 Performance</h6>
+      <canvas id="reportChart" height="120"></canvas>
+    </div>
 
-			function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('active');
-  }
+    <!-- Tabs -->
+    <ul class="nav nav-pills mb-3">
+      <li class="nav-item">
+        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#weekly">Weekly</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#monthly">Monthly</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#yearly">Yearly</button>
+      </li>
+    </ul>
 
-  document.addEventListener('click', function (e) {
-    const sidebar = document.getElementById('sidebar');
-    const toggleBtn = document.querySelector('.bi-list')?.parentElement;
+    <!-- TAB CONTENT -->
+    <div class="tab-content">
 
-    if (
-      window.innerWidth < 768 &&
-      sidebar.classList.contains('active') &&
-      !sidebar.contains(e.target) &&
-      !toggleBtn?.contains(e.target)
-    ) {
-      sidebar.classList.remove('active');
+      <!-- WEEKLY -->
+      <div class="tab-pane fade show active" id="weekly">
+        <div class="card rounded-4 shadow-sm p-4">
+          <% (reports || []).forEach(r => { %>
+            <div class="mb-3">
+              <div class="d-flex justify-content-between">
+                <strong>Week <%= r.week %></strong>
+                <span class="fw-bold"><%= r.score %>%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar bg-success" style="width:<%= r.score %>%"></div>
+              </div>
+              <small class="text-muted"><%= r.remarks || 'No remarks' %></small>
+            </div>
+          <% }) %>
+
+          <% if (!reports || !reports.length) { %>
+            <p class="text-muted text-center mb-0">No weekly reports available</p>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- MONTHLY -->
+      <div class="tab-pane fade" id="monthly">
+        <div class="card rounded-4 shadow-sm p-4">
+          <table class="table table-bordered text-center align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Month</th>
+                <th>Score</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% (reports || []).forEach(r => { %>
+                <tr>
+                  <td><%= r.month %>/<%= r.year %></td>
+                  <td><%= r.score %>%</td>
+                  <td><%= r.remarks || '—' %></td>
+                </tr>
+              <% }) %>
+
+              <% if (!reports || !reports.length) { %>
+                <tr>
+                  <td colspan="3" class="text-muted">No monthly data</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- YEARLY -->
+      <div class="tab-pane fade" id="yearly">
+        <div class="card rounded-4 shadow-sm p-4">
+          <table class="table table-bordered text-center align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Year</th>
+                <th>Score</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% (reports || []).forEach(r => { %>
+                <tr>
+                  <td><%= r.year %></td>
+                  <td><%= r.score %>%</td>
+                  <td><%= r.remarks || '—' %></td>
+                </tr>
+              <% }) %>
+
+              <% if (!reports || !reports.length) { %>
+                <tr>
+                  <td colspan="3" class="text-muted">No yearly data</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Back Button -->
+    <div class="mt-4">
+      <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
+        <i class="bi bi-arrow-left"></i> Back
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Chart JS (UNCHANGED) -->
+<script>
+  const reports = <%- JSON.stringify(reports || []) %>;
+
+  const weeklyData = {
+    labels: reports.map(r => `Week ${r.week}`),
+    scores: reports.map(r => r.score)
+  };
+
+  const monthlyData = {
+    labels: reports.map(r => `${r.month}/${r.year}`),
+    scores: reports.map(r => r.score)
+  };
+
+  const yearlyData = {
+    labels: reports.map(r => `${r.year}`),
+    scores: reports.map(r => r.score)
+  };
+
+  const chart = new Chart(document.getElementById('reportChart'), {
+    type: 'line',
+    data: {
+      labels: weeklyData.labels,
+      datasets: [{
+        label: 'Score (%)',
+        data: weeklyData.scores,
+        borderWidth: 2,
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { min: 0, max: 100 } }
     }
   });
+
+  function updateChart(data) {
+    chart.data.labels = data.labels;
+    chart.data.datasets[0].data = data.scores;
+    chart.update();
+  }
+
+  document.querySelector('[data-bs-target="#weekly"]').addEventListener('click', () => updateChart(weeklyData));
+  document.querySelector('[data-bs-target="#monthly"]').addEventListener('click', () => updateChart(monthlyData));
+  document.querySelector('[data-bs-target="#yearly"]').addEventListener('click', () => updateChart(yearlyData));
 </script>
 
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-	</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
