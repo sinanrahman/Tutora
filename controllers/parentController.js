@@ -35,10 +35,12 @@ exports.viewPayment = async (req, res) => {
 
 exports.viewReport = async (req, res) => {
   try {
-    const student = await Student.findOne().sort({ createdAt: -1 });
+    // get logged-in parent's student
+    const student = await Student.findById(req.user.id)
+      .populate('coordinator');
 
     if (!student) {
-      return res.render('auth/pageNotFound', { msg: 'No student found' });
+      return res.render('auth/pageNotFound', { msg: 'Student not found' });
     }
 
     const reports = await Report.find({ student: student._id })
@@ -47,7 +49,7 @@ exports.viewReport = async (req, res) => {
     const labels = reports.map(r => `Week ${r.week}`);
     const scores = reports.map(r => r.score);
 
-    res.render('parent/viewReport', {
+    return res.render('parent/viewReport', {
       student,
       reports,
       labels: JSON.stringify(labels),
@@ -56,6 +58,8 @@ exports.viewReport = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    res.render('auth/pageNotFound', { msg: 'Error loading report page' });
+    return res.render('auth/pageNotFound', {
+      msg: 'Error loading report page'
+    });
   }
 };
