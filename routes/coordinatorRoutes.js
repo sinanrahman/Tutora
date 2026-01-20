@@ -16,6 +16,8 @@ const {
 	getUpdateTeacher,
 	removeUpdateTeacher,
 	addUpdateTeacher,
+	getAddReport,
+	  postAddReport,
 } = require('../controllers/coordinatorController');
 
 // ==========================================
@@ -76,5 +78,23 @@ router
 router
 	.route('/update-teacher/:studentId/remove/:teacherId')
 	.get(protect, setSidebarMenu, authorize('COORDINATOR'), removeUpdateTeacher);
+
+//report routes
+	router.get(
+	  '/add-report/:studentId',
+	  protect,
+	  authorize('COORDINATOR'),
+	  setSidebarMenu,
+	  getAddReport
+	);
+	
+	router.post(
+	  '/add-report/:studentId',
+	  protect,
+	  authorize('COORDINATOR'),
+	  postAddReport
+	);
+	
+	
 
 module.exports = router;

@@ -2,6 +2,7 @@ const Coordinator = require('../models/Coordinator');
 const Teacher = require('../models/Teacher');
 const Student = require('../models/Student');
 const Session = require('../models/Session');
+const Report = require('../models/Report');
 
 const getTodayRange = () => {
     const start = new Date();
@@ -279,3 +280,45 @@ exports.removeUpdateTeacher = async (req, res) => {
         return res.redirect(`/coordinator/dashboard`);
     }
 }
+
+
+exports.getAddReport = async (req, res) => {
+  const { studentId } = req.params;
+
+  const student = await Student.findById(studentId).select('fullName');
+
+  const reports = await Report.find({ student: studentId })
+    .sort({ createdAt: -1 });
+
+  res.render('coordinator/add-report', {
+    pageTitle: 'Add Report',
+    activePage: "dashboard",
+    studentId,
+    student,         
+    reports
+  });
+};
+
+exports.postAddReport = async (req, res) => {
+  try {
+    const { score, remarks } = req.body;
+    const { studentId } = req.params;
+
+    const today = new Date();
+
+    await Report.create({
+      student: studentId,
+      coordinator: req.user.id, 
+      score,
+      remarks,
+      year: today.getFullYear(),
+      month: today.getMonth() + 1,
+      week: Math.ceil(today.getDate() / 7),
+    });
+
+    res.redirect(`/coordinator/add-report/${studentId}`);
+  } catch (error) {
+    console.error('Add Report Error:', error);
+    res.redirect(`/coordinator/add-report/${req.params.studentId}`);
+  }
+};
