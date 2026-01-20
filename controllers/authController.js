@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
+const Student = require('../models/Student');
+const {generateOTP,hashOTP} = require('../utils/otpGenerate')
 
 //      IMPORTED MODELS
 const Admin = require('../models/Admin');
@@ -50,6 +52,16 @@ exports.coordinatorLoginPage = (req, res) => {
     }
 };
 
+//      RENDER Parent LOGIN PAGE
+exports.parentLoginPage = (req, res) => {
+    try {
+        return res.render('auth/parentLogin', { msg: '' });
+    } catch (error) {
+        console.log(error);
+        return res.render('auth/pageNotFound', { msg: 'Error loading parent login page' });
+    }
+};
+
 //      HELPER: RENDER LOGIN WITH ERROR MESSAGE
 const renderLoginWithMsg = (res, role, msg, attemptsLeft = MAX_ATTEMPTS, remainingTime = 0) => {
     if (role === 'admin') {
@@ -66,6 +78,10 @@ const renderLoginWithMsg = (res, role, msg, attemptsLeft = MAX_ATTEMPTS, remaini
 
     if (role === 'coordinator') {
         return res.render('auth/coordinatorLogin', { msg });
+    }
+
+    if (role === 'parent') {
+        return res.render('auth/parentrLogin', { msg });
     }
 
     return res.render('auth/login', { msg });
@@ -286,4 +302,91 @@ exports.resetPassword = async (req, res) => {
         console.error(err);
         return res.render('auth/pageNotFound', { msg: 'Error processing password reset' });
     }
+};
+
+
+////parent
+
+
+exports.requestParentOTP = async (req, res) => {
+    try {
+        const { parentEmail } = req.body;
+
+        const student = await Student.findOne({ parentEmail });
+        if (!student) return res.render('auth/parentLogin', { msg: 'Parent email not found' });
+
+        const otp = generateOTP();
+        student.parentAuth = {
+            otp: hashOTP(otp),
+            otpExpiresAt: Date.now() + 5 * 60 * 1000,
+        };
+        await student.save();
+
+        // Reusing your existing sendEmail
+        await sendEmail({
+            to: parentEmail,
+            subject: 'Your Tutora OTP',
+            html: `
+                <p>Hello Parent,</p>
+                <p>Your OTP for login is: <strong>${otp}</strong></p>
+                <p>This OTP expires in 5 minutes.</p>
+            `,
+        });
+
+        return res.render('auth/parentVerifyOTP', { parentEmail, msg: 'OTP sent to your email' });
+
+    } catch (err) {
+        console.error(err);
+        return res.render('auth/pageNotFound', { msg: 'Error sending OTP' });
+    }
+};
+exports.verifyParentOTP = async (req, res) => {
+  try {
+    const { parentEmail, otp } = req.body;
+
+    const student = await Student.findOne({ parentEmail });
+
+    if (!student || !student.parentAuth?.otp) {
+      return res.render('auth/parentLogin', {
+        msg: 'Invalid request',
+      });
+    }
+
+    if (student.parentAuth.otpExpiresAt < Date.now()) {
+      return res.render('auth/parentLogin', {
+        msg: 'OTP expired',
+      });
+    }
+
+    if (hashOTP(otp) !== student.parentAuth.otp) {
+      return res.render('auth/parentVerifyOtp', {
+        parentEmail,
+        msg: 'Invalid OTP',
+      });
+    }
+
+    // Clear OTP
+    student.parentAuth = undefined;
+    await student.save();
+
+    // JWT
+    const token = jwt.sign(
+      {
+        id: student._id,
+        role: 'PARENT',
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'strict',
+    });
+
+    return res.redirect('/parent/dashboard');
+  } catch (err) {
+    console.error(err);
+    return res.render('auth/pageNotFound', { msg: 'Error verifying OTP' });
+  }
 };
