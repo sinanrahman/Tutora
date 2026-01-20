@@ -8,15 +8,23 @@
 </head>
 
 <body class="bg-light">
-
-<div class="container py-5">
-
+  <div class="container py-5">
   <div class="card shadow-sm border-0">
     <div class="card-body">
 
+      <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+            <ol class="breadcrumb p-3 mb-0">
+              <li class="breadcrumb-item">
+                <a href="/parent/dashboard">Home</a>
+              </li>
+              <li class="breadcrumb-item">
+               Payment
+              </li>
+            </ol>
+          </nav>
+
       <div class="text-center mb-4">
         <h3 class="fw-bold fs-2" style="color:#870216;">PAYMENT DETAILS</h3>
-        <p class="text-muted">Student Tuition & Package Information</p>
       </div>
 
       <div class="table-responsive">
@@ -35,7 +43,6 @@
               <th>Status</th>
             </tr>
           </thead>
-
          <tbody>
   <% if (student) { %>
     <tr>
@@ -75,8 +82,8 @@
 </tbody>
 
         </table>
+        <a href="/parent/dashboard"><button class="btn btn-secondary">Back</button></a>
       </div>
-
     </div>
   </div>
 </div>
