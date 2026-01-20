@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 const Teacher = require('../models/Teacher');
+const Student = require('../models/Student');
 const Coordinator = require('../models/Coordinator');
 
 exports.protect = async (req, res, next) => {
@@ -31,7 +32,12 @@ exports.protect = async (req, res, next) => {
 			if (!coordinator) return res.redirect('/');
 			res.locals.user = coordinator;
 		}
+		if (decoded.role === 'PARENT') {
+			const student = await Student.findById(decoded.id);
+			if (!student) return res.redirect('/');
 
+			res.locals.user = student;
+		}
 		next();
 	} catch (err) {
 		return res.redirect('/');

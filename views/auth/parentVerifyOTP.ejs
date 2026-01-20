@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Verify OTP</title>
+    <link rel="stylesheet" href="/css/auth/coordinatorLogin.css">
+</head>
+
+<body>
+
+    <form action="/verify-otp" method="POST">
+        <div class="login-card">
+            <div class="login-title">Verify OTP</div>
+
+            <input type="hidden" name="parentEmail" value="<%= parentEmail %>" />
+
+            <div class="input-group">
+                <label>Enter OTP</label>
+                <input
+                    type="text"
+                    name="otp"
+                    placeholder="6-digit OTP"
+                    required
+                >
+            </div>
+
+            <button class="login-btn" type="submit">Verify & Login</button>
+
+            <p class="error-message">
+                <%= msg %>
+            </p>
+
+        </div>
+    </form>
+
+</body>
+</html>

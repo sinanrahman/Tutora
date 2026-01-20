@@ -51,6 +51,10 @@
                 <p><strong>ID:</strong> <%= student.studentId %></p>
                 <p><strong>Class:</strong> <%= student.standard %></p>
                 <p><strong>Phone:</strong> <%= student.phone %></p>
+                <p>
+								<strong>Parent Email:</strong>
+								<%= student.parentEmail %>
+							</p>
                 <p><strong>Country:</strong> <%= student.country %></p>
               </div>
             </div>
@@ -83,8 +87,7 @@
             <div class="d-flex flex-column flex-sm-row gap-2 justify-content-between mt-4">
               <a href="/coordinator/dashboard" class="btn btn-secondary w-100 w-sm-auto"> Back </a>
               <a href="/coordinator/update-teacher/<%= student._id %>" class="btn btn-primary w-100 w-sm-auto"> Update Teacher </a>
-            </div>
-
+              <a href="/coordinator/add-report/<%= student._id %>" class="btn btn-success w-100 w-sm-auto text-white">Add Report</a>
           </div>
         </div>
 

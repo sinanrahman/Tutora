@@ -36,12 +36,34 @@ exports.viewPayment = async (req, res) => {
     });
   }
 };
-exports.viewReport = (req, res) => {
+
+
+
+
+exports.viewReport = async (req, res) => {
   try {
-    res.render('parent/viewReport');
+    const student = await Student.findOne().sort({ createdAt: -1 });
+
+    if (!student) {
+      return res.render('auth/pageNotFound', { msg: 'No student found' });
+    }
+
+    const reports = await Report.find({ student: student._id })
+      .sort({ year: 1, month: 1, week: 1 });
+
+    const labels = reports.map(r => `Week ${r.week}`);
+    const scores = reports.map(r => r.score);
+
+    res.render('parent/viewReport', {
+      student,
+      reports,
+      labels: JSON.stringify(labels),
+      scores: JSON.stringify(scores)
+    });
+
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error loading report page');
+    res.render('auth/pageNotFound', { msg: 'Error loading report page' });
   }
 };
 

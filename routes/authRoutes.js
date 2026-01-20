@@ -11,7 +11,10 @@ const {
     logout,
     forgotPassword,
     renderResetPasswordPage,
-    resetPassword
+    resetPassword,
+    parentLoginPage,
+    requestParentOTP,
+    verifyParentOTP
 } = require('../controllers/authController');
 
 
@@ -38,6 +41,11 @@ router
 router
     .route('/coordinatorLogin')
     .get(coordinatorLoginPage);
+
+//      RENDER PARENT LOGIN
+router
+    .route('/parentLogin')
+    .get(parentLoginPage);
 
 
 // ==========================================
@@ -70,5 +78,13 @@ router
     .route('/reset-password/:token')
     .get(renderResetPasswordPage)
     .post(resetPassword);
+
+router
+    .route('/request-otp')
+    .post(requestParentOTP);
+
+router
+    .route('/verify-otp')
+    .post(verifyParentOTP);
 
 module.exports = router;
