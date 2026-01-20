@@ -1,5 +1,5 @@
 const express = require('express');
-const { parentDashboard, viewPayment } = require('../controllers/parentController');
+const { parentDashboard, viewReport , viewPayment} = require('../controllers/parentController');
 const { setSidebarMenu } = require('../middlewares/sidebarMenu');
 const { authorize } = require('../middlewares/roleMiddleware');
 const { protect } = require('../middlewares/authMiddleware');
@@ -8,6 +8,12 @@ const router = express.Router();
 router
     .route('/dashboard')
     .get(protect,setSidebarMenu,authorize('PARENT'),parentDashboard );
+ 
+router
+
+    .route('/viewreport')
+    .get(protect,setSidebarMenu,authorize('PARENT'),viewReport)
+
 router
     .route('/viewpayment')
     .get(protect,setSidebarMenu,authorize('PARENT'),viewPayment)
