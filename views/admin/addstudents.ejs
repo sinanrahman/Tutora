@@ -1,54 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Add Student</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="/css/admin/addstudents.css" />
+	</head>
 
-<head>
-  <meta charset="UTF-8">
-  <title>Add Student</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="/css/admin/addstudents.css">
-</head>
+	<body class="bg-light">
+		<div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
+			<div class="d-flex align-items-center justify-content-between px-3" style="height: 60px">
+				<img src="/image/logo.png" alt="Logo" class="mobile-logo-img" />
+				<button class="btn btn-light" onclick="toggleSidebar()">
+					<i class="bi bi-list fs-4"></i>
+				</button>
+			</div>
+		</div>
+		<%- include('partials/navbar') %> <%- include('../partials/sidebar') %>
+		<div class="main-content p-5">
+			<div class="card shadow-sm border-0">
+				<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+					<ol class="breadcrumb p-3 mb-0">
+						<li class="breadcrumb-item">
+							<a href="/admin/Dashboard">Home</a>
+						</li>
+						<li class="breadcrumb-item">
+							<a href="/admin/viewstudents">Students</a>
+						</li>
+						<li class="breadcrumb-item active" aria-current="page">Add Student</li>
+					</ol>
+				</nav>
 
-<body class="bg-light">
-  <div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
-    <div class="d-flex align-items-center justify-content-between px-3" style="height: 60px;">
-      <img src="/image/logo.png" alt="Logo" class="mobile-logo-img">
-      <button class="btn btn-light" onclick="toggleSidebar()">
-        <i class="bi bi-list fs-4"></i>
-      </button>
-    </div>
-  </div>
-  <%- include('partials/navbar') %>
-   <%- include('../partials/sidebar') %>
-      <div class="main-content p-5">
-        <div class="card shadow-sm border-0">
-          <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
-            <ol class="breadcrumb p-3 mb-0">
-              <li class="breadcrumb-item">
-                <a href="/admin/Dashboard">Home</a>
-              </li>
-              <li class="breadcrumb-item">
-                <a href="/admin/viewstudents">Students</a>
-              </li>
-              <li class="breadcrumb-item active" aria-current="page">
-                Add Student
-              </li>
-            </ol>
-          </nav>
+				<div class="card-body">
+					<h3 class="fw-bold mb-4 text-center heading">ADD STUDENT</h3>
+					<form action="/admin/addstudents" method="post">
+						<div class="mb-3">
+							<label class="form-label">Full Name</label>
+							<input
+								type="text"
+								class="form-control"
+								name="fullName"
+								placeholder="Enter fullname"
+								required
+							/>
+						</div>
 
-          <div class="card-body">
-            <h3 class="fw-bold mb-4 text-center heading">ADD STUDENT</h3>
-            <form action="/admin/addstudents" method="post">
-              <div class="mb-3">
-                <label class="form-label">Full Name</label>
-                <input type="text" class="form-control" name="fullName" placeholder="Enter fullname" required>
-              </div>
+						<div class="mb-3">
+							<label class="form-label">Email</label>
+							<input
+								type="email"
+								class="form-control"
+								name="email"
+								placeholder="Enter email"
+								required
+							/>
+						</div>
 
-              <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" name="email" placeholder="Enter email" required>
-              </div>
+						<div class="mb-3">
+							<label class="form-label">Phone</label>
+							<input
+								type="tel"
+								name="phone"
+								class="form-control"
+								inputmode="numeric"
+								maxlength="15"
+								oninput="allowOnlyNumbers(this)"
+								placeholder="Enter phone number"
+								required
+							/>
+						</div>
 
               <div class="mb-3">
                 <label class="form-label">Phone</label>
@@ -67,77 +95,82 @@
                 <input type="text" class="form-control" name="country" placeholder="Enter country" required>
               </div>
 
-              <div class="mb-3">
-                <label class="form-label">Standard</label>
-                <input type="number" class="form-control" name="standard" placeholder="Enter standard" required>
-              </div>
+						<div class="mb-3">
+							<label class="form-label">Standard</label>
+							<input
+								type="number"
+								class="form-control"
+								name="standard"
+								placeholder="Enter standard"
+								required
+							/>
+						</div>
 
-              <div class="mb-3">
-                <label class="form-label">School</label>
-                <input type="text" class="form-control" name="school" placeholder="Enter school" required>
-              </div>
+						<div class="mb-3">
+							<label class="form-label">School</label>
+							<input
+								type="text"
+								class="form-control"
+								name="school"
+								placeholder="Enter school"
+								required
+							/>
+						</div>
 
-              <div class="mb-3">
-                <label class="form-label">Last Date</label>
-                <input type="date" class="form-control" name="lastDate" required>
-              </div>
+						<div class="mb-3">
+							<label class="form-label">Last Date</label>
+							<input type="date" class="form-control" name="lastDate" required />
+						</div>
 
-              <div class="mb-3">
-                <label class="form-label">Status</label>
-                <select class="form-select" name="status">
-                  <option value="student" selected>Student</option>
-                  <option value="alumni">Alumni</option>
-                </select>
-              </div>
+						<div class="mb-3">
+							<label class="form-label">Status</label>
+							<select class="form-select" name="status">
+								<option value="student" selected>Student</option>
+								<option value="alumni">Alumni</option>
+							</select>
+						</div>
 
-              <div class="mb-3">
-                <label class="form-label">Assign Coordinator</label>
-                <select class="form-select" name="coordinator">
-                  <option value="">Select Coordinator</option>
-                  <% if (coordinators && coordinators.length> 0) { %>
-                    <% coordinators.forEach(coord=> { %>
-                      <option value="<%= coord._id %>">
-                        <%= coord.fullName %>
-                      </option>
-                      <% }) %>
-                        <% } %>
-                </select>
-              </div>
+						<div class="mb-3">
+							<label class="form-label">Assign Coordinator</label>
+							<select class="form-select" name="coordinator">
+								<option value="">Select Coordinator</option>
+								<% if (coordinators && coordinators.length> 0) { %> <% coordinators.forEach(coord=>
+								{ %>
+								<option value="<%= coord._id %>"><%= coord.fullName %></option>
+								<% }) %> <% } %>
+							</select>
+						</div>
 
-              <div class="d-flex justify-content-end gap-2 mt-4">
-                <a href="/admin/viewstudents" class="btn btn-outline-secondary">
-                  Cancel
-                </a>
-                <button type="submit" class="btn btn-primary">
-                  Save Student
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-      <script>
-        function toggleSidebar() {
-          document.getElementById('sidebar').classList.toggle('active');
-        }
+						<div class="d-flex justify-content-end gap-2 mt-4">
+							<a href="/admin/viewstudents" class="btn btn-outline-secondary">Cancel</a>
+							<button type="submit" class="btn btn-primary">Save Student</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+		<script>
+			function toggleSidebar() {
+				document.getElementById('sidebar').classList.toggle('active');
+			}
 
-        document.addEventListener('click', function (e) {
-          const sidebar = document.getElementById('sidebar');
-          const toggleBtn = document.querySelector('.bi-list')?.parentElement;
+			document.addEventListener('click', function (e) {
+				const sidebar = document.getElementById('sidebar');
+				const toggleBtn = document.querySelector('.bi-list')?.parentElement;
 
-          if (
-            window.innerWidth < 768 &&
-            sidebar.classList.contains('active') &&
-            !sidebar.contains(e.target) &&
-            !toggleBtn?.contains(e.target)
-          ) {
-            sidebar.classList.remove('active');
-          }
-        });
-        function allowOnlyNumbers(input) {
-          input.value = input.value.replace(/\D/g, '');
-        }
-      </script>
-</body>
+				if (
+					window.innerWidth < 768 &&
+					sidebar.classList.contains('active') &&
+					!sidebar.contains(e.target) &&
+					!toggleBtn?.contains(e.target)
+				) {
+					sidebar.classList.remove('active');
+				}
+			});
+			function allowOnlyNumbers(input) {
+				input.value = input.value.replace(/\D/g, '');
+			}
+		</script>
+	</body>
 </html>
