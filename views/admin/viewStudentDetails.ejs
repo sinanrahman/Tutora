@@ -89,10 +89,14 @@
                 </tr>
                 <tr>
                   <th class="bg-light">Status</th>
-                  <td colspan="3">
+                  <td>
                     <span class="badge <%= student.status === 'student' ? 'bg-success' : 'bg-secondary' %>">
                       <%= student.status %>
                     </span>
+                  </td>
+                  <th class="bg-light">Parent Number</th>
+                  <td>
+                      <%= student.parentNumber %>
                   </td>
                 </tr>
               </tbody>

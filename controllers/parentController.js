@@ -24,3 +24,6 @@ exports.viewReport = (req, res) => {
 
 
 
+exports.viewPayment=(req,res)=>{
+    return res.render('parent/viewPayment')
+}

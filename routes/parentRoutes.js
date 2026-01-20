@@ -1,5 +1,5 @@
 const express = require('express');
-const { parentDashboard, viewReport } = require('../controllers/parentController');
+const { parentDashboard, viewReport , viewPayment} = require('../controllers/parentController');
 const { setSidebarMenu } = require('../middlewares/sidebarMenu');
 const { authorize } = require('../middlewares/roleMiddleware');
 const router = express.Router();
@@ -13,4 +13,7 @@ router
     .route('/viewreport')
     .get(viewReport)
 
+router
+    .route('/viewpayment')
+    .get(viewPayment)
 module.exports = router;
