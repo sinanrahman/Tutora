@@ -1,5 +1,5 @@
 const Student = require('../models/Student');
-const report = require('../models/Report')
+const Report = require('../models/Report')
 const Session = require('../models/Session');
 
 
@@ -9,7 +9,7 @@ exports.parentDashboard = async (req, res) => {
     const student = await Student.findOne().sort({ createdAt: -1 });
 
     res.render('parent/dashboard', {
-      activePage: 'parent',
+      activePage: 'dashboard',
       student
     });
   } catch (err) {
@@ -27,7 +27,8 @@ exports.viewPayment = async (req, res) => {
     const student = await Student.findOne().sort({ createdAt: -1 });
 
     return res.render('parent/viewPayment', {
-      student
+      student,
+      activePage:'payments'
     });
   } catch (err) {
     console.error(err);
@@ -58,7 +59,8 @@ exports.viewReport = async (req, res) => {
       student,
       reports,
       labels: JSON.stringify(labels),
-      scores: JSON.stringify(scores)
+      scores: JSON.stringify(scores),
+      activePage:'reports'
     });
 
   } catch (error) {
@@ -83,7 +85,8 @@ exports.viewClassHistory = async (req, res) => {
 
     res.render('parent/classHistory', {
       student,
-      sessions
+      sessions,
+      activePage:'sessions'
     });
   } catch (err) {
     console.error(err);
