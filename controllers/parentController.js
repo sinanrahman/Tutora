@@ -8,9 +8,24 @@ exports.parentDashboard = async (req, res) => {
   try {
    const student = await Student.findById(req.user.id)
     .populate('coordinator', 'fullName');
+     const latestReport = await Report.findOne({ student: student._id })
+      .sort({ createdAt: -1 })
+      .lean();
+
+      const reports = await Report.find({ student: student._id }).select('score');
+
+    let avgPerformance = 0;
+
+    if (reports.length > 0) {
+      const totalScore = reports.reduce((sum, r) => sum + r.score, 0);
+      avgPerformance = Math.round(totalScore / reports.length);
+    }
+
     res.render('parent/dashboard', {
       activePage: 'dashboard',
-      student
+      student,
+      latestReport,
+      avgPerformance
     });
   } catch (err) {
     console.error(err);
