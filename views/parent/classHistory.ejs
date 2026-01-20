@@ -14,82 +14,166 @@
     .badge-class { background-color: #0d6efd; }
     .badge-exam { background-color: #6f42c1; }
     .table th, .table td { vertical-align: middle; }
-    .text-center { text-align: center; }
+
+    /* ===== FIX SIDEBAR OVERLAP ===== */
+    .page-wrapper {
+      margin-left: 220px;
+      padding: 20px;
+    }
+
+    /* ===== MOBILE RESET ===== */
+    @media (max-width: 768px) {
+      .page-wrapper {
+        margin-left: 0;
+        padding-top: 90px;
+      }
+    }
+
+    /* ===== TABLE RESPONSIVE ===== */
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    a, a:visited, a:active {
+      text-decoration: none;
+      color: #000;
+    }
+
+    img {
+      border-radius: 50%;
+      width: 75px;
+      height: 75px;
+      object-fit: cover;
+    }
+
+    .panel__heading {
+      text-transform: capitalize;
+      color: black !important;
+      font-size: 1.379rem;
+    }
+
+    #sidebar {
+      width: 220px;
+      padding-top: 100px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      background-color: #f4f5f7;
+      overflow-y: auto;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav {
+      padding-top: 50px;
+    }
+
+    #sidebar .nav-link {
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 5px;
+    }
+
+    #sidebar .nav-item.active .nav-link {
+      background-color: #ff2e4b;
+      color: #fff !important;
+      font-weight: 600;
+    }
+
+    #sidebar .nav-link:hover {
+      background-color: #fa8d9b;
+    }
+
+    @media (max-width: 768px) {
+      #sidebar {
+        width: 100%;
+        transform: translateX(-100%);
+      }
+
+      #sidebar.active {
+        transform: translateX(0);
+      }
+    }
   </style>
 </head>
+
 <body class="bg-light">
-<%-include('../partials/parentNavbar') %>
-    <%- include('../partials/sidebar') %>
-    <div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
+
+<%- include('../partials/parentNavbar') %>
+<%- include('../partials/sidebar') %>
+
+<div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
   <div class="d-flex align-items-center justify-content-between px-3" style="height: 60px;">
     <img src="/image/logo.png" alt="Logo" class="mobile-logo-img">
-    <button
-      class="btn btn-light"
-      onclick="toggleSidebar()"
-    >
+    <button class="btn btn-light" onclick="toggleSidebar()">
       <i class="bi bi-list fs-4"></i>
     </button>
-
   </div>
 </div>
-<div class="container py-5">
-  <div class="card shadow-sm border-0">
-    <div class="card-body">
 
-      <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
-        <ol class="breadcrumb p-3 mb-0">
-          <li class="breadcrumb-item"><a href="/parent/dashboard">Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Class History</li>
-        </ol>
-      </nav>
+<!-- ===== PAGE CONTENT ===== -->
+<div class="page-wrapper">
+  <div class="container py-5">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
 
-      <div class="text-center mb-4">
-        <h3 class="fw-bold fs-2" style="color:#870216;">CLASS HISTORY</h3>
-        <!-- <p>Student: <strong><%= student.fullName %></strong>  -->
-      </div>
+        <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+          <ol class="breadcrumb p-3 mb-0">
+            <li class="breadcrumb-item"><a href="/parent/dashboard">Home</a></li>
+            <li class="breadcrumb-item active">Class History</li>
+          </ol>
+        </nav>
 
-      <div class="table-responsive">
-        <table class="table table-hover table-striped align-middle" id="classHistoryTable">
-          <thead class="table-light">
-            <tr>
-              <th>Sl No</th>
-              <!-- <th>Student ID</th> -->
-              <th>Type</th>
-              <th>Teacher</th>
-              <th>Date</th>
-              <th>Duration (hrs)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% if (!sessions || sessions.length === 0) { %>
+        <div class="text-center mb-4">
+          <h3 class="fw-bold fs-2" style="color:#870216;">CLASS HISTORY</h3>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover table-striped align-middle" id="classHistoryTable">
+            <thead class="table-light">
               <tr>
-                <td colspan="6" class="text-center text-muted">No class records found</td>
+                <th>Sl No</th>
+                <th>Type</th>
+                <th>Teacher</th>
+                <th>Date</th>
+                <th>Duration (hrs)</th>
               </tr>
-            <% } else { %>
-              <% sessions.forEach((session, index) => { %>
+            </thead>
+            <tbody>
+              <% if (!sessions || sessions.length === 0) { %>
                 <tr>
-                  <td><%= index + 1 %></td>
-                  <!-- <td><%= student.studentId %></td> -->
-                  
-                  <!-- Type Badge -->
-                  <td>
-                    <% if (session.type === 'CLASS') { %>
-                      <span class="badge badge-class">CLASS</span>
-                    <% } else if (session.type === 'EXAM') { %>
-                      <span class="badge badge-exam">EXAM</span>
-                    <% } %>
-                  </td>
-
-                  <td><%= session.teacher ? session.teacher.fullName : 'N/A' %></td>
-                  <td><%= new Date(session.date).toLocaleDateString() %></td>
-                  <td><%= session.durationInHours %></td>
+                  <td colspan="5" class="text-center text-muted">No class records found</td>
                 </tr>
-              <% }) %>
-            <% } %>
-          </tbody>
-        </table>
+              <% } else { %>
+                <% sessions.forEach((session, index) => { %>
+                  <tr>
+                    <td><%= index + 1 %></td>
+                    <td>
+                      <% if (session.type === 'CLASS') { %>
+                        <span class="badge badge-class">CLASS</span>
+                      <% } else { %>
+                        <span class="badge badge-exam">EXAM</span>
+                      <% } %>
+                    </td>
+                    <td><%= session.teacher ? session.teacher.fullName : 'N/A' %></td>
+                    <td><%= new Date(session.date).toLocaleDateString() %></td>
+                    <td><%= session.durationInHours %></td>
+                  </tr>
+                <% }) %>
+              <% } %>
+            </tbody>
+          </table>
 
-        <a href="/parent/dashboard"><button class="btn btn-secondary mt-3">Back</button></a>
+          <a href="/parent/dashboard" class="btn btn-secondary mt-3">Back</a>
+        </div>
+
       </div>
     </div>
   </div>
@@ -102,7 +186,6 @@
 <script>
   new DataTable('#classHistoryTable', { pageLength: 10 });
 
-  
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
   }

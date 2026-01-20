@@ -21,7 +21,7 @@ module.exports = {
 
 	PARENT: [
 		{ key: 'dashboard', label: 'Dashboard', url: '/parent/dashboard' },
-		{ key: 'payments', label: 'Payments', url: '/parent/viewpayments' },
+		{ key: 'payments', label: 'Payments', url: '/parent/payment' },
 		{ key: 'reports', label: 'Reports', url: '/parent/viewreport' },
 		{ key: 'sessions', label: 'Class History', url: '/parent/sessions' },
 	],
