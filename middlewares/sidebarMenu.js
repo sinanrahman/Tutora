@@ -1,6 +1,7 @@
 const sidebarMenu = require('../config/sidebarMenu');
 const Teacher = require('../models/Teacher');
 const Coordinator = require('../models/Coordinator');
+const Student = require('../models/Student');
 const Admin = require('../models/Admin');
 
 exports.setSidebarMenu = async (req, res, next) => {
@@ -9,10 +10,9 @@ exports.setSidebarMenu = async (req, res, next) => {
 
 	if (req.user?.role) {
 		res.locals.role = req.user.role;
-		res.locals.roleCapitalized = res.locals.role.replace(
-			res.locals.role.substring(1, res.locals.role.length),
-			res.locals.role.substring(1, res.locals.role.length).toLowerCase()
-		);
+		res.locals.roleCapitalized =
+  req.user.role.charAt(0) + req.user.role.slice(1).toLowerCase();
+
 		res.locals.dp = false;
 		if (req.user.role == 'TEACHER') {
 			try {
@@ -53,6 +53,13 @@ exports.setSidebarMenu = async (req, res, next) => {
 				}
 			} catch (err) {
 				console.error('Error fetching admin:', err);
+			}
+		}
+if (req.user.role === 'PARENT') {
+
+			const student = await Student.findById(req.user.id).select('parentEmail');
+			if (student) {
+				res.locals.user.fullName = student.parentEmail;
 			}
 		}
 

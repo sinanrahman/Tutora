@@ -14,11 +14,11 @@ router
     .get(protect,setSidebarMenu,authorize('PARENT'),viewReport)
 
 router
-    .route('/payment')
+    .route('/viewpayments')
   .get(protect,setSidebarMenu,authorize('PARENT'),viewPayment)
 
 router
-    .route('/classhistory')
-    .get(viewClassHistory)
-  
+  .route('/sessions')
+  .get(protect, setSidebarMenu, authorize('PARENT'), viewClassHistory);
+
 module.exports = router;
