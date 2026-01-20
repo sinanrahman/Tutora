@@ -44,6 +44,9 @@ app.use('/coordinator', coordinatorRoutes);
 const teacherRoutes = require('./routes/teacherRoutes');
 app.use('/teacher', teacherRoutes);
 
+const parentRoutes = require('./routes/parentRoutes');
+app.use('/parent', parentRoutes);
+
 //		SESSION
 const sessionRoutes = require('./routes/sessionRoutes');
 app.use('/sessions', sessionRoutes);
