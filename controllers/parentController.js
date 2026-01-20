@@ -9,3 +9,7 @@ exports.parentDashboard = async (req, res) => {
         return res.render('auth/pageNotFound', { msg: 'Error: Unable to load teacher dashboard' });
     }
 };
+
+exports.viewPayment=(req,res)=>{
+    return res.render('parent/viewPayment')
+}

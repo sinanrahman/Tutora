@@ -61,6 +61,11 @@
           </div>
 
           <div class="mb-3">
+            <label class="form-label">Parent Number</label>
+            <input type="tel" name="parentNumber" class="form-control" inputmode="numeric" maxlength="15" oninput="allowOnlyNumbers(this)" placeholder="Enter parent phone number"  value="<%= student.parentNumber %>" required>
+          </div>
+
+          <div class="mb-3">
             <label class="form-label">Country</label>
             <input type="text" name="country" class="form-control" value="<%= student.country %>" required>
           </div>

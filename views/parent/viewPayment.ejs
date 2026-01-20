@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Payment Details</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css">
+</head>
+
+<body class="bg-light">
+
+<div class="container py-5">
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <h3 class="fw-bold fs-2" style="color:#870216;">PAYMENT DETAILS</h3>
+        <p class="text-muted">Student Tuition & Package Information</p>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle" id="paymentTable">
+
+          <thead class="table-light">
+            <tr>
+              <th>Sl No</th>
+              <th>Student ID</th>
+              <th>Student Name</th>
+              <th>Package Hours</th>
+              <th>Amount Paid</th>
+              <th>Payment Date</th>
+              <th>Remaining Hours</th>
+              <th>Package End Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>S_001</td>
+              <td>John Doe</td>
+              <td>40 hrs</td>
+              <td>₹ 12,000</td>
+              <td>15 Jan 2026</td>
+              <td class="text-dark">18 hrs</td>
+              <td>31 Mar 2026</td>
+              <td>
+                <span class="badge bg-success">ACTIVE</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td>2</td>
+              <td>S_002</td>
+              <td>Emma Watson</td>
+              <td>30 hrs</td>
+              <td>₹ 9,000</td>
+              <td>01 Feb 2026</td>
+              <td class="text-danger">-2 hrs</td>
+              <td>15 Mar 2026</td>
+              <td>
+                <span class="badge bg-warning text-dark">EXPIRING</span>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
+
+<script>
+  new DataTable('#paymentTable', {
+    pageLength: 10
+  });
+</script>
+
+</body>
+</html>
