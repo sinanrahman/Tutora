@@ -18,4 +18,8 @@ module.exports = {
 		{ key: 'sessions', label: 'Session List', url: '/teacher/sessions' },
 		{ key: 'teacherProfile', label: 'Teacher Profile', url: '/teacher/profile' },
 	],
+
+	PARENT: [
+		{ key: 'dashboard', label: 'Dashboard', url: '/parent/dashboard' },
+	]
 };
