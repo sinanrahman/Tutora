@@ -64,7 +64,7 @@
 							/>
 						</div>
 
-						<div class="mb-3">
+						<!-- <div class="mb-3">
 							<label class="form-label">Phone</label>
 							<input
 								type="tel"
@@ -76,7 +76,7 @@
 								placeholder="Enter phone number"
 								required
 							/>
-						</div>
+						</div> -->
 
               <div class="mb-3">
                 <label class="form-label">Phone</label>
@@ -137,7 +137,8 @@
 								<% if (coordinators && coordinators.length> 0) { %> <% coordinators.forEach(coord=>
 								{ %>
 								<option value="<%= coord._id %>"><%= coord.fullName %></option>
-								<% }) %> <% } %>
+								<% }) %> 
+								<% } %>
 							</select>
 						</div>
 
