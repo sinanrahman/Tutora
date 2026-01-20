@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const studentSchema = new mongoose.Schema(
 	{
-		studentId: { 
-            type: String, 
-            unique: true,
-        },
+		studentId: {
+			type: String,
+			unique: true,
+		},
 		fullName: {
 			type: String,
 			required: true,
@@ -50,6 +50,17 @@ const studentSchema = new mongoose.Schema(
 			type: Date,
 			required: true
 		},
+		parentPhoneNo: {
+			type: String,
+			required: true,
+			index: true,
+			trim: true,
+		},
+
+		parentAuth: {
+			otp: String,
+			otpExpiresAt: Date
+		},
 		package: {
 			hours: {
 				type: Number
@@ -84,17 +95,17 @@ const studentSchema = new mongoose.Schema(
 )
 
 studentSchema.pre('save', async function (next) {
-    if (!this.studentId) {
-        const lastStudent = await this.constructor.findOne({ studentId: { $exists: true } }).sort({ studentId: -1 });
-        
-        let nextNum = 1;
-        if (lastStudent && lastStudent.studentId) {
-            const lastIdNum = parseInt(lastStudent.studentId.replace('S_', ''), 10);
-            nextNum = lastIdNum + 1;
-        }
-        const paddedNum = nextNum.toString().padStart(3, '0');
-        this.studentId = `S_${paddedNum}`;
-    }
+	if (!this.studentId) {
+		const lastStudent = await this.constructor.findOne({ studentId: { $exists: true } }).sort({ studentId: -1 });
+
+		let nextNum = 1;
+		if (lastStudent && lastStudent.studentId) {
+			const lastIdNum = parseInt(lastStudent.studentId.replace('S_', ''), 10);
+			nextNum = lastIdNum + 1;
+		}
+		const paddedNum = nextNum.toString().padStart(3, '0');
+		this.studentId = `S_${paddedNum}`;
+	}
 });
 
 module.exports = mongoose.model('Student', studentSchema);
