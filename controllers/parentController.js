@@ -1,5 +1,5 @@
 const Student = require('../models/Student');
-const report = require('../models/Report')
+const Report = require('../models/Report')
 const Session = require('../models/Session');
 
 
@@ -9,7 +9,7 @@ exports.parentDashboard = async (req, res) => {
    const student = await Student.findById(req.user.id)
     .populate('coordinator', 'fullName');
     res.render('parent/dashboard', {
-      activePage: 'parent',
+      activePage: 'dashboard',
       student
     });
   } catch (err) {
@@ -26,7 +26,8 @@ exports.viewPayment = async (req, res) => {
     // Fetch any one student (latest for example)
 const student = await Student.findById(req.user.id)
     return res.render('parent/viewPayment', {
-      student
+      student,
+      activePage:'payments'
     });
   } catch (err) {
     console.error(err);
@@ -41,9 +42,12 @@ const student = await Student.findById(req.user.id)
 
 exports.viewReport = async (req, res) => {
   try {
-const student = await Student.findById(req.user.id)
+    // get logged-in parent's student
+    const student = await Student.findById(req.user.id)
+      .populate('coordinator');
+
     if (!student) {
-      return res.render('auth/pageNotFound', { msg: 'No student found' });
+      return res.render('auth/pageNotFound', { msg: 'Student not found' });
     }
 
     const reports = await Report.find({ student: student._id })
@@ -52,16 +56,19 @@ const student = await Student.findById(req.user.id)
     const labels = reports.map(r => `Week ${r.week}`);
     const scores = reports.map(r => r.score);
 
-    res.render('parent/viewReport', {
+    return res.render('parent/viewReport', {
       student,
       reports,
       labels: JSON.stringify(labels),
-      scores: JSON.stringify(scores)
+      scores: JSON.stringify(scores),
+      activePage:'reports'
     });
 
   } catch (error) {
     console.error(error);
-    res.render('auth/pageNotFound', { msg: 'Error loading report page' });
+    return res.render('auth/pageNotFound', {
+      msg: 'Error loading report page'
+    });
   }
 };
 
@@ -82,7 +89,8 @@ exports.viewClassHistory = async (req, res) => {
 
     res.render('parent/classHistory', {
       student,
-      sessions
+      sessions,
+      activePage:'sessions'
     });
   } catch (err) {
     console.error(err);
