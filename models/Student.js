@@ -35,11 +35,11 @@ const studentSchema = new mongoose.Schema(
 		},
 		standard: {
 			type: String,
-			required: true
+			required: true,
 		},
 		school: {
 			type: String,
-			required: true
+			required: true,
 		},
 		status: {
 			type: String,
@@ -48,9 +48,9 @@ const studentSchema = new mongoose.Schema(
 		},
 		lastDate: {
 			type: Date,
-			required: true
+			required: true,
 		},
-		parentPhoneNo: {
+		parentNumber: {
 			type: String,
 			required: true,
 			index: true,
@@ -59,44 +59,46 @@ const studentSchema = new mongoose.Schema(
 
 		parentAuth: {
 			otp: String,
-			otpExpiresAt: Date
+			otpExpiresAt: Date,
 		},
 		package: {
 			hours: {
-				type: Number
+				type: Number,
 			},
 			amount: {
-				type: Number
+				type: Number,
 			},
 			description: {
-				type: String
+				type: String,
 			},
 			startDate: {
-				type: Date
+				type: Date,
 			},
 			endDate: {
-				type: Date
+				type: Date,
 			},
 			paymentDate: {
-				type: Date
-			}
+				type: Date,
+			},
 		},
 		coordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'Coordinator' },
 		assignedTeachers: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
-				ref: 'Teacher'
-			}
-		]
+				ref: 'Teacher',
+			},
+		],
 	},
 	{
 		timestamps: true,
 	}
-)
+);
 
 studentSchema.pre('save', async function (next) {
 	if (!this.studentId) {
-		const lastStudent = await this.constructor.findOne({ studentId: { $exists: true } }).sort({ studentId: -1 });
+		const lastStudent = await this.constructor
+			.findOne({ studentId: { $exists: true } })
+			.sort({ studentId: -1 });
 
 		let nextNum = 1;
 		if (lastStudent && lastStudent.studentId) {
