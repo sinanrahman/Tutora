@@ -19,6 +19,6 @@ router
 
 router
     .route('/classhistory')
-    .get(viewClassHistory)
+    .get(protect,setSidebarMenu,authorize('PARENT'),viewClassHistory)
   
 module.exports = router;

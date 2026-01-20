@@ -6,8 +6,8 @@ const Session = require('../models/Session');
 
 exports.parentDashboard = async (req, res) => {
   try {
-    const student = await Student.findOne().sort({ createdAt: -1 });
-
+   const student = await Student.findById(req.user.id)
+    .populate('coordinator', 'fullName');
     res.render('parent/dashboard', {
       activePage: 'parent',
       student
@@ -24,8 +24,7 @@ exports.parentDashboard = async (req, res) => {
 exports.viewPayment = async (req, res) => {
   try {
     // Fetch any one student (latest for example)
-    const student = await Student.findOne().sort({ createdAt: -1 });
-
+const student = await Student.findById(req.user.id)
     return res.render('parent/viewPayment', {
       student
     });
@@ -42,8 +41,7 @@ exports.viewPayment = async (req, res) => {
 
 exports.viewReport = async (req, res) => {
   try {
-    const student = await Student.findOne().sort({ createdAt: -1 });
-
+const student = await Student.findById(req.user.id)
     if (!student) {
       return res.render('auth/pageNotFound', { msg: 'No student found' });
     }
@@ -70,7 +68,8 @@ exports.viewReport = async (req, res) => {
 exports.viewClassHistory = async (req, res) => {
   try {
     // Fetch latest student (or you can fetch specific student via req.user if auth is implemented)
-    const student = await Student.findOne().sort({ createdAt: -1 });
+    const student = await Student.findOne({ parentEmail: req.user.email });
+
 
     if (!student) {
       return res.render('auth/pageNotFound', { msg: 'Student not found' });
