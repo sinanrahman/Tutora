@@ -1,7 +1,11 @@
 const Student = require('../models/Student');
 const Report = require('../models/Report')
 const Session = require('../models/Session');
-
+const Invoice = require('../models/Invoice');
+const fs = require('fs');
+const path = require('path');           // ✅ REQUIRED
+const ejs = require('ejs');
+const puppeteer = require('puppeteer');
 
 
 exports.parentDashboard = async (req, res) => {
@@ -50,17 +54,150 @@ exports.parentDashboard = async (req, res) => {
 
 exports.viewPayment = async (req, res) => {
   try {
-    // Fetch any one student (latest for example)
-const student = await Student.findById(req.user.id)
+    const student = await Student.findById(req.user.id);
+    if (!student) {
+      return res.render('auth/pageNotFound', { msg: 'Student not found' });
+    }
+    const invoices = await Invoice.find({ studentId: student.studentId }).sort({ date: -1 });
+
     return res.render('parent/viewPayment', {
       student,
-      activePage:'payments'
+      invoices, 
+      activePage: 'payments'
     });
   } catch (err) {
     console.error(err);
-    return res.render('auth/pageNotFound', {
-      msg: 'Unable to load payment details'
+    return res.render('auth/pageNotFound', { msg: 'Unable to load payment details' });
+  }
+};
+
+exports.viewInvoice = async (req, res) => {
+  try {
+    const invoiceId = req.params.id;
+    const invoice = await Invoice.findOne({ id: invoiceId });
+
+    if (!invoice) {
+      return res.render('auth/pageNotFound', { msg: 'Invoice not found' });
+    }
+    const student = await Student.findById(req.user.id);
+    if (!student || invoice.studentId !== student.studentId) {
+      return res.status(403).send('Access Denied');
+    }
+    return res.render('parent/viewInvoicee', { newInvoice: invoice, activePage: 'payments' });
+
+  } catch (err) {
+    console.error(err);
+    return res.render('auth/pageNotFound', { msg: 'Unable to load invoice' });
+  }
+};
+
+
+
+
+exports.viewStudentInvoicePDF = async (req, res) => {
+  try {
+    const invoiceId = req.params.id;
+    const invoice = await Invoice.findOne({ id: invoiceId });
+    if (!invoice) return res.render('auth/pageNotFound', { msg: 'Invoice not found' });
+
+    const student = await Student.findById(req.user.id);
+    if (!student || invoice.studentId !== student.studentId) {
+      return res.status(403).send('Access Denied');
+    }
+
+    return res.render('parent/viewInvoicee', {
+      newInvoice: invoice,
+      activePage: 'payments'
     });
+
+  } catch (err) {
+    console.error(err);
+    return res.render('auth/pageNotFound', { msg: 'Unable to load invoice' });
+  }
+};
+
+
+
+exports.downloadParentInvoicePDF = async (req, res) => {
+  try {
+    const invoiceId = req.params.id;
+
+    // 1️⃣ Find invoice
+    const invoice = await Invoice.findOne({ id: invoiceId });
+    if (!invoice) {
+      return res.status(404).send("Invoice not found");
+    }
+
+    // 2️⃣ Verify logged-in parent owns this invoice
+    const student = await Student.findById(req.user.id);
+    if (!student || invoice.studentId !== student.studentId) {
+      return res.status(403).send("Access Denied");
+    }
+
+    // 3️⃣ IMAGE CONVERSION FUNCTION
+    const imageToBase64 = (filename) => {
+      try {
+        const filePath = path.join(process.cwd(), 'static', 'image', filename);
+
+        if (!fs.existsSync(filePath)) {
+          console.error("File does not exist:", filePath);
+          return null;
+        }
+
+        const bitmap = fs.readFileSync(filePath);
+        const ext = path.extname(filePath).substring(1);
+        return `data:image/${ext};base64,${bitmap.toString('base64')}`;
+      } catch (err) {
+        console.error("Image conversion error:", err);
+        return null;
+      }
+    };
+
+    // 4️⃣ Get images
+    const logoBase64 = imageToBase64('logo.png');
+    const paidBase64 = imageToBase64('paid.webp');
+
+    // 5️⃣ Render PARENT invoice template
+    const templatePath = path.join(
+      __dirname,
+      '../views/parent/viewInvoicee.ejs'
+    );
+
+    const html = await ejs.renderFile(templatePath, {
+      newInvoice: invoice,
+      logoSrc: logoBase64,
+      paidSrc: paidBase64
+    });
+
+    // 6️⃣ Puppeteer PDF generation
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox']
+    });
+
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+    await page.emulateMediaType('print');
+
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '20px', bottom: '20px' }
+    });
+
+    await browser.close();
+
+    // 7️⃣ Send PDF
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="invoice-${invoiceId}.pdf"`
+    );
+    res.send(pdfBuffer);
+
+  } catch (err) {
+    console.error("PDF Generation Error:", err);
+    res.status(500).send("Error generating PDF");
   }
 };
 
@@ -101,9 +238,7 @@ exports.viewReport = async (req, res) => {
 
 exports.viewClassHistory = async (req, res) => {
   try {
-    // Fetch latest student (or you can fetch specific student via req.user if auth is implemented)
-    const student = await Student.findOne({ parentEmail: req.user.email });
-
+    const student = await Student.findById(req.user.id);
 
     if (!student) {
       return res.render('auth/pageNotFound', { msg: 'Student not found' });
