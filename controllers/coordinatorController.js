@@ -13,9 +13,44 @@ const getTodayRange = () => {
 
 	return { start, end };
 };
-
-//      RENDER COORDINATOR DASHBOARD
 exports.coordinatorDashboard = async (req, res) => {
+  try {
+    const coord = await Coordinator.findById(req.user.id);
+
+    if (!coord) {
+      return res.render('auth/pageNotFound', { msg: 'Coordinator not found' });
+    }
+
+    const totalStudents = await Student.countDocuments({
+      coordinator: coord._id,
+    });
+
+    const studentIds = await Student
+      .find({ coordinator: coord._id })
+      .distinct('_id');
+
+    const pendingSessions = await Session.countDocuments({
+      status: 'PENDING',
+      student: { $in: studentIds },
+    });
+
+    return res.render('coordinator/dashboard', {
+      coord,
+      totalStudents,
+      pendingSessions,
+      activePage: 'dashboard',
+      username: coord.fullName,
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.render('auth/pageNotFound', { msg: 'Dashboard error' });
+  }
+};
+
+
+//      RENDER COORDINATOR STUDENT LIST
+exports.coordinatorStudentlist = async (req, res) => {
 	try {
 		if (!req.user || !req.user.id) {
 			return res.render('auth/pageNotFound', {
@@ -41,11 +76,11 @@ exports.coordinatorDashboard = async (req, res) => {
 
 		// Optional: Aggregation logic for teacherUsage can go here
 
-		return res.render('coordinator/dashboard', {
+		return res.render('coordinator/students', {
 			coord,
 			students,
 			teachers,
-			activePage: 'dashboard',
+			activePage: 'students',
 			username: coord.fullName,
 		});
 	} catch (err) {
@@ -74,7 +109,7 @@ exports.getAssignedStudents = async (req, res) => {
 			.populate('assignedTeachers', 'fullName')
 			.sort({ createdAt: -1 });
 
-		return res.render('coordinator/dashboard', { students, coord, teachers: [] });
+		return res.render('coordinator/students', { students, coord, teachers: [] });
 	} catch (err) {
 		console.error(err);
 		return res.render('auth/pageNotFound', { msg: 'Error loading assigned students' });
@@ -119,7 +154,7 @@ exports.getStudentProfile = async (req, res) => {
 			student,
 			coord,
 			totalHours,
-			activePage: 'dashboard',
+			activePage: 'students',
 			username: coord.fullName,
 		});
 	} catch (err) {
@@ -243,7 +278,7 @@ exports.getUpdateTeacher = async (req, res) => {
 			.populate('assignedTeachers');
 
 		return res.render('coordinator/update-teacher', {
-			activePage: 'dashboard',
+			activePage: 'students',
 			username: coord.fullName,
 			t: teachers,
 			assignedTeachers,
@@ -292,7 +327,7 @@ exports.getAddReport = async (req, res) => {
 
 	res.render('coordinator/add-report', {
 		pageTitle: 'Add Report',
-		activePage: 'dashboard',
+		activePage: 'students',
 		studentId,
 		student,
 		reports,
