@@ -69,8 +69,6 @@
             <thead class="table-light">
               <tr>
                 <th>Sl No</th>
-                <th>Student ID</th>
-                <th>Student Name</th>
                 <th>Package Hours</th>
                 <th>Amount Paid</th>
                 <th>Payment Date</th>
@@ -86,9 +84,7 @@
                 <% invoices.forEach((invoice, index) => { %>
                   <tr>
                     <td><%= index + 1 %></td>
-                    <td><%= student.studentId %></td>
-                    <td><%= student.fullName %></td>
-
+                    
                     <td><%= invoice.packageHours || student.package?.hours || 0 %> hrs</td>
 
                     <td>₹ <%= invoice.amount || 0 %></td>
@@ -118,7 +114,7 @@
                     </td>
 
                     <td>
-                      <a href="/parent/invoice/<%= invoice.id %>" class="btn btn-sm btn-primary">
+                      <a href="/parent/invoice/<%= invoice.id %>" class="btn btn-sm btn-warning">
                         <i class="bi bi-eye"></i> View Invoice
                       </a>
                     </td>
