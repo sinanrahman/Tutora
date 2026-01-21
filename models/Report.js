@@ -41,6 +41,14 @@ const reportSchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
+		type: {
+			type: String,
+			enum: ['weekly', 'monthly'],
+			required: true,
+		},
+		viewDate:{
+			type:String
+		}
 	},
 	{ timestamps: true }
 );
