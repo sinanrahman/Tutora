@@ -6,7 +6,6 @@
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css"/>
 
   <style>
     .main-content {
@@ -23,10 +22,6 @@
 
     table {
       white-space: nowrap;
-    }
-
-    .dataTables_wrapper {
-      overflow-x: auto;
     }
   </style>
 </head>
@@ -69,7 +64,7 @@
 
         <!-- Table -->
         <div class="table-responsive">
-          <table class="table table-hover table-striped align-middle w-100" id="paymentTable">
+          <table class="table table-hover table-striped align-middle w-100">
 
             <thead class="table-light">
               <tr>
@@ -82,42 +77,57 @@
                 <th>Remaining Hours</th>
                 <th>Package End Date</th>
                 <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
 
             <tbody>
-              <% if (student) { %>
-                <tr>
-                  <td>1</td>
-                  <td><%= student.studentId %></td>
-                  <td><%= student.fullName %></td>
-                  <td><%= student.package?.hours || 0 %> hrs</td>
-                  <td>₹ <%= student.package?.amount || 0 %></td>
-                  <td>
-                    <%= student.package?.paymentDate
-                      ? new Date(student.package.paymentDate).toDateString()
-                      : 'N/A' %>
-                  </td>
-                  <td class="<%= student.remainingHours < 0 ? 'text-danger' : 'text-dark' %>">
-                    <%= student.remainingHours %> hrs
-                  </td>
-                  <td>
-                    <%= student.package?.endDate
-                      ? new Date(student.package.endDate).toDateString()
-                      : 'N/A' %>
-                  </td>
-                  <td>
-                    <% if (student.remainingHours > 0) { %>
-                      <span class="badge bg-success">ACTIVE</span>
-                    <% } else { %>
-                      <span class="badge bg-danger">EXPIRED</span>
-                    <% } %>
-                  </td>
-                </tr>
+              <% if (student && invoices && invoices.length > 0) { %>
+                <% invoices.forEach((invoice, index) => { %>
+                  <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= student.studentId %></td>
+                    <td><%= student.fullName %></td>
+
+                    <td><%= invoice.packageHours || student.package?.hours || 0 %> hrs</td>
+
+                    <td>₹ <%= invoice.amount || 0 %></td>
+
+                    <td>
+                      <%= invoice.date
+                        ? new Date(invoice.date).toDateString()
+                        : 'N/A' %>
+                    </td>
+
+                    <td class="<%= student.remainingHours < 0 ? 'text-danger' : 'text-dark' %>">
+                      <%= student.remainingHours %> hrs
+                    </td>
+
+                    <td>
+                      <%= student.package?.endDate
+                        ? new Date(student.package.endDate).toDateString()
+                        : 'N/A' %>
+                    </td>
+
+                    <td>
+                      <% if (student.remainingHours > 0) { %>
+                        <span class="badge bg-success">ACTIVE</span>
+                      <% } else { %>
+                        <span class="badge bg-danger">EXPIRED</span>
+                      <% } %>
+                    </td>
+
+                    <td>
+                      <a href="/parent/invoice/<%= invoice.id %>" class="btn btn-sm btn-primary">
+                        <i class="bi bi-eye"></i> View Invoice
+                      </a>
+                    </td>
+                  </tr>
+                <% }) %>
               <% } else { %>
                 <tr>
-                  <td colspan="9" class="text-center text-muted">
-                    No student data found
+                  <td colspan="10" class="text-center text-muted">
+                    No payment records found
                   </td>
                 </tr>
               <% } %>
@@ -138,13 +148,8 @@
 
 <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
 
 <script>
-  new DataTable('#paymentTable', {
-    pageLength: 10
-  });
-
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
   }
