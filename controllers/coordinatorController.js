@@ -49,13 +49,11 @@ exports.coordinatorDashboard = async (req, res) => {
 			activePage: 'dashboard',
 			username: coord.fullName,
 		});
-
 	} catch (err) {
 		console.error(err);
 		return res.render('auth/pageNotFound', { msg: 'Dashboard error' });
 	}
 };
-
 
 //      RENDER COORDINATOR STUDENT LIST
 exports.coordinatorStudentlist = async (req, res) => {
@@ -141,7 +139,7 @@ exports.getStudentProfile = async (req, res) => {
 		const student = await Student.findOne({
 			_id: req.params.id,
 			coordinator: coord._id,
-		}).populate('assignedTeachers', 'fullName email');
+		}).populate('assignedTeachers', 'fullName email subjects');
 
 		if (!student) {
 			return res.render('auth/pageNotFound', { msg: 'Error: Access denied or student not found' });
