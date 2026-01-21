@@ -10,6 +10,7 @@ module.exports = {
 
 	COORDINATOR: [
 		{ key: 'dashboard', label: 'Dashboard', url: '/coordinator/dashboard' },
+		{ key: 'students', label: 'Students', url: '/coordinator/students' },
 		{ key: 'session', label: 'Session Approval', url: '/coordinator/session-approval' },
 	],
 

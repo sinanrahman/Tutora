@@ -8,6 +8,7 @@ const { setSidebarMenu } = require('../middlewares/sidebarMenu');
 //      CONTROLLERS
 const {
 	coordinatorDashboard,
+	coordinatorStudentlist,
 	getAssignedStudents,
 	getStudentProfile,
 	assignTeachers,
@@ -25,9 +26,14 @@ const {
 // ==========================================
 
 //      COORDINATOR DASHBOARD
+
 router
 	.route('/dashboard')
 	.get(protect, setSidebarMenu, authorize('COORDINATOR'), coordinatorDashboard);
+
+router
+	.route('/students')
+	.get(protect, setSidebarMenu, authorize('COORDINATOR'), coordinatorStudentlist);
 
 // ==========================================
 //              STUDENT ROUTES
