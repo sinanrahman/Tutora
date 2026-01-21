@@ -10,13 +10,22 @@ const puppeteer = require('puppeteer');
 
 exports.parentDashboard = async (req, res) => {
   try {
-   const student = await Student.findById(req.user.id)
-    .populate('coordinator', 'fullName');
-     const latestReport = await Report.findOne({ student: student._id })
+    const student = await Student.findById(req.user.id)
+      .populate('coordinator', 'fullName');
+
+    const currentYear = new Date().getFullYear();
+
+    const latestReport = await Report.findOne({
+      student: student._id,
+      year: currentYear
+    })
       .sort({ createdAt: -1 })
       .lean();
 
-      const reports = await Report.find({ student: student._id }).select('score');
+    const reports = await Report.find({
+      student: student._id,
+      year: currentYear
+    }).select('score');
 
     let avgPerformance = 0;
 
@@ -29,8 +38,10 @@ exports.parentDashboard = async (req, res) => {
       activePage: 'dashboard',
       student,
       latestReport,
-      avgPerformance
+      avgPerformance,
+      currentYear
     });
+
   } catch (err) {
     console.error(err);
     res.render('auth/pageNotFound', {
@@ -38,6 +49,7 @@ exports.parentDashboard = async (req, res) => {
     });
   }
 };
+
 
 
 exports.viewPayment = async (req, res) => {

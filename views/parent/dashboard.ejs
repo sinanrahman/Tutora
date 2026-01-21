@@ -88,35 +88,36 @@
   </div>
 
   <!-- LATEST REPORT -->
-   <div class="d-flex justify-content-center align-items-center p-2">
-<div class="card shadow-sm border-0 rounded-4 mb-4 w-50 p-3 bg-primary-subtle">
-  <div class="card-body">
-    <h4 class="fw-bold mb-3">
-      <i class="bi bi-file-earmark-text me-2"></i>
-      Latest Report
-    </h4>
+  <div class="d-flex justify-content-center p-2">
+  <div class="col-12 col-md-10 col-lg-8">
+    <div class="card shadow-sm border-0 rounded-4 mb-4 p-3 bg-primary-subtle">
+      <div class="card-body">
+        <h4 class="fw-bold mb-3">
+          <i class="bi bi-file-earmark-text me-2"></i>
+          Latest Report
+        </h4>
 
-    <% if (latestReport) { %>
-      <p class="mb-1 fs-5">
-        <strong>Score:</strong> <%= latestReport.score || '-' %>
-      </p>
+        <% if (latestReport) { %>
+          <p class="mb-1 fs-5">
+            <strong>Score:</strong> <%= latestReport.score || '-' %>
+          </p>
 
-      <p class="mb-1 fs-5">
-        <strong>Remarks:</strong> <%= latestReport.remarks || '-' %>
-      </p>
+          <p class="mb-1 fs-5">
+            <strong>Remarks:</strong> <%= latestReport.remarks || '-' %>
+          </p>
 
-      <p class="text-muted fs-5">
-        <strong>Updated on:</strong>
-        <%= new Date(latestReport.createdAt).toDateString() %>
-      </p>
-    <% } else { %>
-      <p class="text-muted mb-0">No reports available yet.</p>
-    <% } %>
+          <p class="text-muted fs-5">
+            <strong>Updated on:</strong>
+            <%= new Date(latestReport.createdAt).toDateString() %>
+          </p>
+        <% } else { %>
+          <p class="text-muted mb-0">No reports available yet.</p>
+        <% } %>
+      </div>
+    </div>
   </div>
 </div>
 
-
-   </div>
 
   
   

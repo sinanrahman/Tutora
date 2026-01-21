@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Verify OTP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
     <link rel="stylesheet" href="/css/auth/coordinatorLogin.css">
 </head>
 
@@ -17,12 +20,8 @@
 
             <div class="input-group">
                 <label>Enter OTP</label>
-                <input
-                    type="text"
-                    name="otp"
-                    placeholder="6-digit OTP"
-                    required
-                >
+                <input type="text" name="otp" placeholder="6-digit OTP" maxlength="6" inputmode="numeric"
+                    pattern="[0-9]*" required>
             </div>
 
             <button class="login-btn" type="submit">Verify & Login</button>
@@ -31,8 +30,11 @@
                 <%= msg %>
             </p>
 
+            <a href="/parentLogin" class="back-link text-decoration-none">Back</a>
+
         </div>
     </form>
 
 </body>
+
 </html>

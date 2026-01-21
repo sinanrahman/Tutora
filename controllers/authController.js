@@ -340,6 +340,7 @@ exports.requestParentOTP = async (req, res) => {
         return res.render('auth/pageNotFound', { msg: 'Error sending OTP' });
     }
 };
+
 exports.verifyParentOTP = async (req, res) => {
   try {
     const { parentEmail, otp } = req.body;
