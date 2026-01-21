@@ -19,6 +19,9 @@ const {
 	addUpdateTeacher,
 	getAddReport,
 	  postAddReport,
+	  editReport,
+	  deleteReport,
+	  getReports,
 } = require('../controllers/coordinatorController');
 
 // ==========================================
@@ -100,6 +103,29 @@ router
 	  authorize('COORDINATOR'),
 	  postAddReport
 	);
+	router.get(
+	'/reports/:studentId',
+	protect,
+	authorize('COORDINATOR'),
+	setSidebarMenu,
+	getReports
+);
+
+	router.post(
+	  '/edit-report/:id',
+	  protect,
+	  authorize('COORDINATOR'),
+	  editReport
+	);
+
+	router.post(
+	  '/delete-report/:id',
+	  protect,
+	  authorize('COORDINATOR'),
+	  deleteReport
+	);
+
+
 	
 	
 
