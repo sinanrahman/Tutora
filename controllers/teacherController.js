@@ -6,8 +6,64 @@ const fileUploadToCloudinary = require('../utils/cloudinaryUpload');
 const cloudinary = require('../config/cloudinary');
 const mongoose = require('mongoose')
 
-//      RENDER TEACHER DASHBOARD
-exports.teacherDashboard = async (req, res) => {
+
+exports.dashboard = async (req, res) => {
+    try {
+        const teacherId = req.user.id;
+        const teacher = await Teacher.findById(teacherId);
+
+        // 1️⃣ Total Students
+        const totalStudents = await Student.countDocuments({
+            assignedTeachers: teacherId
+        });
+
+        // 2️⃣ Pending Sessions
+        const pendingSessions = await Session.countDocuments({
+            teacher: teacherId,
+            status: 'PENDING'
+        });
+
+        // 3️⃣ Total Earnings from approved sessions
+        const sessions = await Session.find({
+            teacher: teacherId,
+            status: 'APPROVED'
+        }).select('durationInHours');
+
+        let totalEarnings = 0;
+        let totalDuration = 0;
+
+        sessions.forEach((s) => {
+            totalEarnings += s.durationInHours * teacher.hourlyRate;
+            totalDuration += s.durationInHours;
+        });
+
+        // 4️⃣ Total Paid Salary
+        const allSalaries = await Salary.find({ teacherId: teacherId }).select('amount');
+        const totalPaid = allSalaries.reduce((sum, s) => sum + s.amount, 0);
+
+        // 5️⃣ Pending Salary
+        const pendingSalary = totalEarnings - totalPaid;
+
+        res.render('teacher/dashboard', {
+            totalStudents,
+            pendingSessions,
+            totalSalaryPaid: totalPaid,
+            pendingSalary,
+            activePage: 'dashboard'
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.render('auth/pageNotFound', {
+            msg: 'Error loading teacher dashboard'
+        });
+    }
+};
+
+
+
+
+exports.viewStudents = async (req, res) => {
     try {
         const teacherId = req.user.id;
 
@@ -19,17 +75,19 @@ exports.teacherDashboard = async (req, res) => {
             .populate('coordinator', 'fullName')
             .sort({ createdAt: -1 });
 
-        return res.render('teacher/dashboard', {
+        return res.render('teacher/students', {
             user: teacher,
             teacher,
             students,
-            activePage: 'dashboard',
+            activePage: 'students',
         });
     } catch (err) {
         console.error(err);
         return res.render('auth/pageNotFound', { msg: 'Error: Unable to load teacher dashboard' });
     }
 };
+
+
 
 //      RENDER TEACHER SESSIONS LIST
 exports.teacherSessionsPage = async (req, res) => {
@@ -68,7 +126,7 @@ exports.addSessionPage = async (req, res) => {
             teacher,
             student,
             selectedStudentId,
-            activePage: 'dashboard',
+            activePage: 'students',
         });
     } catch (err) {
         console.error(err);
@@ -90,58 +148,58 @@ exports.teacherProfilePage = async (req, res) => {
         // const allApprovedSessionsOfTeacher = await Session.find({teacher:teacherId,status:'APPROVED'}) 
 
         const result = await Session.aggregate([
-    {
-        // 1. Filter: Find approved sessions for this teacher
-        $match: {
-            teacher: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
-            status: 'APPROVED'
-        }
-    },
-    {
-        // 2. Calculate: Multiply duration * rate for each doc, then sum them all
-        $group: {
-            _id: null, // We want one single result, not groups
-            totalEarnings: { 
-                $sum: { $multiply: ["$durationInHours", teacher.hourlyRate] } 
+            {
+                // 1. Filter: Find approved sessions for this teacher
+                $match: {
+                    teacher: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+                    status: 'APPROVED'
+                }
             },
-            totalDuration:{
-                $sum:'$durationInHours'
-            }
-        }
-    }
-]);
-let allPaidSalary = await Salary.aggregate([
-        {
-            // 1. Filter: Find approved sessions for this teacher
-            $match: {
-                teacherId: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
-            }
-        },
-        {
-            // 2. Calculate: Multiply duration * rate for each doc, then sum them all
-            $group: {
-                _id: null, // We want one single result, not groups
-                totalPaid:{
-                    $sum:'$amount'
+            {
+                // 2. Calculate: Multiply duration * rate for each doc, then sum them all
+                $group: {
+                    _id: null, // We want one single result, not groups
+                    totalEarnings: {
+                        $sum: { $multiply: ["$durationInHours", teacher.hourlyRate] }
+                    },
+                    totalDuration: {
+                        $sum: '$durationInHours'
+                    }
                 }
             }
-        }
-    ])
-    // result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
-    allPaidSalary = allPaidSalary.length > 0 ? allPaidSalary[0].totalPaid : 0;
-    let finalAmount = result.length > 0 ? result[0].totalEarnings : 0;
-    // const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
-    finalAmount = finalAmount - allPaidSalary
-// result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
-// const finalAmount = result.length > 0 ? result[0].totalEarnings : 0;
-const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
-const allSalary = await Salary.find({teacherId})
+        ]);
+        let allPaidSalary = await Salary.aggregate([
+            {
+                // 1. Filter: Find approved sessions for this teacher
+                $match: {
+                    teacherId: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+                }
+            },
+            {
+                // 2. Calculate: Multiply duration * rate for each doc, then sum them all
+                $group: {
+                    _id: null, // We want one single result, not groups
+                    totalPaid: {
+                        $sum: '$amount'
+                    }
+                }
+            }
+        ])
+        // result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
+        allPaidSalary = allPaidSalary.length > 0 ? allPaidSalary[0].totalPaid : 0;
+        let finalAmount = result.length > 0 ? result[0].totalEarnings : 0;
+        // const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
+        finalAmount = finalAmount - allPaidSalary
+        // result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
+        // const finalAmount = result.length > 0 ? result[0].totalEarnings : 0;
+        const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
+        const allSalary = await Salary.find({ teacherId })
 
 
         return res.render('teacher/profile', {
             user: teacher,
             teacher,
-             activePage: 'teacherProfile',
+            activePage: 'teacherProfile',
             pendingSalary: finalAmount,
             totalDuration,
             allSalary,
@@ -181,12 +239,12 @@ exports.viewStudentProfile = async (req, res) => {
             totalHours += s.durationInHours;
         });
         const teacher = await Teacher.findById(req.user.id);
-        
+
         return res.render('teacher/studentProfile', {
             user: teacher,
             student,
             totalHours,
-            activePage: 'dashboard',
+            activePage: 'students',
         });
     } catch (err) {
         console.error(err);
@@ -240,67 +298,67 @@ exports.updateProfilePic = async (req, res) => {
 
 // RENDER PENDING SALARY PAGE
 exports.viewPendingSalaryPage = async (req, res) => {
-  try {
-    const teacherId = req.user.id;
-    const teacher = await Teacher.findById(teacherId);
+    try {
+        const teacherId = req.user.id;
+        const teacher = await Teacher.findById(teacherId);
 
-    // Total Approved Sessions Earnings
-    const result = await Session.aggregate([
-      {
-        $match: {
-          teacher: new mongoose.Types.ObjectId(teacherId),
-          status: 'APPROVED'
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          totalEarnings: {
-            $sum: { $multiply: ["$durationInHours", teacher.hourlyRate] }
-          },
-          totalDuration: { $sum: "$durationInHours" }
-        }
-      }
-    ]);
+        // Total Approved Sessions Earnings
+        const result = await Session.aggregate([
+            {
+                $match: {
+                    teacher: new mongoose.Types.ObjectId(teacherId),
+                    status: 'APPROVED'
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalEarnings: {
+                        $sum: { $multiply: ["$durationInHours", teacher.hourlyRate] }
+                    },
+                    totalDuration: { $sum: "$durationInHours" }
+                }
+            }
+        ]);
 
-    // Total Paid Salary
-    let paid = await Salary.aggregate([
-      {
-        $match: {
-          teacherId: new mongoose.Types.ObjectId(teacherId)
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          totalPaid: { $sum: "$amount" }
-        }
-      }
-    ]);
+        // Total Paid Salary
+        let paid = await Salary.aggregate([
+            {
+                $match: {
+                    teacherId: new mongoose.Types.ObjectId(teacherId)
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalPaid: { $sum: "$amount" }
+                }
+            }
+        ]);
 
-    const totalPaid = paid.length > 0 ? paid[0].totalPaid : 0;
-    const totalEarnings = result.length > 0 ? result[0].totalEarnings : 0;
-    const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
+        const totalPaid = paid.length > 0 ? paid[0].totalPaid : 0;
+        const totalEarnings = result.length > 0 ? result[0].totalEarnings : 0;
+        const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
 
-    const pendingSalary = totalEarnings - totalPaid;
-const allSalary = await Salary.find({ teacherId }).sort({ paidDate: -1 });
+        const pendingSalary = totalEarnings - totalPaid;
+        const allSalary = await Salary.find({ teacherId }).sort({ paidDate: -1 });
 
-return res.render('teacher/pendingSalary', {
-  user: teacher,
-  teacher,
-  pendingSalary,
-  totalDuration,
-  totalPaid,
-  totalEarnings,
-  allSalary,
-  allPaidSalary: totalPaid,
-  activePage: 'teacherProfile'
-});
+        return res.render('teacher/pendingSalary', {
+            user: teacher,
+            teacher,
+            pendingSalary,
+            totalDuration,
+            totalPaid,
+            totalEarnings,
+            allSalary,
+            allPaidSalary: totalPaid,
+            activePage: 'teacherProfile'
+        });
 
-  } catch (err) {
-    console.error(err);
-    return res.render('auth/pageNotFound', {
-      msg: 'Error: Unable to load pending salary page'
-    });
-  }
+    } catch (err) {
+        console.error(err);
+        return res.render('auth/pageNotFound', {
+            msg: 'Error: Unable to load pending salary page'
+        });
+    }
 };

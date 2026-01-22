@@ -36,7 +36,6 @@
 
 <div class="card rounded-4 shadow-sm p-4">
 
-<!-- Breadcrumb -->
 <nav class="mb-3">
   <a href="/parent/dashboard" class="text-decoration-none">Dashboard</a>
   <span class="text-muted"> / Progress Report</span>
@@ -44,7 +43,6 @@
 
 <h4 class="fw-bold heading text-center mb-4">Student Progress Report</h4>
 
-<!-- SUMMARY -->
 <div class="row mb-4 justify-content-center">
   <div class="col-md-4">
     <div class="card p-3 text-center bg-success-subtle">
@@ -60,7 +58,6 @@
   </div>
 </div>
 
-<!-- CHART -->
 <div class="card rounded-4 shadow-sm p-4 mb-4">
   <div class="d-flex justify-content-between mb-2">
     <div class="controls-inline">
@@ -75,7 +72,6 @@
   <canvas id="reportChart"></canvas>
 </div>
 
-<!-- TABLES -->
 <ul class="nav nav-pills mb-3 justify-content-center">
   <li class="nav-item">
     <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#weekly">Weekly</button>
@@ -87,7 +83,6 @@
 
 <div class="tab-content">
 
-<!-- WEEKLY TABLE -->
 <div class="tab-pane fade show active" id="weekly">
   <table class="table table-bordered text-center">
     <thead class="table-light">
@@ -108,7 +103,6 @@
   </table>
 </div>
 
-<!-- MONTHLY TABLE -->
 <div class="tab-pane fade" id="monthly">
   <table class="table table-bordered text-center">
     <thead class="table-light">
@@ -157,14 +151,21 @@ for(let y=CURRENT_YEAR-4;y<=CURRENT_YEAR;y++){
 }
 yearSelect.value = CURRENT_YEAR;
 
-/* WEEKLY DATA – ALL WEEKS */
+/* WEEKLY DATA – month name once */
 function weeklyData(year){
-  const labels=[], data=[];
+  const labels = [];
+  const data = [];
+  const monthEndIndexes = {};
+  let index = -1;
+
   for(let m=1;m<=12;m++){
     const weeks = Math.ceil(new Date(year,m,0).getDate()/7);
     const mName = new Date(year,m-1,1).toLocaleString('default',{month:'short'});
+
     for(let w=1;w<=weeks;w++){
+      index++;
       labels.push(`${mName} W${w}`);
+
       const r = rawReports.find(r =>
         r.year===year &&
         r.type==='weekly' &&
@@ -172,9 +173,14 @@ function weeklyData(year){
         r.week===w
       );
       data.push(r ? r.score : null);
+
+      if(w === weeks){
+        monthEndIndexes[index] = mName;
+      }
     }
   }
-  return { labels, data };
+
+  return { labels, data, monthEndIndexes };
 }
 
 /* MONTHLY DATA */
@@ -223,25 +229,17 @@ function renderChart(){
         responsive:true,
         interaction:{ mode:'index', intersect:false },
         plugins:{
-          legend:{ display:false },
-          tooltip:{
-            callbacks:{
-              title:(items)=> items[0].label,
-              label:(item)=> item.raw!=null
-                ? `Score: ${item.raw}%`
-                : 'No report this week'
-            }
-          }
+          legend:{ display:false }
         },
         scales:{
           y:{ min:0, max:100 },
           x:{
             ticks:{
-              autoSkip:true,
-              maxTicksLimit:12,
+              autoSkip:false,
               callback:(val,index)=>{
-                // show only month name
-                return payload.labels[index].split(' ')[0];
+                return payload.monthEndIndexes
+                  ? payload.monthEndIndexes[index] || ''
+                  : payload.labels[index];
               }
             }
           }

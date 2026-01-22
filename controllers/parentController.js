@@ -7,7 +7,6 @@ const path = require('path');           // ✅ REQUIRED
 const ejs = require('ejs');
 const puppeteer = require('puppeteer');
 
-
 exports.parentDashboard = async (req, res) => {
   try {
     const student = await Student.findById(req.user.id)

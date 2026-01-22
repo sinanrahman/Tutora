@@ -11,13 +11,13 @@ exports.setSidebarMenu = async (req, res, next) => {
 	if (req.user?.role) {
 		res.locals.role = req.user.role;
 		res.locals.roleCapitalized =
-  req.user.role.charAt(0) + req.user.role.slice(1).toLowerCase();
+			req.user.role.charAt(0) + req.user.role.slice(1).toLowerCase();
 
 		res.locals.dp = false;
 		if (req.user.role == 'TEACHER') {
 			try {
 				// 2. Fetch the teacher document
-				const teacherDoc = await Teacher.findById(req.user.id).select('profilePic');
+				const teacherDoc = await Teacher.findById(req.user.id).select('profilePic fullName');
 
 				// 3. Assign ONLY the profilePic field to 'dp'
 
@@ -55,7 +55,7 @@ exports.setSidebarMenu = async (req, res, next) => {
 				console.error('Error fetching admin:', err);
 			}
 		}
-if (req.user.role === 'PARENT') {
+		if (req.user.role === 'PARENT') {
 
 			const student = await Student.findById(req.user.id).select('parentEmail');
 			if (student) {
