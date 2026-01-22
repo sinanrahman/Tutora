@@ -22,6 +22,11 @@ exports.parentDashboard = async (req, res) => {
 
 		let avgPerformance = 0;
 
+		const reports = await Report.find({
+			student: student._id,
+			year: currentYear
+		}).select('score');
+
 		if (reports.length > 0) {
 			const totalScore = reports.reduce((sum, r) => sum + r.score, 0);
 			avgPerformance = Math.round(totalScore / reports.length);
