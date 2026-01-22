@@ -10,6 +10,8 @@
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
 
   <style>
     .heading { color: #870216; }
@@ -28,12 +30,16 @@
     <div class="card rounded-4 shadow-sm p-4">
 
       <!-- Breadcrumb -->
-      <nav class="mb-3">
-        <a href="/parent/dashboard" class="text-decoration-none">Dashboard</a>
-        <span class="text-muted">/ Progress Report</span>
-      </nav>
+     <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+          <ol class="breadcrumb p-3 mb-0">
+            <li class="breadcrumb-item">
+              <a href="/parent/dashboard">Home</a>
+            </li>
+            <li class="breadcrumb-item active">Progress Report</li>
+          </ol>
+        </nav>
 
-      <h4 class="fw-bold heading text-center mb-4">Student Progress Report</h4>
+      <h3 class="fw-bold heading text-center mb-4">Student Progress Report</h3>
 
       <!-- SUMMARY -->
       <div class="row mb-4 justify-content-center">
@@ -138,9 +144,7 @@
 
       </div>
 
-      <button onclick="history.back()" class="btn btn-outline-secondary mt-3">
-        <i class="bi bi-arrow-left"></i> Back
-      </button>
+     
 
     </div>
   </div>
@@ -170,14 +174,17 @@ function weeklyData(year) {
   const data = [];
 
   for (let m = 1; m <= 12; m++) {
-    const weeks = Math.ceil(new Date(year, m, 0).getDate() / 7);
+    const daysInMonth = new Date(year, m, 0).getDate();
+    const weeks = Math.ceil(daysInMonth / 7);
+    const safeWeeks = Math.max(weeks, 5); // ✅ fix Feb
+
     const mName = new Date(year, m - 1, 1).toLocaleString('default', { month: 'short' });
 
     const monthlyReport = rawReports.find(r =>
       r.year === year && r.type === 'monthly' && r.month === m
     );
 
-    for (let w = 1; w <= weeks; w++) {
+    for (let w = 1; w <= safeWeeks; w++) {
       labels.push(`${mName} W${w}`);
 
       const weeklyReport = rawReports.find(r =>
@@ -189,6 +196,7 @@ function weeklyData(year) {
       else data.push(null);
     }
   }
+
   return { labels, data };
 }
 
