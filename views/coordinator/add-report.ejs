@@ -1,67 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Add Report</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<meta charset="UTF-8">
+	<title>Add Report – <%= student.fullName %></title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<!-- Bootstrap & Icons -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+	<style>
+		.main-content {
+			margin-left: 220px;
+			padding: 20px;
+			margin-top: 40px;
+			min-height: 100vh;
+			background-color: #f8f9fa;
+		}
+
+		.card {
+			border-radius: 10px;
+		}
+
+		.heading {
+			color: #870216;
+		}
+
+		.mobile-topbar {
+			z-index: 1100;
+		}
+
+		.mobile-logo-img {
+			height: 40px;
+			width: auto;
+		}
+
+		@media (max-width: 768px) {
+			.main-content {
+				margin-left: 0;
+				padding-top: 90px;
+				padding-left: 15px;
+				padding-right: 15px;
+			}
+
+			#sidebar {
+				transform: translateX(-100%);
+				transition: transform 0.3s ease;
+			}
+
+			#sidebar.active {
+				transform: translateX(0);
+			}
+		}
+	</style>
 </head>
 
 <body class="bg-light">
 
-<%- include('../partials/coordinatorNavbar') %>
-<%- include('../partials/sidebar') %>
+	<%- include('../partials/coordinatorNavbar') %>
+	<%- include('../partials/sidebar') %>
 
-<main class="container py-4" style="max-width:720px">
-
-  <h5 class="fw-bold text-center mb-3">
-    Add Report – <%= student.fullName %>
-  </h5>
-
-  <div class="card shadow">
-    <div class="card-body">
-
-      <form action="/coordinator/add-report/<%= studentId %>" method="POST">
-
-        <div class="mb-3">
-          <label class="form-label">Report Type</label>
-          <select name="type" id="reportType" class="form-select" required>
-            <option value="">Select</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-          </select>
-        </div>
-
-        <div class="mb-3 d-none" id="dateWrapper">
-          <label class="form-label">Select Date</label>
-          <input type="date" name="reportDate" class="form-control" required>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Score</label>
-          <input type="number" name="score" class="form-control" min="0" max="100" required>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Remarks</label>
-          <textarea name="remarks" class="form-control"></textarea>
-        </div>
-
-        <button class="btn btn-primary w-100">Submit</button>
-      </form>
-
+   <!-- MOBILE TOP BAR -->
+  <div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
+    <div class="d-flex align-items-center justify-content-between px-3" style="height:60px">
+      <img src="/image/logo.png" class="mobile-logo-img" alt="Logo">
+      <button class="btn btn-light" onclick="toggleSidebar()">
+        <i class="bi bi-list fs-4"></i>
+      </button>
     </div>
   </div>
 
-</main>
+	<div class="main-content">
 
-<script>
-  const typeSelect = document.getElementById('reportType');
-  const dateWrapper = document.getElementById('dateWrapper');
+		<div class="card shadow-sm border-0">
 
-  typeSelect.addEventListener('change', () => {
-    dateWrapper.classList.toggle('d-none', !typeSelect.value);
-  });
-</script>
+			<nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+				<ol class="breadcrumb p-3 mb-0">
+					<li class="breadcrumb-item">
+						<a href="/coordinator/dashboard">Home</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="/coordinator/students">Students</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="/coordinator/student/<%= studentId %>">Student Profile</a>
+					</li>
+          <li class="breadcrumb-item">
+						<a href="/coordinator/reports/<%= student._id %>">Reports</a>
+					</li>
+					<li class="breadcrumb-item active">Add Report</li>
+				</ol>
+			</nav>
+
+			<div class="card-body">
+
+				<div class="text-center mb-4">
+					<h3 class="fw-bold heading">
+						Add Report
+          <h6 class="fw-bold">
+						<%= student.fullName.toUpperCase() %>
+					</h6>
+				</div>
+
+				<div class="row justify-content-center">
+					<div class="col-12 col-md-8 col-lg-6">
+
+						<form action="/coordinator/add-report/<%= studentId %>" method="POST">
+
+							<div class="mb-3">
+								<label class="form-label">Report Type</label>
+								<select name="type" id="reportType" class="form-select" required>
+									<option value="">Select</option>
+									<option value="weekly">Weekly</option>
+									<option value="monthly">Monthly</option>
+								</select>
+							</div>
+
+							<div class="mb-3 d-none" id="dateWrapper">
+								<label class="form-label">Select Date</label>
+								<input type="date" name="reportDate" class="form-control" required>
+							</div>
+
+							<div class="mb-3">
+								<label class="form-label">Score</label>
+								<input type="number" name="score" class="form-control"
+									min="0" max="100" required>
+							</div>
+
+							<div class="mb-3">
+								<label class="form-label">Remarks</label>
+								<textarea name="remarks" class="form-control" rows="3"></textarea>
+							</div>
+
+							<button class="btn btn-primary w-100">
+								Submit Report
+							</button>
+
+						</form>
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+	<script>
+		const typeSelect = document.getElementById('reportType');
+		const dateWrapper = document.getElementById('dateWrapper');
+
+		typeSelect.addEventListener('change', () => {
+			dateWrapper.classList.toggle('d-none', !typeSelect.value);
+		});
+
+		 function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    document.addEventListener('click', function (e) {
+      const sidebar = document.getElementById('sidebar');
+      const toggleBtn = document.querySelector('.bi-list')?.parentElement;
+
+      if (
+        window.innerWidth < 768 &&
+        sidebar.classList.contains('active') &&
+        !sidebar.contains(e.target) &&
+        !toggleBtn?.contains(e.target)
+      ) {
+        sidebar.classList.remove('active');
+      }
+    });
+
+	</script>
 
 </body>
 </html>
