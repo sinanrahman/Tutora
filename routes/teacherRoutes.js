@@ -14,10 +14,18 @@ const {
 	viewStudentProfile,
 	updateProfilePic,
 	  viewPendingSalaryPage,
+	  dashboard,
+	  viewStudents,
 } = require('../controllers/teacherController');
 
 //      TEACHER DASHBOARD
-router.route('/dashboard').get(protect, setSidebarMenu, authorize('TEACHER'), teacherDashboard);
+router
+	.route('/dashboard')
+	.get(protect, setSidebarMenu, authorize('TEACHER'), dashboard);
+
+router
+	.route('/students')
+	.get(protect, setSidebarMenu, authorize('TEACHER'), viewStudents);
 
 //      VIEW ALL SESSIONS
 router.route('/sessions').get(protect, setSidebarMenu, authorize('TEACHER'), teacherSessionsPage);

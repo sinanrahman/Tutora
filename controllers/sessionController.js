@@ -15,7 +15,7 @@ exports.submitSession = async (req, res) => {
             durationInHours,
         });
 
-        return res.redirect('/teacher/dashboard');
+        return res.redirect(`/teacher/studentProfile/${student}`);
     } catch (error) {
         console.error(error);
         return res.render('auth/pageNotFound', { msg: 'Error: Session submission failed' });
