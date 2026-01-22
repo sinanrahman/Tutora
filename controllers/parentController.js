@@ -24,7 +24,8 @@ exports.parentDashboard = async (req, res) => {
 
 		const reports = await Report.find({
 			student: student._id,
-			year: currentYear
+			year: currentYear,
+			type: 'monthly',
 		}).select('score');
 
 		if (reports.length > 0) {
