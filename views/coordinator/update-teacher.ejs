@@ -1,18 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Update Teacher</title>
+
+	<!-- Bootstrap -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+	<!-- DataTables -->
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css" />
+
 	<style>
 		.main-content {
 			margin-left: 220px;
 			padding: 20px;
-			padding-top: 80px;
+			margin-top: 40px;
 			min-height: 100vh;
-			background: #f8f9fa;
+			background-color: #f8f9fa;
+		}
+
+		.card {
+			border-radius: 10px;
+		}
+
+		.heading {
+			color: #870216;
+		}
+
+		.mobile-topbar {
+			z-index: 1100;
+		}
+
+		.mobile-logo-img {
+			height: 40px;
+			width: auto;
 		}
 
 		@media (max-width: 768px) {
@@ -30,7 +54,7 @@
 		}
 
 		@media (max-width: 576px) {
-			h1 {
+			h3 {
 				font-size: 1.5rem;
 			}
 
@@ -41,126 +65,145 @@
 		}
 	</style>
 </head>
-<body>
+
+<body class="bg-light">
 	<%- include('../partials/coordinatorNavbar') %>
 	<%- include('../partials/sidebar') %>
+
 	<div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
-			<div class="d-flex align-items-center justify-content-between px-3" style="height: 60px">
-				<img src="/image/logo.png" alt="Logo" class="mobile-logo-img" />
-
-				<button class="btn btn-light" onclick="toggleSidebar()">
-					<i class="bi bi-list fs-4"></i>
-				</button>
-			</div>
+		<div class="d-flex align-items-center justify-content-between px-3" style="height: 60px">
+			<img src="/image/logo.png" alt="Logo" class="mobile-logo-img" />
+			<button class="btn btn-light" onclick="toggleSidebar()">
+				<i class="bi bi-list fs-4"></i>
+			</button>
 		</div>
+	</div>
 
-	<div class="main-content">
-		<nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
-			<ol class="breadcrumb container-fluid my-3 p-2 p-md-3">
-				<li class="breadcrumb-item">
-					<a href="/coordinator/dashboard">Home</a>
-				</li>
-				<li class="breadcrumb-item">
-					<a href="/coordinator/students">students</a>
-				</li>
-				<li class="breadcrumb-item">
-					<a href="/coordinator/student/<%= studentId %>">studentProfile</a>
-				</li>
-				<li class="breadcrumb-item active" aria-current="page">
-					updateTeacher
-				</li>
-			</ol>
-		</nav>
+	<div class="main-content p-5">
+		<div class="card shadow-sm border-0">
+			<nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+				<ol class="breadcrumb p-3">
+					<li class="breadcrumb-item"><a href="/coordinator/dashboard">Home</a></li>
+					<li class="breadcrumb-item"><a href="/coordinator/students">Students</a></li>
+					<li class="breadcrumb-item">
+						<a href="/coordinator/student/<%= studentId %>">Student Profile</a>
+					</li>
+					<li class="breadcrumb-item active">Update Teacher</li>
+				</ol>
+			</nav>
 
-		<h1 class="fw-bold text-center mt-4" style="color:#870216;"> UPDATE TEACHER </h1>
-
-		<div class="container-fluid">
-			<div class="row justify-content-center">
-
-				<div class="col-12 col-lg-10 mt-4">
-					<h5 class="fw-bold text-success mb-3">Assigned Teachers</h5>
-
-					<div class="table-responsive">
-						<table class="table table-hover table-bordered align-middle">
-							<thead class="table-light">
-								<tr>
-									<th>SI NO</th>
-									<th>Name</th>
-									<th>ID</th>
-									<th>Subject</th>
-									<th>Action</th>
-								</tr>
-							</thead>
-							<tbody>
-								<% assignedTeachers.forEach((t, i)=> { %>
-									<tr>
-										<td> <%= i + 1 %> </td>
-										<td> <%= t.fullName %> </td>
-										<td> <%= t.teacherId %> </td>
-										<td> <%= t.subjects %> </td>
-										<td>
-											<a href="/coordinator/update-teacher/<%= studentId %>/remove/<%= t._id %>" class="btn btn-danger btn-sm"> Remove </a>
-										</td>
-									</tr>
-									<% }) %>
-							</tbody>
-						</table>
-					</div>
+			<div class="card-body">
+				<div class="text-center mb-4">
+					<h3 class="fw-bold heading">UPDATE TEACHER</h3>
 				</div>
 
-				<div class="col-12 col-lg-10 mt-5">
-					<h5 class="fw-bold text-success mb-3">Teacher List</h5>
+				<div class="container-fluid">
+					<div class="row justify-content-center">
 
-					<div class="table-responsive">
-						<table class="table table-hover table-bordered align-middle">
-							<thead class="table-light">
-								<tr>
-									<th>SI NO</th>
-									<th>Name</th>
-									<th>ID</th>
-									<th>Subject</th>
-									<th>Action</th>
-								</tr>
-							</thead>
-							<tbody>
-								<% t.forEach((teacher, i)=> {
-									const isAssigned = assignedTeachers.some(a => a._id.toString() === teacher._id.toString());
-								%>
+						<!-- Assigned Teachers -->
+						<div class="col-12 col-lg-10 mt-4">
+							<h5 class="fw-bold text-success mb-3">Assigned Teachers</h5>
 
-								<tr class="<%= isAssigned ? 'table-secondary' : '' %>">
-									<td>
-										<%= i + 1 %>
-									</td>
-									<td>
-										<%= teacher.fullName %>
-									</td>
-									<td>
-										<%= teacher.teacherId %>
-									</td>
-									<td>
-										<%= teacher.subjects %>
-									</td>
-									<td>
-										<% if (isAssigned) { %>
-										<button class="btn btn-secondary btn-sm" disabled> Assigned </button>
-										<% } else { %>
-										<a href="/coordinator/update-teacher/<%= studentId %>/add/<%= teacher._id %>" class="btn btn-success btn-sm">Add </a>
-										<% } %>
-									</td>
-								</tr>
-								<% }) %>
-							</tbody>
-						</table>
+							<div class="table-responsive">
+								<table id="assignedTeachersTable"
+									class="table table-hover table-bordered align-middle">
+									<thead class="table-light">
+										<tr>
+											<th>SI NO</th>
+											<th>Name</th>
+											<th>ID</th>
+											<th>Subject</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										<% assignedTeachers.forEach((t, i)=> { %>
+										<tr>
+											<td><%= i + 1 %></td>
+											<td><%= t.fullName %></td>
+											<td><%= t.teacherId %></td>
+											<td><%= t.subjects %></td>
+											<td>
+												<a href="/coordinator/update-teacher/<%= studentId %>/remove/<%= t._id %>"
+													class="btn btn-danger btn-sm">
+													Remove
+												</a>
+											</td>
+										</tr>
+										<% }) %>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<!-- Teacher List -->
+						<div class="col-12 col-lg-10 mt-5">
+							<h5 class="fw-bold text-success mb-3">Teacher List</h5>
+
+							<div class="table-responsive">
+								<table id="teacherListTable"
+									class="table table-hover table-bordered align-middle">
+									<thead class="table-light">
+										<tr>
+											<th>SI NO</th>
+											<th>Name</th>
+											<th>ID</th>
+											<th>Subject</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										<% t.forEach((teacher, i)=> {
+											const isAssigned = assignedTeachers.some(a =>
+												a._id.toString() === teacher._id.toString());
+										%>
+										<tr class="<%= isAssigned ? 'table-secondary' : '' %>">
+											<td><%= i + 1 %></td>
+											<td><%= teacher.fullName %></td>
+											<td><%= teacher.teacherId %></td>
+											<td><%= teacher.subjects %></td>
+											<td>
+												<% if (isAssigned) { %>
+												<button class="btn btn-secondary btn-sm" disabled>
+													Assigned
+												</button>
+												<% } else { %>
+												<a href="/coordinator/update-teacher/<%= studentId %>/add/<%= teacher._id %>"
+													class="btn btn-success btn-sm">
+													Add
+												</a>
+												<% } %>
+											</td>
+										</tr>
+										<% }) %>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
 					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>
 
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"> </script>
+	<!-- Scripts -->
+	<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
 	<script>
-			function toggleSidebar() {
+		// Initialize DataTables
+		new DataTable('#assignedTeachersTable', {
+			pageLength: 5,
+			lengthChange: false
+		});
+
+		new DataTable('#teacherListTable', {
+			pageLength: 10
+		});
+
+		function toggleSidebar() {
 			document.getElementById('sidebar').classList.toggle('active');
 		}
 
