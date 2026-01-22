@@ -210,95 +210,88 @@ exports.viewReport = async (req, res) => {
 
     let students = [];
 
-    // 1) If req.user.email exists (parent login with email in token/session)
+    // 1️⃣ Parent email based lookup
     if (user.email) {
       const parentEmail = String(user.email).trim();
-      console.log('viewReport: parentEmail from req.user.email:', parentEmail);
-
       students = await Student.find({ parentEmail }).lean();
 
-      // case-insensitive fallback
-      if ((!students || students.length === 0) && parentEmail) {
-        students = await Student.find({ parentEmail: { $regex: `^${parentEmail}$`, $options: 'i' } }).lean();
-        console.log('viewReport: fallback case-insensitive student search used');
+      if (!students.length) {
+        students = await Student.find({
+          parentEmail: { $regex: `^${parentEmail}$`, $options: 'i' }
+        }).lean();
       }
-
-      console.log('viewReport: students found (by parentEmail):', students && students.length ? students.map(s => ({ id: s._id.toString(), parentEmail: s.parentEmail })) : students);
     }
 
-    // 2) If req.user has role PARENT and id (protect middleware stored decoded token with id/role)
-    if ((!students || students.length === 0) && (user.role === 'PARENT' && (user.id || user._id))) {
+    // 2️⃣ Token-based fallback
+    if (!students.length && user.role === 'PARENT' && (user.id || user._id)) {
       const uid = user.id || user._id;
-      console.log('viewReport: trying to treat req.user.id as Student id:', uid);
       const studentDoc = await Student.findById(uid).lean();
       if (studentDoc) students = [studentDoc];
-      console.log('viewReport: student found by id:', studentDoc ? studentDoc._id.toString() : null);
     }
 
-    // 3) Query param fallback (helpful for debugging/admin)
-    if ((!students || students.length === 0) && req.query && req.query.studentId) {
-      const sid = req.query.studentId;
-      console.log('viewReport: using studentId from query:', sid);
-      const studentDoc = await Student.findById(sid).lean();
+    // 3️⃣ Query param fallback
+    if (!students.length && req.query?.studentId) {
+      const studentDoc = await Student.findById(req.query.studentId).lean();
       if (studentDoc) students = [studentDoc];
     }
 
-    if (!students || students.length === 0) {
-      req.flash('error', 'No students found for your account.');
+    // ❌ No student → redirect (original behavior)
+    if (!students.length) {
+      if (req.flash) {
+        req.flash('error', 'No students found for your account.');
+      }
       return res.redirect('/parent/dashboard');
     }
 
-    // Use the first student by default
     const student = students[0];
-    console.log('viewReport: selected student id:', student._id);
+    console.log('Selected student:', student._id);
 
-    // Debug counts
-    const totalReportsCount = await Report.countDocuments();
-    const studentReportsCount = await Report.countDocuments({ student: student._id });
-    const allStudentsReportsCount = await Report.countDocuments({ student: { $in: students.map(s => s._id) } });
-    console.log('Reports counts - total:', totalReportsCount, 'for selected student:', studentReportsCount, 'for all parent students:', allStudentsReportsCount);
-
-    // Primary: fetch reports for the selected student
+    // 📊 Fetch reports (same logic as before)
     let reportsRaw = await Report.find({ student: student._id })
       .sort({ year: 1, month: 1, week: 1 })
       .lean();
 
-    // If none for selected student and parent has multiple students, try fetching all parent's students' reports
-    if ((!reportsRaw || reportsRaw.length === 0) && students.length > 1) {
-      console.log('viewReport: no reports for selected student, trying reports for all parent students');
-      reportsRaw = await Report.find({ student: { $in: students.map(s => s._id) } })
+    // 🔁 Multi-student fallback (unchanged)
+    if (!reportsRaw.length && students.length > 1) {
+      reportsRaw = await Report.find({
+        student: { $in: students.map(s => s._id) }
+      })
         .sort({ year: 1, month: 1, week: 1 })
         .lean();
     }
 
-    console.log('Reports fetched (raw):', reportsRaw && reportsRaw.length ? reportsRaw.map(r => ({ id: r._id.toString(), year: r.year, month: r.month, week: r.week, score: r.score })) : reportsRaw);
-
-    if (!reportsRaw || reportsRaw.length === 0) {
-      req.flash('info', 'No reports available yet for your student(s).');
-      return res.redirect('/parent/dashboard');
+    // ✅ IMPORTANT FIX:
+    // Do NOT redirect if reports are empty
+    if (!reportsRaw) {
+      reportsRaw = [];
     }
 
-    // Transform each report for EJS
-    const reports = reportsRaw.map(r => {
-      return {
-        _id: r._id,
-        score: r.score,
-        remarks: r.remarks,
-        week: r.week,
-        month: r.month,
-        year: r.year,
-        type: r.type,
-        viewDate:r.viewDate
-      };
+    // 🧱 Prepare data for EJS
+    const reports = reportsRaw.map(r => ({
+      _id: r._id,
+      score: r.score,
+      remarks: r.remarks,
+      week: r.week,
+      month: r.month,
+      year: r.year,
+      type: r.type,
+      viewDate: r.viewDate
+    }));
+
+    console.log('Final report count:', reports.length);
+
+    // ✅ Always render page once student exists
+    return res.render('parent/viewReport', {
+      student,
+      reports,
+      activePage: 'reports'
     });
 
-    console.log('Final reports prepared for view (count):', reports.length);
-    console.log(reports)
-
-    return res.render('parent/viewReport', { student, reports, activePage: 'reports' });
   } catch (err) {
     console.error('Error in viewReport:', err);
-    req.flash('error', 'Something went wrong while fetching reports.');
+    if (req.flash) {
+      req.flash('error', 'Something went wrong while fetching reports.');
+    }
     return res.redirect('/parent/dashboard');
   }
 };
