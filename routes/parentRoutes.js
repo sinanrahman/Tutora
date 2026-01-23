@@ -1,5 +1,5 @@
 const express = require('express');
-const { parentDashboard, viewReport , viewPayment, viewClassHistory, viewStudentInvoices, viewStudentInvoicePDF, downloadParentInvoicePDF} = require('../controllers/parentController');
+const { parentDashboard , viewPayment, viewClassHistory, viewStudentInvoices, viewStudentInvoicePDF, downloadParentInvoicePDF, viewReportGraph, viewReportTable, remark} = require('../controllers/parentController');
 const { setSidebarMenu } = require('../middlewares/sidebarMenu');
 const { authorize } = require('../middlewares/roleMiddleware');
 const { protect } = require('../middlewares/authMiddleware');
@@ -11,8 +11,12 @@ router
     .get(protect,setSidebarMenu,authorize('PARENT'),parentDashboard );
  
 router
-    .route('/viewreport')
-    .get(protect,setSidebarMenu,authorize('PARENT'),viewReport)
+    .route('/report/graph')
+    .get(protect,setSidebarMenu,authorize('PARENT'),viewReportGraph)
+
+    router
+    .route('/report/table')
+    .get(protect,setSidebarMenu,authorize('PARENT'),remark)
 
 router
     .route('/payment')
