@@ -176,87 +176,121 @@ exports.downloadParentInvoicePDF = async (req, res) => {
 	}
 };
 
-exports.viewReport = async (req, res) => {
-	try {
-		const user = req.user || {};
-		console.log('viewReport: req.user =', user);
+exports.viewReportGraph = async (req, res) => {
+  try {
+    const user = req.user || {};
+    let students = [];
 
-		let students = [];
+    if (user.email) {
+      const parentEmail = String(user.email).trim();
+      students = await Student.find({ parentEmail }).lean();
 
-		if (user.email) {
-			const parentEmail = String(user.email).trim();
-			students = await Student.find({ parentEmail }).lean();
+      if (!students.length) {
+        students = await Student.find({
+          parentEmail: { $regex: `^${parentEmail}$`, $options: 'i' },
+        }).lean();
+      }
+    }
 
-			if (!students.length) {
-				students = await Student.find({
-					parentEmail: { $regex: `^${parentEmail}$`, $options: 'i' },
-				}).lean();
-			}
-		}
+    if (!students.length && user.role === 'PARENT' && (user.id || user._id)) {
+      const uid = user.id || user._id;
+      const studentDoc = await Student.findById(uid).lean();
+      if (studentDoc) students = [studentDoc];
+    }
 
-		if (!students.length && user.role === 'PARENT' && (user.id || user._id)) {
-			const uid = user.id || user._id;
-			const studentDoc = await Student.findById(uid).lean();
-			if (studentDoc) students = [studentDoc];
-		}
+    if (!students.length && req.query?.studentId) {
+      const studentDoc = await Student.findById(req.query.studentId).lean();
+      if (studentDoc) students = [studentDoc];
+    }
 
-		if (!students.length && req.query?.studentId) {
-			const studentDoc = await Student.findById(req.query.studentId).lean();
-			if (studentDoc) students = [studentDoc];
-		}
+    if (!students.length) {
+      req.flash?.('error', 'No students found.');
+      return res.redirect('/parent/dashboard');
+    }
 
-		if (!students.length) {
-			if (req.flash) {
-				req.flash('error', 'No students found for your account.');
-			}
-			return res.redirect('/parent/dashboard');
-		}
+    const student = students[0];
 
-		const student = students[0];
-		console.log('Selected student:', student._id);
+    const reportsRaw = await Report.find({ student: student._id })
+      .sort({ year: 1, month: 1, week: 1 })
+      .lean();
 
-		let reportsRaw = await Report.find({ student: student._id })
-			.sort({ year: 1, month: 1, week: 1 })
-			.lean();
+    const reports = reportsRaw.map(r => ({
+      _id: r._id,
+      score: r.score,
+      remarks: r.remarks,
+      week: r.week,
+      month: r.month,
+      year: r.year,
+      type: r.type,
+      viewDate: r.viewDate,
+    }));
 
-		if (!reportsRaw.length && students.length > 1) {
-			reportsRaw = await Report.find({
-				student: { $in: students.map((s) => s._id) },
-			})
-				.sort({ year: 1, month: 1, week: 1 })
-				.lean();
-		}
-
-		if (!reportsRaw) {
-			reportsRaw = [];
-		}
-
-		const reports = reportsRaw.map((r) => ({
-			_id: r._id,
-			score: r.score,
-			remarks: r.remarks,
-			week: r.week,
-			month: r.month,
-			year: r.year,
-			type: r.type,
-			viewDate: r.viewDate,
-		}));
-
-		console.log('Final report count:', reports.length);
-
-		return res.render('parent/viewReport', {
-			student,
-			reports,
-			activePage: 'reports',
-		});
-	} catch (err) {
-		console.error('Error in viewReport:', err);
-		if (req.flash) {
-			req.flash('error', 'Something went wrong while fetching reports.');
-		}
-		return res.redirect('/parent/dashboard');
-	}
+    return res.render('parent/viewReport', {
+      student,
+      reports,
+      activePage: 'reports',
+    });
+  } catch (err) {
+    console.error(err);
+    req.flash?.('error', 'Error loading report');
+    res.redirect('/parent/dashboard');
+  }
 };
+
+
+exports.remark = async (req, res) => {
+  try {
+    const user = req.user || {};
+    let students = [];
+
+    if (user.email) {
+      const parentEmail = String(user.email).trim();
+      students = await Student.find({ parentEmail }).lean();
+    }
+
+    if (!students.length && req.query?.studentId) {
+      const studentDoc = await Student.findById(req.query.studentId).lean();
+      if (studentDoc) students = [studentDoc];
+    }
+
+    if (!students.length) {
+      req.flash?.('error', 'No students found.');
+      return res.redirect('/parent/dashboard');
+    }
+
+    const student = students[0];
+
+    // ✅ CORRECT SORTING
+    const reportsRaw = await Report.find({ student: student._id })
+      .sort({ createdAt: -1 }) // 🔥 newest added first
+      .lean();
+
+    const reports = reportsRaw.map(r => ({
+      score: r.score,
+      remarks: r.remarks,
+      week: r.week,
+      month: r.month,
+      year: r.year,
+      type: r.type,
+      viewDate: r.viewDate,
+      createdAt: r.createdAt,
+    }));
+
+    return res.render('parent/remark', {
+      student,
+      reports,
+      activePage: 'reports',
+    });
+  } catch (err) {
+    console.error(err);
+    res.redirect('/parent/dashboard');
+  }
+};
+
+
+
+
+
 
 exports.viewClassHistory = async (req, res) => {
 	try {
