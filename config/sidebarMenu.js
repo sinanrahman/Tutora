@@ -20,11 +20,4 @@ module.exports = {
 		{ key: 'sessions', label: 'Session List', url: '/teacher/sessions' },
 		{ key: 'teacherProfile', label: 'Teacher Profile', url: '/teacher/profile' },
 	],
-
-	PARENT: [
-		{ key: 'dashboard', label: 'Dashboard', url: '/parent/dashboard' },
-		{ key: 'payments', label: 'Payments', url: '/parent/payment' },
-		{ key: 'reports', label: 'Reports', url: '/parent/viewreport' },
-		{ key: 'sessions', label: 'Class History', url: '/parent/sessions' },
-	],
 };
