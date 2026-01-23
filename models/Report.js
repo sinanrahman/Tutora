@@ -24,7 +24,11 @@ const reportSchema = new mongoose.Schema(
 			type: String,
 			trim: true,
 		},
-
+		day: {
+			type: Number,
+			min: 1,
+			max: 31
+		},
 		week: {
 			type: Number,
 			min: 1,
@@ -46,8 +50,8 @@ const reportSchema = new mongoose.Schema(
 			enum: ['weekly', 'monthly'],
 			required: true,
 		},
-		viewDate:{
-			type:String
+		viewDate: {
+			type: String
 		}
 	},
 	{ timestamps: true }
