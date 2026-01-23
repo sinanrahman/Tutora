@@ -9,7 +9,10 @@ const puppeteer = require('puppeteer');
 
 exports.parentDashboard = async (req, res) => {
 	try {
-		const student = await Student.findById(req.user.id).populate('coordinator', 'fullName');
+		const student = await Student.findById(req.user.id).populate(
+			'coordinator',
+			'fullName'
+		);
 
 		const currentYear = new Date().getFullYear();
 
@@ -32,17 +35,9 @@ exports.parentDashboard = async (req, res) => {
 			const totalScore = reports.reduce((sum, r) => sum + r.score, 0);
 			avgPerformance = Math.round(totalScore / reports.length);
 		}
-		let hoursLeft = 0;
 
-		if (student?.package?.endDate) {
-			const now = new Date();
-			const endDate = new Date(student.package.endDate);
-
-			const diffMs = endDate - now;
-			hoursLeft = diffMs > 0
-				? Math.ceil(diffMs / (1000 * 60 * 60))
-				: 0;
-		}
+		// ✅ FIX: show remaining package hours (not date-based expiry)
+		const hoursLeft = student?.remainingHours ?? 0;
 
 		res.render('parent/dashboard', {
 			activePage: 'dashboard',
@@ -50,7 +45,7 @@ exports.parentDashboard = async (req, res) => {
 			latestReport,
 			avgPerformance,
 			currentYear,
-			hoursLeft
+			hoursLeft,
 		});
 	} catch (err) {
 		console.error(err);
@@ -59,6 +54,7 @@ exports.parentDashboard = async (req, res) => {
 		});
 	}
 };
+
 
 exports.viewPayment = async (req, res) => {
 	try {
