@@ -33,12 +33,26 @@ exports.parentDashboard = async (req, res) => {
 			avgPerformance = Math.round(totalScore / reports.length);
 		}
 
+// 🔹 Calculate hours left till package expiry
+let hoursLeft = 0;
+
+if (student?.package?.endDate) {
+  const now = new Date();
+  const endDate = new Date(student.package.endDate);
+
+  const diffMs = endDate - now;
+  hoursLeft = diffMs > 0
+    ? Math.ceil(diffMs / (1000 * 60 * 60))
+    : 0;
+}
+
 		res.render('parent/dashboard', {
 			activePage: 'dashboard',
 			student,
 			latestReport,
 			avgPerformance,
 			currentYear,
+			hoursLeft
 		});
 	} catch (err) {
 		console.error(err);
