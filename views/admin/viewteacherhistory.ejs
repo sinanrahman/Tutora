@@ -55,7 +55,7 @@
                 <% tsHistory.forEach((s, i) => { %>
                 <tr>
                   <td><%= i + 1 %></td>
-                  <td><%= s.student.fullName %></td>
+<td><%= s.student?.fullName || 'Student Removed' %></td>
                   <td><%= s.type %></td>
                   <td><%= s.durationInHours %> hrs</td>
                   <td><%= new Date(s.date).toLocaleDateString() %></td>
