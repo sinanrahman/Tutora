@@ -399,6 +399,10 @@ exports.postAddReport = async (req, res) => {
 		}
 
 		reportData.viewDate = viewDate;
+		reportData.day = selectedDate.getDate();
+		reportData.month = getMonth(selectedDate) + 1;
+		reportData.year = getYear(selectedDate);
+
 
 		await Report.create(reportData);
 

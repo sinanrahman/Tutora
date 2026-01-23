@@ -1,164 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Pending Salary</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	  	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"rel="stylesheet"/>
 
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<style>
-    	.mobile-logo-img {
-  height: 40px;
-  width: auto;
-}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-.mobile-topbar {
-  z-index: 1100;
-}
-		.heading {
-		color: #870216;
-	}
-	
-</style>
+  <!-- DataTables -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css">
+
+  <style>
+    .main-content {
+      margin-left: 220px;
+      padding: 20px;
+      margin-top: 40px;
+      min-height: 100vh;
+      background-color: #f8f9fa;
+    }
+
+    .heading {
+      color: #870216;
+    }
+
+    .mobile-topbar {
+      z-index: 1100;
+    }
+
+    .mobile-logo-img {
+      height: 40px;
+      width: auto;
+    }
+
+    .dashboard-link {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-3px);
+      transition: 0.3s;
+    }
+  </style>
+</head>
 
 <body class="bg-light">
 
   <%- include('../partials/teacherNavbar') %>
   <%- include('../partials/sidebar') %>
 
+  <!-- Mobile Topbar -->
   <div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
-			<div class="d-flex align-items-center justify-content-between px-3" style="height: 60px">
-				<img src="/image/logo.png" alt="Logo" class="mobile-logo-img" />
-
-				<button class="btn btn-light" onclick="toggleSidebar()">
-					<i class="bi bi-list fs-4"></i>
-				</button>
-			</div>
-		</div>
-
-  <div class="main-content mt-5 pt-3">
-
-    <nav style="--bs-breadcrumb-divider: '>'">
-      <ol class="breadcrumb p-3">
-        <li class="breadcrumb-item">
-          <a href="/teacher/dashboard">Home</a>
-        </li>
-        <li class="breadcrumb-item">
-          <a href="/teacher/profile">profile</a>
-        </li>
-        <li class="breadcrumb-item active">Pending Salary</li>
-      </ol>
-    </nav>
-
-    <div class="container-fluid">
-      <div class="card shadow-sm">
-   <div class="card-body">
-
-  <h3 class="fw-bold heading mb-4">
-    Pending Salary Summary
-  </h3>
-
-  <div class="row text-center">
-
-    <div class="col-md-3 mb-3">
-      <label class="fw-semibold text-muted">Total Hours</label>
-      <h5><%= totalDuration %> hrs</h5>
+    <div class="d-flex align-items-center justify-content-between px-3" style="height:60px">
+      <img src="/image/logo.png" class="mobile-logo-img">
+      <button class="btn btn-light" onclick="toggleSidebar()">
+        <i class="bi bi-list fs-4"></i>
+      </button>
     </div>
-
-    <div class="col-md-3 mb-3">
-      <label class="fw-semibold text-muted">Total Earnings</label>
-      <h5>₹ <%= totalEarnings %></h5>
-    </div>
-
-    <div class="col-md-3 mb-3">
-      <label class="fw-semibold text-muted">Total Paid</label>
-      <h5 class="text-success">₹ <%= totalPaid %></h5>
-    </div>
-
-    <div class="col-md-3 mb-3">
-      <label class="fw-semibold text-danger">Pending Salary</label>
-      <h4 class="fw-bolder text-danger">
-        ₹ <%= pendingSalary %>
-      </h4>
-    </div>
-
   </div>
 
-  <hr class="my-5">
+  <div class="main-content">
 
-  <h3 class="fw-bolder bg-light heading d-flex justify-content-between align-items-center px-2">
-    <span>My Received Salary</span>
-    <span class="fs-5 text-dark">
-      Total: ₹ <%= allPaidSalary %>
-    </span>
-  </h3>
+    <div class="card shadow-sm border-0">
+      <nav style="--bs-breadcrumb-divider:'>'" aria-label="breadcrumb">
+        <ol class="breadcrumb p-3">
+          <li class="breadcrumb-item"><a href="/teacher/Dashboard">Home</a></li>
+          <li class="breadcrumb-item"><a href="/teacher/profile">Profile</a></li>
+          <li class="breadcrumb-item active">Salary</li>
+        </ol>
+      </nav>
 
-  <div class="table-responsive mt-3">
-    <table class="table table-bordered table-hover align-middle">
-      <thead class="table-light text-center">
-        <tr>
-          <th>#</th>
-          <th>Description</th>
-          <th>Amount (₹)</th>
-          <th>Paid Date</th>
-          <th>Status</th>
-        </tr>
-      </thead>
+      <div class="card-body">
 
-      <tbody>
-        <% if(allSalary.length === 0){ %>
-          <tr class="text-center">
-            <td colspan="5">No salary paid yet</td>
-          </tr>
-        <% } %>
+        <h3 class="fw-bold fs-2 mb-4 text-center heading">
+          SALARY SUMMARY
+        </h3>
 
-        <% allSalary.forEach((salary, i) => { %>
-          <tr class="text-center">
-            <td><%= i + 1 %></td>
-            <td><%= salary.description %></td>
-            <td><%= salary.amount %></td>
-            <td>
-              <%= salary.paidDate
-                ? new Date(salary.paidDate).toLocaleDateString('en-IN')
-                : '—' %>
-            </td>
-            <td>
-              <span class="badge bg-success">Paid</span>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  </div>
+        <!-- ===== SUMMARY CARDS ===== -->
+        <div class="row justify-content-center g-4 mb-5">
 
-</div>
+          <div class="col-md-3 col-6">
+            <div class="card shadow-sm border-0 dashboard-card text-center bg-primary">
+              <div class="card-body py-4">
+                <h6 class="text-muted mb-2">
+                  <i class="bi bi-clock-history me-2"></i>Total Hours
+                </h6>
+                <h3 class="fw-medium"><%= totalDuration %> hrs</h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-6">
+            <div class="card shadow-sm border-0 dashboard-card text-center bg-info">
+              <div class="card-body py-4">
+                <h6 class="text-muted mb-2">
+                  <i class="bi bi-currency-rupee me-2"></i>Total Earnings
+                </h6>
+                <h3 class="fw-medium">₹ <%= totalEarnings %></h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-6">
+            <div class="card shadow-sm border-0 dashboard-card text-center bg-success">
+              <div class="card-body py-4">
+                <h6 class="text-muted mb-2">
+                  <i class="bi bi-check-circle-fill me-2"></i>Total Salary Paid
+                </h6>
+                <h3 class="fw-medium">₹ <%= totalPaid %></h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-6">
+            <div class="card shadow-sm border-0 dashboard-card text-center bg-danger">
+              <div class="card-body py-4">
+                <h6 class="text-muted mb-2">
+                  <i class="bi bi-exclamation-circle-fill me-2"></i>Pending Salary
+                </h6>
+                <h3 class="fw-medium">₹ <%= pendingSalary %></h3>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ===== TABLE HEADER ===== -->
+        <h4 class="fw-bold heading d-flex justify-content-between align-items-center mb-3">
+          <span>My Received Salary</span>
+         
+        </h4>
+
+        <!-- ===== DATATABLE ===== -->
+        <div class="table-responsive">
+          <table class="table table-striped align-middle" id="salaryTable">
+            <thead class="table-light text-center">
+              <tr>
+                <th>#</th>
+                <th>Description</th>
+                <th>Amount (₹)</th>
+                <th>Paid Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if(allSalary.length === 0){ %>
+                <tr class="text-center">
+                  <td colspan="5">No salary paid yet</td>
+                </tr>
+              <% } %>
+
+              <% allSalary.forEach((salary, i)=>{ %>
+                <tr class="text-center">
+                  <td><%= i + 1 %></td>
+                  <td><%= salary.description %></td>
+                  <td><%= salary.amount %></td>
+                  <td>
+                    <%= salary.paidDate
+                      ? new Date(salary.paidDate).toLocaleDateString('en-IN')
+                      : '—' %>
+                  </td>
+                  <td>
+                    <span class="badge bg-success">Paid</span>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
 
       </div>
     </div>
-
   </div>
 
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-   <script>
-    	function toggleSidebar() {
-			document.getElementById('sidebar').classList.toggle('active');
-		}
+  <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
 
-		document.addEventListener('click', function (e) {
-			const sidebar = document.getElementById('sidebar');
-			const toggleBtn = document.querySelector('.bi-list')?.parentElement;
+  <script>
+    new DataTable('#salaryTable');
 
-			if (
-				window.innerWidth < 768 &&
-				sidebar.classList.contains('active') &&
-				!sidebar.contains(e.target) &&
-				!toggleBtn?.contains(e.target)
-			) {
-				sidebar.classList.remove('active');
-			}
-		});
-    </script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    document.addEventListener('click', function (e) {
+      const sidebar = document.getElementById('sidebar');
+      const toggleBtn = document.querySelector('.bi-list')?.parentElement;
+
+      if (
+        window.innerWidth < 768 &&
+        sidebar.classList.contains('active') &&
+        !sidebar.contains(e.target) &&
+        !toggleBtn?.contains(e.target)
+      ) {
+        sidebar.classList.remove('active');
+      }
+    });
+  </script>
+
 </body>
 </html>

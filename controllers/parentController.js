@@ -3,7 +3,7 @@ const Report = require('../models/Report');
 const Session = require('../models/Session');
 const Invoice = require('../models/Invoice');
 const fs = require('fs');
-const path = require('path'); // ✅ REQUIRED
+const path = require('path');
 const ejs = require('ejs');
 const puppeteer = require('puppeteer');
 
@@ -32,19 +32,17 @@ exports.parentDashboard = async (req, res) => {
 			const totalScore = reports.reduce((sum, r) => sum + r.score, 0);
 			avgPerformance = Math.round(totalScore / reports.length);
 		}
+		let hoursLeft = 0;
 
-// 🔹 Calculate hours left till package expiry
-let hoursLeft = 0;
+		if (student?.package?.endDate) {
+			const now = new Date();
+			const endDate = new Date(student.package.endDate);
 
-if (student?.package?.endDate) {
-  const now = new Date();
-  const endDate = new Date(student.package.endDate);
-
-  const diffMs = endDate - now;
-  hoursLeft = diffMs > 0
-    ? Math.ceil(diffMs / (1000 * 60 * 60))
-    : 0;
-}
+			const diffMs = endDate - now;
+			hoursLeft = diffMs > 0
+				? Math.ceil(diffMs / (1000 * 60 * 60))
+				: 0;
+		}
 
 		res.render('parent/dashboard', {
 			activePage: 'dashboard',
