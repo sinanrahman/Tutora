@@ -135,12 +135,62 @@
   <nav class="navbar fixed-top navbar-expand-lg parent-navbar">
     <div class="container-fluid">
 
-      <!-- Logo -->
-      <div class="d-flex align-items-center">
-        <a class="navbar-brand" href="/parent/dashboard">
-          <img src="/image/logo.png" class="navbar-logo">
-        </a>
-        <span class="panel-badge d-none d-lg-inline">Parent Panel</span>
+    <!-- Logo -->
+    <div class="d-flex align-items-center">
+      <a class="navbar-brand" href="/parent/dashboard">
+        <img src="/image/logo.png" class="navbar-logo">
+      </a>
+      <span class="panel-badge d-none d-lg-inline">Parent Panel</span>
+    </div>
+
+    <!-- Mobile toggle -->
+    <button
+      class="navbar-toggler d-lg-none"
+      type="button"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#parentMenu"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- DESKTOP MENU -->
+    <div class="collapse navbar-collapse d-none d-lg-flex">
+      <ul class="navbar-nav ms-auto align-items-center gap-2">
+
+        <li class="nav-item">
+          <a class="nav-link" href="/parent/dashboard">Dashboard</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/parent/payment">Payments</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/parent/report/graph">Reports</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/parent/sessions">Class History</a>
+        </li>
+	  </ul>
+       <button
+    class="btn btn-danger ms-3"
+    data-bs-toggle="modal"
+    data-bs-target="#logoutModal"
+  >
+    Logout <i class="bi bi-box-arrow-right ms-1"></i>
+  </button>
+</div>
+    </div>
+
+  </div>
+</nav>
+<div class="modal fade" id="logoutModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Logout</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
       <!-- Mobile toggle -->
@@ -211,6 +261,7 @@
       <button class="btn-close" data-bs-dismiss="offcanvas"></button>
     </div>
 
+<<<<<<< HEAD
     <div class="offcanvas-body d-flex flex-column">
       <ul class="navbar-nav mb-4">
         <li class="nav-item <%= activePage === 'dashboard' ? 'active' : '' %>"><a class="nav-link"
@@ -222,6 +273,15 @@
         <li class="nav-item <%= activePage === 'sessions' ? 'active' : '' %>"><a class="nav-link"
             href="/parent/sessions">Class History</a></li>
       </ul>
+=======
+  <div class="offcanvas-body d-flex flex-column">
+    <ul class="navbar-nav mb-4">
+      <li><a class="nav-link" href="/parent/dashboard">Dashboard</a></li>
+      <li><a class="nav-link" href="/parent/payment">Payments</a></li>
+      <li><a class="nav-link" href="/parent/report/graph">Reports</a></li>
+      <li><a class="nav-link" href="/parent/sessions">Class History</a></li>
+    </ul>
+>>>>>>> main
 
       <div class="mt-auto text-center">
         <i class="bi bi-person-circle fs-1"></i>
