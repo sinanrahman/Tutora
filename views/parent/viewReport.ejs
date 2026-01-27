@@ -226,9 +226,9 @@
 								data: payload.data,
 								spanGaps: true,
 								tension: 0.35,
-								pointRadius: 2,
+								pointRadius: 5,
 								pointHoverRadius: 7,
-								hitRadius: 15,
+								hitRadius: 35,
 							         borderColor: '#870216',
 								borderWidth: 2,
 				      backgroundColor: (() => {
@@ -245,7 +245,7 @@
 							responsive: true,
 							maintainAspectRatio: false,
 							devicePixelRatio: window.devicePixelRatio || 1,
-							interaction: { mode: 'index', intersect: false },
+							interaction: { mode: 'nearest', intersect: true },
 							plugins: { legend: { display: false } },
 							scales: {
 								y: { min: 0, max: 100 },
