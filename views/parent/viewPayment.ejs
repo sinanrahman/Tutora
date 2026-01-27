@@ -1,167 +1,412 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Student Payment Details</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <title>Payment Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <!-- Bootstrap (match project) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
 
-  <style>
-    .main-content {
-      padding: 20px;
+ <style>
+  body { background-color: #f2f2f2; }
+
+  .heading { color: #870216; }
+
+  /* Controls */
+  .controls-row {
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+  }
+
+  .controls-left,
+  .controls-right {
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+
+  /* Payment cards (Remarks-style) */
+  .payment-card {
+    border-radius: 18px;
+    border: none;
+    background: #fff;
+    box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+    transition: transform .2s ease;
+    height: 100%;
+  }
+
+  .payment-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .card-meta {
+    font-size: .75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .card-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #212529;
+  }
+
+  .badge-paid {
+    background: #198754;
+    border-radius: 14px;
+    padding: 6px 14px;
+    font-size: .75rem;
+  }
+
+  .badge-unpaid {
+    background: #dc3545;
+    border-radius: 14px;
+    padding: 6px 14px;
+    font-size: .75rem;
+  }
+
+  .view-btn {
+    border-radius: 12px;
+    font-weight: 600;
+  }
+
+  .no-records {
+    min-height: 160px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#6c757d;
+  }
+
+  .pagination-row {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:20px;
+  }
+
+  @media (max-width:768px) {
+    .controls-row {
+      flex-direction:column;
+      align-items:stretch;
     }
+  }
+</style>
 
-    @media (max-width: 768px) {
-      .main-content {
-        margin-left: 0;
-        padding-top: 90px;
-      }
-    }
-
-    table {
-      white-space: nowrap;
-    }
-  </style>
 </head>
 
-<body class="bg-light">
+<body>
 
 <%- include('../partials/parentNavbar') %>
 
-
-<!-- Mobile Topbar -->
-<!-- <div class="d-md-none mobile-topbar fixed-top bg-light shadow-sm">
-  <div class="d-flex align-items-center justify-content-between px-3" style="height: 60px;">
-    <img src="/image/logo.png" alt="Logo" class="mobile-logo-img">
-    <button class="btn btn-light" onclick="toggleSidebar()">
-      <i class="bi bi-list fs-4"></i>
-    </button>
-  </div>
-</div> -->
-
 <div class="main-content">
-  <div class="container-fluid py-4">
+  <div class="container py-4">
 
-    <div class="card shadow-sm border-0">
-      <div class="card-body">
+    <div class="card rounded-4 shadow-sm p-3">
 
-        <!-- Breadcrumb -->
-        <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
-          <ol class="breadcrumb p-3 mb-0">
-            <li class="breadcrumb-item">
-              <a href="/parent/dashboard">Home</a>
-            </li>
-            <li class="breadcrumb-item active">Payment</li>
-          </ol>
-        </nav>
+      <!-- Breadcrumb -->
+      <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+        <ol class="breadcrumb p-2 mb-2">
+          <li class="breadcrumb-item"><a href="/parent/dashboard">Home</a></li>
+          <li class="breadcrumb-item active">Payments</li>
+        </ol>
+      </nav>
 
-        <!-- Heading -->
-        <div class="text-center mb-4">
-          <h3 class="fw-bold fs-2" style="color:#870216;">PAYMENT DETAILS</h3>
+      <h4 class="fw-bold fs-2 heading text-center mb-3">Payment Details</h4>
+
+      <!-- Small controls (mobile-first) -->
+      <div class="controls-row mb-3">
+
+        <div class="controls-left">
+          <select id="statusFilter" class="form-select form-select-sm small-filter" aria-label="Status filter">
+            <option value="all">All</option>
+            <option value="paid">Paid</option>
+            <option value="unpaid">Unpaid</option>
+          </select>
+
+          <select id="sortBy" class="form-select form-select-sm small-filter" aria-label="Sort by">
+            <option value="new">Date: Newest</option>
+            <option value="old">Date: Oldest</option>
+            <option value="amount-desc">Amount: High → Low</option>
+            <option value="amount-asc">Amount: Low → High</option>
+          </select>
+
+          <!-- <div class="form-check form-switch ms-1">
+            <input class="form-check-input" type="checkbox" id="expiringToggle" />
+            <label class="form-check-label small" for="expiringToggle">Expiring soon</label>
+          </div> -->
         </div>
 
-        <!-- Table -->
-        <div class="table-responsive">
-          <table class="table table-hover table-striped align-middle w-100">
+        <div class="controls-right">
+          <div class="input-group input-group-sm small-search">
+            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <input id="searchInput" type="search" class="form-control form-control-sm" placeholder="Search amount, hrs ,..." />
+          </div>
 
-            <thead class="table-light">
-              <tr>
-                <th>Sl No</th>
-                <th>Package Hours</th>
-                <th>Amount Paid</th>
-                <th>Payment Date</th>
-                <th>Remaining Hours</th>
-                <th>Package End Date</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
+          <div class="small text-muted align-self-center d-none d-sm-block">
+            <span id="visibleCount">0</span> / <strong id="totalCount">0</strong>
+          </div>
+        </div>
+      </div>
 
-            <tbody>
-              <% if (student && invoices && invoices.length > 0) { %>
-                <% invoices.forEach((invoice, index) => { %>
-                  <tr>
-                    <td><%= index + 1 %></td>
-                    
-                    <td><%= invoice.packageHours || student.package?.hours || 0 %> hrs</td>
+      <!-- Cards grid -->
+      <div id="paymentsContainer" class="row g-3">
+        <!-- JS will inject cards here -->
+      </div>
 
-                    <td>₹ <%= invoice.amount || 0 %></td>
+      <!-- No records -->
+      <div id="noRecords" class="no-records d-none mt-3">No payment records found</div>
 
-                    <td>
-                      <%= invoice.date
-                        ? new Date(invoice.date).toDateString()
-                        : 'N/A' %>
-                    </td>
+      <!-- Pagination bottom -->
+      <div class="pagination-row">
+          <button id="prevBtn" class="btn btn-outline-secondary btn-sm" disabled>
+            <i class="bi bi-chevron-left"></i> Previous
+          </button>
+            <div class="text-muted small">
+          Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
+        </div>
+          <button id="nextBtn" class="btn btn-outline-secondary btn-sm" disabled>
+            Next <i class="bi bi-chevron-right"></i>
+          </button>
+      </div>
 
-                    <td class="<%= student.remainingHours < 0 ? 'text-danger' : 'text-dark' %>">
-                      <%= student.remainingHours %> hrs
-                    </td>
+    </div>
+  </div>
+</div>
 
-                    <td>
-                      <%= student.package?.endDate
-                        ? new Date(student.package.endDate).toDateString()
-                        : 'N/A' %>
-                    </td>
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  (function () {
+    // Server data
+    const rawInvoices = <%- JSON.stringify(invoices || []) %>;
+    const student = <%- JSON.stringify(student || {}) %>;
 
-                    <td>
-                      <% if (student.remainingHours > 0) { %>
-                        <span class="badge bg-success">ACTIVE</span>
-                      <% } else { %>
-                        <span class="badge bg-danger">EXPIRED</span>
-                      <% } %>
-                    </td>
+    const PAGE_SIZE = 10;
 
-                    <td>
-                      <a href="/parent/invoice/<%= invoice.id %>" class="btn btn-sm btn-warning">
-                        <i class="bi bi-eye"></i> View Invoice
-                      </a>
-                    </td>
-                  </tr>
-                <% }) %>
-              <% } else { %>
-                <tr>
-                  <td colspan="10" class="text-center text-muted">
-                    No payment records found
-                  </td>
-                </tr>
-              <% } %>
-            </tbody>
+    // State
+    let state = {
+      list: [],
+      page: 1,
+      pageSize: PAGE_SIZE,
+      filters: {
+        status: 'all',
+        search: '',
+        sort: 'new',
+        expiring: false
+      }
+    };
 
-          </table>
+    // Helpers
+    function isPaid(inv) {
+      if (typeof inv.paid === 'boolean') return inv.paid;
+      if (inv.status && typeof inv.status === 'string') return /paid/i.test(inv.status);
+      return !!(inv.amount && inv.date); // fallback heuristic
+    }
+
+    function formatDate(d) {
+      if (!d) return 'N/A';
+      const dt = new Date(d);
+      if (isNaN(dt)) return 'N/A';
+      return dt.toDateString();
+    }
+
+    function daysUntil(date) {
+      if (!date) return Infinity;
+      const d = new Date(date);
+      const now = new Date();
+      const diff = d - now;
+      return Math.ceil(diff / (1000*60*60*24));
+    }
+
+    function applyAll() {
+      const f = state.filters;
+      let list = rawInvoices.slice();
+
+      // search
+      const q = (f.search || '').trim().toLowerCase();
+      if (q) {
+        list = list.filter(inv => {
+          const amount = String(inv.amount || '').toLowerCase();
+          const hours = String(inv.packageHours || (student.package?.hours || '')).toLowerCase();
+          const id = String(inv.id || inv._id || '').toLowerCase();
+          const dateStr = inv.date ? new Date(inv.date).toDateString().toLowerCase() : '';
+          return amount.includes(q) || hours.includes(q) || id.includes(q) || dateStr.includes(q);
+        });
+      }
+
+      // status
+      if (f.status === 'paid') list = list.filter(isPaid);
+      else if (f.status === 'unpaid') list = list.filter(inv => !isPaid(inv));
+
+      // expiring soon (packages ending within 7 days) - uses student.package.endDate
+      if (f.expiring) {
+        list = list.filter(inv => {
+          const end = inv.packageEnd || student.package?.endDate;
+          return typeof end !== 'undefined' && daysUntil(end) <= 7;
+        });
+      }
+
+      // sort
+      if (f.sort === 'new') list.sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
+      else if (f.sort === 'old') list.sort((a,b) => new Date(a.date || 0) - new Date(b.date || 0));
+      else if (f.sort === 'amount-desc') list.sort((a,b) => (b.amount || 0) - (a.amount || 0));
+      else if (f.sort === 'amount-asc') list.sort((a,b) => (a.amount || 0) - (b.amount || 0));
+
+      state.list = list;
+      state.page = 1; // reset to first page when filters change
+      render();
+    }
+
+   function renderCard(inv) {
+  const paid = isPaid(inv);
+  const pkgHours = inv.packageHours ?? student.package?.hours ?? 0;
+  const remaining = typeof student.remainingHours !== 'undefined' ? student.remainingHours : '-';
+  const packageEnd = inv.packageEnd ?? student.package?.endDate;
+  const paymentDate = inv.date ? formatDate(inv.date) : 'N/A';
+  const amount = inv.amount ?? 0;
+  const invoiceId = inv.id || inv._id || '';
+
+  return `
+    <div class="col-md-6 col-lg-4">
+      <div class="card payment-card p-4">
+
+        <div class="d-flex justify-content-between mb-3">
+          <span class="text-muted fw-semibold">
+            <i class="bi bi-calendar-event"></i> ${paymentDate}
+          </span>
+
+          <span class="badge ${paid ? 'badge-paid' : 'badge-unpaid'} text-white p-2 fw-bold">
+            ${paid ? 'PAID' : 'UNPAID'}
+          </span>
         </div>
 
-        <div class="mt-3">
-          <a href="/parent/dashboard" class="btn btn-secondary">Back</a>
+        <div class="row mb-3">
+          <div class="col-6">
+            <div class="card-meta">Package Hours</div>
+            <div class="card-value">${pkgHours} hrs</div>
+          </div>
+
+          <div class="col-6 text-end">
+            <div class="card-meta">Amount</div>
+            <div class="card-value">₹ ${amount}</div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          
+        <div class="col-6 text-start">
+          <div class="card-meta">Package End</div>
+            <div class="small text-muted">
+              ${packageEnd ? formatDate(packageEnd) : 'N/A'}
+            </div>
+          </div>
+        </div>
+
+        <div class="text-end">
+          <a href="/parent/invoice/${invoiceId}"
+             class="btn btn-outline-danger btn-sm view-btn">
+            <i class="bi bi-eye"></i> View Invoice
+          </a>
         </div>
 
       </div>
     </div>
+  `;
+}
 
-  </div>
-</div>
+    function render() {
+      const container = document.getElementById('paymentsContainer');
+      const totalCountEl = document.getElementById('totalCount');
+      const visibleCountEl = document.getElementById('visibleCount');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const currentPageEl = document.getElementById('currentPage');
+      const totalPagesEl = document.getElementById('totalPages');
+      const noRecords = document.getElementById('noRecords');
 
-<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+      const list = state.list;
+      const total = list.length;
+      totalCountEl.textContent = total;
+      const pageSize = state.pageSize;
+      const totalPages = Math.max(1, Math.ceil(total / pageSize));
+      if (state.page > totalPages) state.page = totalPages;
 
-<script>
-  // function toggleSidebar() {
-  //   document.getElementById('sidebar').classList.toggle('active');
-  // }
+      const start = (state.page - 1) * pageSize;
+      const end = Math.min(total, start + pageSize);
+      visibleCountEl.textContent = total === 0 ? 0 : `${start + 1}-${end}`;
+      currentPageEl.textContent = state.page;
+      totalPagesEl.textContent = totalPages;
 
-  // document.addEventListener('click', function (e) {
-  //   const sidebar = document.getElementById('sidebar');
-  //   const toggleBtn = document.querySelector('.bi-list')?.parentElement;
+      prevBtn.disabled = state.page <= 1;
+      nextBtn.disabled = state.page >= totalPages;
 
-  //   if (
-  //     window.innerWidth < 768 &&
-  //     sidebar.classList.contains('active') &&
-  //     !sidebar.contains(e.target) &&
-  //     !toggleBtn?.contains(e.target)
-  //   ) {
-  //     sidebar.classList.remove('active');
-  //   }
-  // });
+      if (total === 0) {
+        container.innerHTML = '';
+        noRecords.classList.remove('d-none');
+        return;
+      } else {
+        noRecords.classList.add('d-none');
+      }
+
+      const slice = list.slice(start, end);
+      const html = slice.map(inv => renderCard(inv)).join('');
+      container.innerHTML = html;
+    }
+
+    // Event bindings
+    document.getElementById('statusFilter').addEventListener('change', (e) => {
+      state.filters.status = e.target.value;
+      applyAll();
+    });
+    document.getElementById('sortBy').addEventListener('change', (e) => {
+      state.filters.sort = e.target.value;
+      applyAll();
+    });
+    // document.getElementById('expiringToggle').addEventListener('change', (e) => {
+    //   state.filters.expiring = e.target.checked;
+    //   applyAll();
+    // });
+
+    const searchInput = document.getElementById('searchInput');
+    let searchTimer = null;
+    searchInput.addEventListener('input', (e) => {
+      state.filters.search = e.target.value;
+      if (searchTimer) clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => applyAll(), 200);
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      if (state.page > 1) {
+        state.page--;
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      const totalPages = Math.max(1, Math.ceil(state.list.length / state.pageSize));
+      if (state.page < totalPages) {
+        state.page++;
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    // Initialize: set an initial sort by newest and compute list
+    (function init() {
+      // If server already sorted, rawInvoices may be sorted; still apply defaults
+      state.filters.sort = 'new';
+      applyAll();
+    })();
+
+  })();
 </script>
 
 </body>
