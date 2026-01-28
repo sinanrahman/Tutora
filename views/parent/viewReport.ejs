@@ -130,7 +130,6 @@
 							<small id="chartHint" class="text-muted ms-2">Weekly performance (all weeks)</small>
 						</div>
 
-						<!-- SCROLLABLE AREA -->
 						<div class="chart-scroll-wrapper">
 							<div class="chart-inner">
 								<canvas id="reportChart"></canvas>
@@ -138,7 +137,6 @@
 						</div>
 					</div>
 
-					<!-- VIEW TABLE BUTTON -->
 					<div class="text-end mb-3">
 						<a
 							href="/parent/report/table?studentId=<%= student._id %>"
@@ -152,126 +150,124 @@
 		</div>
 
 		<script>
-						const rawReports = <%- JSON.stringify(reports) %>;
-						const CURRENT_YEAR = new Date().getFullYear();
-						const yearSelect = document.getElementById('yearSelect');
-						const typeSelect = document.getElementById('typeSelect');
-						const chartHint = document.getElementById('chartHint');
-						const ctx = document.getElementById('reportChart').getContext('2d');
-						let chart;
+			const rawReports = <%- JSON.stringify(reports) %>;
+			const CURRENT_YEAR = new Date().getFullYear();
+			const yearSelect = document.getElementById('yearSelect');
+			const typeSelect = document.getElementById('typeSelect');
+			const chartHint = document.getElementById('chartHint');
+			const ctx = document.getElementById('reportChart').getContext('2d');
 
-						// Populate years
-						for (let y = CURRENT_YEAR - 4; y <= CURRENT_YEAR; y++) {
-							yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
-						}
-						yearSelect.value = CURRENT_YEAR;
+			let chart;
+			const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-					function weeklyData(year) {
-			    const labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-			    const data = [];
-			    const tooltipLabels = [];
 
-			    // Build data for each week
-			    for (let m = 1; m <= 12; m++) {
-			        const weeks = Math.max(Math.ceil(new Date(year, m, 0).getDate() / 7), 5);
-			        const monthly = rawReports.find(r => r.year === year && r.type === 'monthly' && r.month === m);
+			for (let y = CURRENT_YEAR - 4; y <= CURRENT_YEAR; y++) {
+				yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+			}
+			yearSelect.value = CURRENT_YEAR;
 
-			        for (let w = 1; w <= weeks; w++) {
-			            const weekly = rawReports.find(r =>
-			                r.year === year && r.type === 'weekly' && r.month === m && r.week === w
-			            );
-			            data.push(weekly ? weekly.score : monthly ? monthly.score : null);
-			            tooltipLabels.push(`${labels[m-1]} W${w}`);
-			        }
-			    }
 
-			    return {
-			        labels: data.map((_, i) => {
-			            // Map x-axis to months only
-			            const monthIndex = Math.floor(i / 5); // approx 4-5 weeks per month
-			            return labels[monthIndex] || '';
-			        }),
-			        data,
-			        tooltipLabels
-			    };
+			function weeklyData(year) {
+				const labels = [];
+				const data = [];
+				const tooltipLabels = [];
+
+				for (let m = 1; m <= 12; m++) {
+					const weeks = Math.max(Math.ceil(new Date(year, m, 0).getDate() / 7), 5);
+					const monthly = rawReports.find(r =>
+						r.year === year && r.type === 'monthly' && r.month === m
+					);
+
+					for (let w = 1; w <= weeks; w++) {
+						const weekly = rawReports.find(r =>
+							r.year === year && r.type === 'weekly' && r.month === m && r.week === w
+						);
+
+						labels.push(MONTHS[m - 1]);          // X-axis shows month only
+						data.push(weekly ? weekly.score : monthly ? monthly.score : null);
+						tooltipLabels.push(`${MONTHS[m - 1]} W${w}`);
+					}
+				}
+
+				return { labels, data, tooltipLabels };
 			}
 
-						function monthlyData(year) {
-							const labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-							const data = new Array(12).fill(null);
+			/* MONTHLY DATA */
+			function monthlyData(year) {
+				const data = new Array(12).fill(null);
 
-							rawReports.forEach(r => {
-								if (r.year === year && r.type === 'monthly') {
-									data[r.month - 1] = r.score;
+				rawReports.forEach(r => {
+					if (r.year === year && r.type === 'monthly') {
+						data[r.month - 1] = r.score;
+					}
+				});
+
+				return {
+					labels: MONTHS,
+					data,
+					tooltipLabels: MONTHS
+				};
+			}
+
+			/* RENDER */
+			function renderChart() {
+				const year = +yearSelect.value;
+				const type = typeSelect.value;
+				const payload = type === 'monthly'
+					? monthlyData(year)
+					: weeklyData(year);
+
+				chartHint.textContent = type === 'monthly'
+					? 'Monthly performance overview'
+					: 'Weekly performance (all weeks)';
+
+				if (chart) chart.destroy();
+
+				chart = new Chart(ctx, {
+					type: 'line',
+					data: {
+						labels: payload.labels,
+						datasets: [{
+							data: payload.data,
+							spanGaps: true,
+							tension: 0.35,
+							pointRadius: 5,
+							pointHoverRadius: 7,
+							borderColor: '#870216',
+							borderWidth: 2,
+							backgroundColor: 'rgba(135,2,22,0.15)',
+							pointBackgroundColor: '#870216',
+							fill: true
+						}]
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false,
+						plugins: {
+							legend: { display: false },
+							tooltip: {
+								callbacks: {
+									title: items => payload.tooltipLabels[items[0].dataIndex],
+									label: item => `Score: ${item.raw ?? 0}%`
 								}
-							});
-							return { labels, data, tooltipLabels: labels };
-						}
-
-						function renderChart() {
-							const year = +yearSelect.value;
-							const type = typeSelect.value;
-							const payload = type === 'monthly' ? monthlyData(year) : weeklyData(year);
-
-							chartHint.textContent = type === 'monthly'
-								? 'Monthly performance overview'
-								: 'Weekly performance (all weeks)';
-
-							if (!chart) {
-								chart = new Chart(ctx, {
-									type: 'line',
-									data: {
-										labels: payload.labels,
-										datasets: [{
-											data: payload.data,
-											spanGaps: true,
-											tension: 0.35,
-											pointRadius: 5,
-											pointHoverRadius: 7,
-											hitRadius: 35,
-											borderColor: '#870216',
-											borderWidth: 2,
-											backgroundColor: (() => {
-												const g = ctx.createLinearGradient(0, 0, 0, 360);
-												g.addColorStop(0, 'rgba(135,2,22,0.35)');
-												g.addColorStop(1, 'rgba(135,2,22,0.05)');
-												return g;
-											})(),
-											pointBackgroundColor: '#870216',
-											fill: true
-										}]
-									},
-									options: {
-										responsive: true,
-										maintainAspectRatio: false,
-										plugins: {
-											legend: { display: false },
-											tooltip: {
-												callbacks: {
-													title: tooltipItems => {
-														const idx = tooltipItems[0].dataIndex;
-														return payload.tooltipLabels[idx]; // show Jan W1, Jan W2… for weekly
-													},
-													label: tooltipItem => `Score: ${tooltipItem.raw}%`
-												}
-											}
-										},
-										scales: {
-											y: { min: 0, max: 100 },
-											x: { ticks: { autoSkip: true, maxTicksLimit: 12, font: { size: 10 } } }
-										}
-									}
-								});
-							} else {
-								chart.data.labels = payload.labels;
-								chart.data.datasets[0].data = payload.data;
-								chart.update();
+							}
+						},
+						scales: {
+							y: { min: 0, max: 100 },
+							x: {
+								ticks: {
+									autoSkip: true,
+									maxTicksLimit: 12
+								}
 							}
 						}
+					}
+				});
+			}
 
-						yearSelect.onchange = renderChart;
-						typeSelect.onchange = renderChart;
-						renderChart();
+			yearSelect.onchange = renderChart;
+			typeSelect.onchange = renderChart;
+			renderChart();
 		</script>
 
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
