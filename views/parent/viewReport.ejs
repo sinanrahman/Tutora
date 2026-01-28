@@ -1,297 +1,279 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Student Progress Report – <%= student.fullName %></title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Student Progress Report – <%= student.fullName %>
-  </title>
+		<!-- Bootstrap -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+			rel="stylesheet"
+		/>
 
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+		<!-- Chart.js -->
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+		<style>
+			body {
+				background-color: #f2f2f2;
+			}
+			.heading {
+				color: #870216;
+			}
+			.card {
+				background-color: #ffffff;
+				border: 1px solid #e1e1e1;
+			}
+			.breadcrumb a {
+				color: #870216;
+			}
+			.chart-card canvas {
+				height: 360px !important;
+				width: 100% !important;
+			}
+			.controls-inline {
+				display: flex;
+				gap: 0.5rem;
+				align-items: center;
+			}
+			.year-select {
+				min-width: 120px;
+			}
 
-  <style>
-    body {
-      background-color: #f2f2f2;
-    }
+			@media (max-width: 576px) {
+				.chart-card canvas {
+					height: 320px !important;
+				}
+				.chart-scroll-wrapper {
+					width: 100%;
+					overflow-x: auto;
+					overflow-y: hidden;
+					-webkit-overflow-scrolling: touch;
+				}
+				.chart-inner {
+					min-width: 1100px;
+				}
+				.controls-inline {
+					flex-direction: column;
+					width: 100%;
+				}
+				.controls-inline .form-select {
+					width: 100%;
+				}
+				h3.heading {
+					font-size: 1.25rem;
+				}
 
-    .heading {
-      color: #870216;
-    }
+				body,
+				.main-content {
+					overflow-x: hidden;
+				}
+			}
+			@media (min-width: 768px) {
+				.chart-inner {
+					min-width: 100%;
+				}
+			}
+		</style>
+	</head>
 
-    .card {
-      background-color: #ffffff;
-      border: 1px solid #e1e1e1;
-    }
+	<body class="bg-light">
+		<%- include('../partials/parentNavbar') %>
 
-    .breadcrumb a {
-      color: #870216;
-    }
+		<div class="main-content">
+			<div class="container py-4">
+				<div class="card rounded-4 shadow-sm p-4">
+					<!-- Breadcrumb -->
+					<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+						<ol class="breadcrumb p-3 mb-0">
+							<li class="breadcrumb-item"><a href="/parent/dashboard">Home</a></li>
+							<li class="breadcrumb-item active">Progress Report</li>
+						</ol>
+					</nav>
 
-    .chart-card canvas {
-      height: 360px !important;
-      width: 100% !important;
-    }
+					<h3 class="fw-bold heading text-center mb-4">Progress Report</h3>
 
-    .controls-inline {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-    }
+					<!-- SUMMARY -->
+					<div class="row mb-4 justify-content-center">
+						<div class="col-md-4">
+							<div class="card p-3 text-center bg-light">
+								<h4 class="text-danger">
+									<%= reports.length ? reports[reports.length - 1].score : 0 %>%
+								</h4>
+								<small>Latest Score</small>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="card p-3 text-center bg-light">
+								<h4 class="text-danger"><%= reports.length %></h4>
+								<small>Total Reports</small>
+							</div>
+						</div>
+					</div>
 
-    .year-select {
-      min-width: 120px;
-    }
+					<!-- CHART -->
+					<div class="card rounded-4 shadow-sm p-4 mb-4 chart-card">
+						<div class="d-flex justify-content-between mb-2">
+							<div class="controls-inline">
+								<select id="yearSelect" class="form-select year-select"></select>
+								<select id="typeSelect" class="form-select year-select">
+									<option value="weekly">Weekly</option>
+									<option value="monthly">Monthly</option>
+								</select>
+							</div>
+							<small id="chartHint" class="text-muted ms-2">Weekly performance (all weeks)</small>
+						</div>
 
-    @media (max-width: 576px) {
-      .chart-card canvas {
-        height: 260px !important;
-      }
+						<!-- SCROLLABLE AREA -->
+						<div class="chart-scroll-wrapper">
+							<div class="chart-inner">
+								<canvas id="reportChart"></canvas>
+							</div>
+						</div>
+					</div>
 
-      .controls-inline {
-        gap: 0.4rem;
-        flex-direction: column;
-        align-items: stretch;
-        width: 100%;
-      }
+					<!-- VIEW TABLE BUTTON -->
+					<div class="text-end mb-3">
+						<a
+							href="/parent/report/table?studentId=<%= student._id %>"
+							class="btn btn-outline-danger btn-sm"
+						>
+							View Detailed Table
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
 
-      .controls-inline .form-select {
-        width: 100%;
-      }
+		<script>
+						const rawReports = <%- JSON.stringify(reports) %>;
+						const CURRENT_YEAR = new Date().getFullYear();
+						const yearSelect = document.getElementById('yearSelect');
+						const typeSelect = document.getElementById('typeSelect');
+						const chartHint = document.getElementById('chartHint');
+						const ctx = document.getElementById('reportChart').getContext('2d');
+						let chart;
 
-      h3.heading {
-        font-size: 1.25rem;
-      }
+						// Populate years
+						for (let y = CURRENT_YEAR - 4; y <= CURRENT_YEAR; y++) {
+							yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+						}
+						yearSelect.value = CURRENT_YEAR;
 
-      body,
-      .main-content {
-        overflow-x: hidden;
-      }
+					function weeklyData(year) {
+			    const labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			    const data = [];
+			    const tooltipLabels = [];
 
-      .container {
-        padding-left: 12px !important;
-        padding-right: 12px !important;
-      }
+			    // Build data for each week
+			    for (let m = 1; m <= 12; m++) {
+			        const weeks = Math.max(Math.ceil(new Date(year, m, 0).getDate() / 7), 5);
+			        const monthly = rawReports.find(r => r.year === year && r.type === 'monthly' && r.month === m);
 
-      .card {
-        width: 100%;
-      }
+			        for (let w = 1; w <= weeks; w++) {
+			            const weekly = rawReports.find(r =>
+			                r.year === year && r.type === 'weekly' && r.month === m && r.week === w
+			            );
+			            data.push(weekly ? weekly.score : monthly ? monthly.score : null);
+			            tooltipLabels.push(`${labels[m-1]} W${w}`);
+			        }
+			    }
 
-      .row>[class*='col-'] {
-        margin-bottom: 0.75rem;
-      }
+			    return {
+			        labels: data.map((_, i) => {
+			            // Map x-axis to months only
+			            const monthIndex = Math.floor(i / 5); // approx 4-5 weeks per month
+			            return labels[monthIndex] || '';
+			        }),
+			        data,
+			        tooltipLabels
+			    };
+			}
 
-      .chart-card {
-        padding: 1rem !important;
-      }
+						function monthlyData(year) {
+							const labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+							const data = new Array(12).fill(null);
 
-      .chart-card canvas {
-        max-width: 100% !important;
-      }
+							rawReports.forEach(r => {
+								if (r.year === year && r.type === 'monthly') {
+									data[r.month - 1] = r.score;
+								}
+							});
+							return { labels, data, tooltipLabels: labels };
+						}
 
-      .breadcrumb {
-        padding: 0.75rem !important;
-      }
+						function renderChart() {
+							const year = +yearSelect.value;
+							const type = typeSelect.value;
+							const payload = type === 'monthly' ? monthlyData(year) : weeklyData(year);
 
-      .text-end .btn {
-        width: 100%;
-        margin-top: 0.5rem;
-      }
-    }
-  </style>
-</head>
+							chartHint.textContent = type === 'monthly'
+								? 'Monthly performance overview'
+								: 'Weekly performance (all weeks)';
 
-<body class="bg-light">
-  <%- include('../partials/parentNavbar') %>
+							if (!chart) {
+								chart = new Chart(ctx, {
+									type: 'line',
+									data: {
+										labels: payload.labels,
+										datasets: [{
+											data: payload.data,
+											spanGaps: true,
+											tension: 0.35,
+											pointRadius: 5,
+											pointHoverRadius: 7,
+											hitRadius: 35,
+											borderColor: '#870216',
+											borderWidth: 2,
+											backgroundColor: (() => {
+												const g = ctx.createLinearGradient(0, 0, 0, 360);
+												g.addColorStop(0, 'rgba(135,2,22,0.35)');
+												g.addColorStop(1, 'rgba(135,2,22,0.05)');
+												return g;
+											})(),
+											pointBackgroundColor: '#870216',
+											fill: true
+										}]
+									},
+									options: {
+										responsive: true,
+										maintainAspectRatio: false,
+										plugins: {
+											legend: { display: false },
+											tooltip: {
+												callbacks: {
+													title: tooltipItems => {
+														const idx = tooltipItems[0].dataIndex;
+														return payload.tooltipLabels[idx]; // show Jan W1, Jan W2… for weekly
+													},
+													label: tooltipItem => `Score: ${tooltipItem.raw}%`
+												}
+											}
+										},
+										scales: {
+											y: { min: 0, max: 100 },
+											x: { ticks: { autoSkip: true, maxTicksLimit: 12, font: { size: 10 } } }
+										}
+									}
+								});
+							} else {
+								chart.data.labels = payload.labels;
+								chart.data.datasets[0].data = payload.data;
+								chart.update();
+							}
+						}
 
-    <div class="main-content">
-      <div class="container py-4">
-        <div class="card rounded-4 shadow-sm p-4">
+						yearSelect.onchange = renderChart;
+						typeSelect.onchange = renderChart;
+						renderChart();
+		</script>
 
-          <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
-            <ol class="breadcrumb p-3 mb-0">
-              <li class="breadcrumb-item"><a href="/parent/dashboard">Home</a></li>
-              <li class="breadcrumb-item active">Progress Report</li>
-            </ol>
-          </nav>
-
-          <h3 class="fw-bold heading text-center mb-4">Progress Report</h3>
-
-          <div class="row mb-4 justify-content-center">
-            <div class="col-md-4">
-              <div class="card p-3 text-center bg-light">
-                <h4 class="text-danger">
-                  <%= reports.length ? reports[reports.length - 1].score : 0 %>%
-                </h4>
-                <small>Latest Score</small>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card p-3 text-center bg-light">
-                <h4 class="text-danger">
-                  <%= reports.length %>
-                </h4>
-                <small>Total Reports</small>
-              </div>
-            </div>
-          </div>
-
-          <div class="card rounded-4 shadow-sm p-4 mb-4 chart-card">
-            <div class="d-flex justify-content-between mb-2">
-              <div class="controls-inline">
-                <select id="yearSelect" class="form-select year-select"></select>
-                <select id="typeSelect" class="form-select year-select">
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
-                </select>
-              </div>
-              <small id="chartHint" class="text-muted" style="margin-left: 1rem">
-                Weekly performance (all weeks)
-              </small>
-            </div>
-
-            <canvas id="reportChart"></canvas>
-          </div>
-
-          <div class="text-end mb-3">
-            <a href="/parent/report/table?studentId=<%= student._id %>" class="btn btn-outline-danger btn-sm">
-              View Detailed Card
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      const rawReports = JSON.parse('<%- JSON.stringify(reports) %>');
-      const CURRENT_YEAR = new Date().getFullYear();
-
-      const yearSelect = document.getElementById('yearSelect');
-      const typeSelect = document.getElementById('typeSelect');
-      const chartHint = document.getElementById('chartHint');
-      const ctx = document.getElementById('reportChart').getContext('2d');
-
-      let chart;
-
-      for (let y = CURRENT_YEAR - 4; y <= CURRENT_YEAR; y++) {
-        yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
-      }
-      yearSelect.value = CURRENT_YEAR;
-
-      function weeklyData(year) {
-        const labels = [];
-        const data = [];
-
-        for (let m = 1; m <= 12; m++) {
-          const weeks = Math.max(Math.ceil(new Date(year, m, 0).getDate() / 7), 5);
-          const mName = new Date(year, m - 1, 1).toLocaleString('default', { month: 'short' });
-          const monthly = rawReports.find(
-            r => r.year === year && r.type === 'monthly' && r.month === m
-          );
-
-          for (let w = 1; w <= weeks; w++) {
-            labels.push(`${mName} W${w}`);
-
-            const weekly = rawReports.find(
-              r => r.year === year && r.type === 'weekly' && r.month === m && r.week === w
-            );
-
-            data.push(weekly ? weekly.score : monthly ? monthly.score : null);
-          }
-        }
-        return { labels, data };
-      }
-
-      function monthlyData(year) {
-        const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const data = new Array(12).fill(null);
-
-        rawReports.forEach(r => {
-          if (r.year === year && r.type === 'monthly') {
-            data[r.month - 1] = r.score;
-          }
-        });
-        return { labels, data };
-      }
-
-      function renderChart() {
-        const year = +yearSelect.value;
-        const type = typeSelect.value;
-        const payload = type === 'monthly' ? monthlyData(year) : weeklyData(year);
-
-        chartHint.textContent =
-          type === 'monthly'
-            ? 'Monthly performance overview'
-            : 'Weekly performance (all weeks)';
-
-        if (!chart) {
-          chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-              labels: payload.labels,
-              datasets: [{
-                data: payload.data,
-                spanGaps: true,
-                tension: 0.35,
-                borderColor: '#870216',
-                borderWidth: 2,
-                backgroundColor: (() => {
-                  const gradient = ctx.createLinearGradient(0, 0, 0, 360);
-                  gradient.addColorStop(0, 'rgba(135,2,22,0.35)');
-                  gradient.addColorStop(1, 'rgba(135,2,22,0.05)');
-                  return gradient;
-                })(),
-                pointBackgroundColor: '#870216',
-                fill: true
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              devicePixelRatio: window.devicePixelRatio || 1,
-              interaction: { mode: 'point', intersect: true },
-              plugins: {
-                legend: { display: false },
-                tooltip: { mode: 'nearest', intersect: false }
-              },
-              scales: {
-                y: { min: 0, max: 100 },
-                x: {
-                  ticks: {
-                    autoSkip: type === 'weekly', // allow all 12 months
-                    maxTicksLimit: 12,
-                    font: { size: 10 },
-                    callback: function (value, index) {
-                      if (type === 'monthly') {
-                        return payload.labels[index]; // Jan Feb Mar Apr...
-                      }
-
-                      // weekly → show only month name (Jan, Feb...)
-                      return payload.labels[index].split(' ')[0];
-                    }
-                  }
-                }
-              }
-            }
-          });
-        } else {
-          chart.destroy();   // 🔥 important
-          chart = null;
-          renderChart();     // recreate with new type
-        }
-      }
-
-      yearSelect.onchange = renderChart;
-      typeSelect.onchange = renderChart;
-      renderChart();
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	</body>
 </html>
