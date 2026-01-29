@@ -159,7 +159,9 @@
     font-size: 13px;
     font-weight: 600;
   }
-
+  .read-more{
+    color:rgb(255, 169, 169)
+  }
   .plan-box {
     background: #000;
     color: #fff;
@@ -301,7 +303,7 @@
                         : 'No remarks available.' %>
                     </p>
                     <% if (latestReport?.remarks && latestReport.remarks.length> 100) { %>
-                      <a href="/parent/report/table?studentId=<%= student._id %>" class="text-danger small">Read
+                      <a href="/parent/report/table?studentId=<%= student._id %>" class="read-more small">Read
                         More</a>
                       <% } %>
                   </div>
