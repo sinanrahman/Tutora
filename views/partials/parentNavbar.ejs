@@ -36,8 +36,16 @@
 				height: 65px;
 			}
 
+			/* ================= NAVBAR LOGO ================= */
+			.navbar-brand {
+				display: flex;
+				align-items: center; /* vertically centers logo */
+			}
+
 			.navbar-logo {
-				width: 75px;
+				height: 50px; /* fixed height for consistency */
+				width: auto; /* keeps aspect ratio */
+				object-fit: contain; /* prevents stretching */
 			}
 
 			.panel-badge {
@@ -71,7 +79,7 @@
 				}
 
 				.mobile-logout button {
-					background: #a92335; /* new background */
+					background: #a13241; /* new background */
 					border: none;
 					border-radius: 12px;
 					padding: 6px 10px;
