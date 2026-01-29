@@ -11,6 +11,8 @@
 </head>
 
 <style>
+  
+
   .profile-icon {
     color: #444;
   }
@@ -20,10 +22,7 @@
     font-size: large;
   }
 
-  .main-content {
-    margin-top: 0px;
-    padding: 30px;
-  }
+  
   .remarkCard{
     background:linear-gradient(135deg, #4c5253f3, #807e7e);
     
@@ -197,19 +196,19 @@
 <body class="bg-light">
   <%- include('../partials/parentNavbar') %>
 
-    <div class="main-content mt-4">
+    <div class="main-content pt-4">
       <div class="container px-lg-4">
 
         <div class="row mb-4">
           <div class="col-12 ">
             <div
               class="card shadow-sm border-0 rounded-4 p-4 d-flex flex-row align-items-center justify-content-between"
-              style="background:#fff7f7;">
+              style="background: #fff7f7;">
               <div class="d-flex align-items-center gap-4">
                 <div class="rounded-4 d-flex align-items-center  justify-content-center text-white fw-bold"
                   style="width:64px;height:64px;background:#322d2d;font-size:22px;">
-                  <%= (student?.fullName || 'S' )[0] %>
-                    <%= (student?.fullName || 'T' ).split(' ')[1]?.[0] || '' %>
+                  <%= (student?.fullName || 'S' )[0].toUpperCase() %>
+                    <%= (student?.fullName || 'T' ).split(' ')[1]?.[0].toUpperCase() || '' %>
             </div>
             <div>
               <h4 class="fw-bold mb-1"><%= student?.fullName || ' Student Name' %>
