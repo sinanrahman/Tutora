@@ -322,18 +322,22 @@
                 </div>
               </div>
 
+              <%
+                const totalMinutes = Math.max(0, Math.floor((hoursLeft || 0) * 60));
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = totalMinutes % 60;
+              %>
+
               <div class="days-left">
                 <small class="fw-semibold">HOURS LEFT</small><br />
                 <span>
-                  <%= hoursLeft || 0 %>
+                  <%= hours %>h <%= minutes.toString().padStart(2, '0') %>m
                 </span>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
 </body>
-
 </html>

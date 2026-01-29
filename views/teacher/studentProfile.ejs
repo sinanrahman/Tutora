@@ -116,9 +116,15 @@
         <%= totalHours %> hours
       </td>
 	   <th class="bg-light">Remaining Hours</th>
-      <td class="fw-semibold text-success">
-        <%= student.remainingHours %> hours
-      </td>
+      <%
+		const totalMinutes = Math.floor((student?.remainingHours || 0) * 60);
+		const h = Math.floor(totalMinutes / 60);
+		const m = totalMinutes % 60;
+		%>
+
+		<td class="fw-semibold text-success">
+		<%= h %>h <%= m.toString().padStart(2, '0') %>m
+		</td>
     </tr>
 
     <tr>
