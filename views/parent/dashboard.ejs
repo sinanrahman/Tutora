@@ -258,10 +258,20 @@
                   <div class="d-flex flex-column">
                     <h6 class="fw-bold mb-0">Latest Report Card</h6>
                     <small class="text-muted report-summary">Academic Summary</small>
-                    <small class="fw-semibold report-date">
-                      <i class="bi bi-calendar-event me-1 text-danger"></i>
-                      <%= latestReport ? new Date(latestReport.createdAt).toDateString() : '-' %>
-                    </small>
+                                    <small class="fw-semibold report-date">
+                    <i class="bi bi-calendar-event me-1 text-danger"></i>
+                    <%= latestReport
+                        ? new Date(
+                            latestReport.year,
+                            (latestReport.month || 1) - 1,
+                            latestReport.day || 1
+                          ).toLocaleDateString('en-IN', {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric'
+                          })
+                        : '-' %>
+                  </small>
                   </div>
                 </div>
 
