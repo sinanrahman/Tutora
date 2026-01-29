@@ -25,11 +25,10 @@
 			}
 			.heading {
 				color: #870216;
+			}.cards{
+				background: linear-gradient(130deg,#5d0d18,#b0737a);
 			}
-			.card {
-				background-color: #ffffff;
-				border: 1px solid #e1e1e1;
-			}
+			
 			.breadcrumb a {
 				color: #870216;
 			}
@@ -86,11 +85,10 @@
 	<body class="bg-light">
 		<%- include('../partials/parentNavbar') %>
 
-		<div class="main-content">
+		<div class="main-content p-4">
 			<div class="container py-4">
-				<div class="card rounded-4 shadow-sm p-4">
 					<!-- Breadcrumb -->
-					<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+					<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb" class="d-none d-md-block">
 						<ol class="breadcrumb p-3 mb-0">
 							<li class="breadcrumb-item"><a href="/parent/dashboard">Home</a></li>
 							<li class="breadcrumb-item active">Progress Report</li>
@@ -99,23 +97,25 @@
 
 					<h3 class="fw-bold heading text-center mb-4">Progress Report</h3>
 
-					<!-- SUMMARY -->
-					<div class="row mb-4 justify-content-center">
-						<div class="col-md-4">
-							<div class="card p-3 text-center bg-light">
-								<h4 class="text-danger">
-									<%= reports.length ? reports[reports.length - 1].score : 0 %>%
-								</h4>
-								<small>Latest Score</small>
-							</div>
-						</div>
-						<div class="col-md-4">
-							<div class="card p-3 text-center bg-light">
-								<h4 class="text-danger"><%= reports.length %></h4>
-								<small>Total Reports</small>
-							</div>
-						</div>
-					</div>
+				<div class="row g-3 mb-4 justify-content-center">
+  <div class="col-6 col-md-3">
+    <div class="cards p-3 text-center text-white border-0 rounded-3">
+      <h4 >
+        <%= reports.length ? reports[reports.length - 1].score : 0 %>%
+      </h4>
+      <small>Latest Score</small>
+    </div>
+  </div>
+
+  <div class="col-6 col-md-3">
+    <div class="cards p-3 text-center text-white border-0 rounded-3">
+      <h4><%= reports.length %></h4>
+      <small>Total Reports</small>
+    </div>
+  </div>
+</div>
+
+
 
 					<!-- CHART -->
 					<div class="card rounded-4 shadow-sm p-4 mb-4 chart-card">
@@ -136,16 +136,6 @@
 							</div>
 						</div>
 					</div>
-
-					<div class="text-end mb-3">
-						<a
-							href="/parent/report/table?studentId=<%= student._id %>"
-							class="btn btn-outline-danger btn-sm"
-						>
-							View Detailed Table
-						</a>
-					</div>
-				</div>
 			</div>
 		</div>
 
@@ -231,7 +221,7 @@
 							data: payload.data,
 							spanGaps: true,
 							tension: 0.35,
-							pointRadius: 5,
+							pointRadius: 3,
 							pointHoverRadius: 7,
 							borderColor: '#870216',
 							borderWidth: 2,

@@ -80,6 +80,23 @@
 			<div class="main-content">
 				<div class="card shadow-sm border-0">
 
+					<nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+						<ol class="breadcrumb p-3 mb-0">
+							<li class="breadcrumb-item">
+								<a href="/coordinator/dashboard">Home</a>
+							</li>
+							<li class="breadcrumb-item">
+								<a href="/coordinator/students">Students</a>
+							</li>
+							<li class="breadcrumb-item">
+								<a href="/coordinator/student/<%= studentId %>">Student Profile</a>
+							</li>
+							<li class="breadcrumb-item active" aria-current="page">
+								View Report
+							</li>
+						</ol>
+					</nav>
+
 					<div class="card-body">
 						<div class="text-center mb-4">
 							<h3 class="fw-bold heading">REPORT</h3>
