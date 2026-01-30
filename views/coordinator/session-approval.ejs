@@ -110,7 +110,15 @@
 											<td><%= s.student.fullName %></td>
 											<td><%= s.teacher.fullName %></td>
 											<td><%= new Date(s.date).toLocaleDateString() %></td>
-											<td><%= s.durationInHours %> hrs</td>
+											<%
+												const durHours = s?.durationInHours ?? 0;
+												const totalMins = Math.floor(durHours * 60);
+												const dh = Math.floor(totalMins / 60);
+												const dm = totalMins % 60;
+												%>
+
+												<td><%= `${dh}h ${dm.toString().padStart(2, '0')}m` %></td>
+
 											<td>
 												<button class="btn btn-sm btn-success"
 													data-bs-toggle="modal"
@@ -156,7 +164,13 @@
 											<td><%= s.student.fullName %></td>
 											<td><%= s.teacher.fullName %></td>
 											<td><%= new Date(s.date).toLocaleDateString() %></td>
-											<td><%= s.durationInHours %> hrs</td>
+											<%
+											const durHours = s?.durationInHours ?? 0;
+											const totalMinutes = Math.floor(durHours * 60);
+											const hours = Math.floor(totalMinutes / 60);
+											const minutes = totalMinutes % 60;
+											%>
+											<td><%= `${hours}h ${minutes.toString().padStart(2, '0')}m` %></td>
 											<td>
 												<span class="badge bg-success">Approved</span>
 											</td>

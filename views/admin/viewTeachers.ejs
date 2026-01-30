@@ -76,9 +76,17 @@
                             </span>
                             <% }) %>
                         </td>
+                       <%
+                          const tHours = teacher?.totalHours ?? 0;
+                          const tMinutes = Math.floor(tHours * 60);
+                          const th = Math.floor(tMinutes / 60);
+                          const tm = tMinutes % 60;
+                        %>
+
                         <td class="text-center">
-                          <%= teacher.totalHours || 0 %> hrs
+                            <%= tHours ? `${th}h ${tm.toString().padStart(2, '0')}m` : '0' %>
                         </td>
+
                         <td class="text-center">
                           <span class="badge <%= teacher.status === 'teacher' ? 'bg-success' : 'bg-secondary' %>">
                             <%= teacher.status %>
