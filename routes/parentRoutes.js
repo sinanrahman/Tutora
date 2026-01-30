@@ -20,23 +20,18 @@ router
 
 router
     .route('/payment')
-  .get(protect,setSidebarMenu,authorize('PARENT'),viewPayment)
+    .get(protect,setSidebarMenu,authorize('PARENT'),viewPayment)
 
 router
-  .route('/sessions')
-  .get(protect, setSidebarMenu, authorize('PARENT'), viewClassHistory);
+    .route('/sessions')
+    .get(protect, setSidebarMenu, authorize('PARENT'), viewClassHistory);
 
 router
-  .route('/invoice/:id')
-  .get(protect, setSidebarMenu, authorize('PARENT'), viewStudentInvoicePDF);
+    .route('/invoice/:id')
+    .get(protect, setSidebarMenu, authorize('PARENT'), viewStudentInvoicePDF);
 
-router.get(
-  '/invoice/:id/download',
-  protect,
-  setSidebarMenu,
-  authorize('PARENT'),
-  downloadParentInvoicePDF
-);
-
+router
+    .route('/invoice/:id/download')
+    .get(protect,setSidebarMenu,authorize('PARENT'),downloadParentInvoicePDF);
 
 module.exports = router;

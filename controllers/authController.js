@@ -5,7 +5,6 @@ const sendEmail = require('../utils/sendEmail');
 const Student = require('../models/Student');
 const {generateOTP,hashOTP} = require('../utils/otpGenerate')
 
-//      IMPORTED MODELS
 const Admin = require('../models/Admin');
 const Teacher = require('../models/Teacher');
 const Coordinator = require('../models/Coordinator');
@@ -13,12 +12,10 @@ const Coordinator = require('../models/Coordinator');
 const MAX_ATTEMPTS = 3;
 const LOCK_TIME = 1 * 60 * 1000;
 
-//      RENDER MAIN LOGIN PAGE
 exports.loginPage = (req, res) => {
     return res.render('auth/login');
 };
 
-//      RENDER ADMIN LOGIN PAGE
 exports.adminLoginPage = (req, res) => {
     try {
         return res.render('auth/adminLogin', {
@@ -32,7 +29,6 @@ exports.adminLoginPage = (req, res) => {
     }
 };
 
-//      RENDER TEACHER LOGIN PAGE
 exports.teacherLoginPage = (req, res) => {
     try {
         return res.render('auth/teacherLogin', { msg: '' });
@@ -42,7 +38,6 @@ exports.teacherLoginPage = (req, res) => {
     }
 };
 
-//      RENDER COORDINATOR LOGIN PAGE
 exports.coordinatorLoginPage = (req, res) => {
     try {
         return res.render('auth/coordinatorLogin', { msg: '' });
@@ -52,7 +47,6 @@ exports.coordinatorLoginPage = (req, res) => {
     }
 };
 
-//      RENDER Parent LOGIN PAGE
 exports.parentLoginPage = (req, res) => {
     try {
         return res.render('auth/parentLogin', { msg: '' });
@@ -62,7 +56,6 @@ exports.parentLoginPage = (req, res) => {
     }
 };
 
-//      HELPER: RENDER LOGIN WITH ERROR MESSAGE
 const renderLoginWithMsg = (res, role, msg, attemptsLeft = MAX_ATTEMPTS, remainingTime = 0) => {
     if (role === 'admin') {
         return res.render('auth/adminLogin', {
@@ -197,13 +190,11 @@ exports.login = async (req, res) => {
     }
 };
 
-//      HANDLE LOGOUT
 exports.logout = (req, res) => {
     res.clearCookie('token');
     return res.redirect('/');
 };
 
-//      HANDLE FORGOT PASSWORD REQUEST
 exports.forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
@@ -244,7 +235,6 @@ exports.forgotPassword = async (req, res) => {
     }
 };
 
-//      RENDER RESET PASSWORD PAGE
 exports.renderResetPasswordPage = async (req, res) => {
     try {
         const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
@@ -268,7 +258,6 @@ exports.renderResetPasswordPage = async (req, res) => {
     }
 };
 
-//      HANDLE RESET PASSWORD SUBMISSION
 exports.resetPassword = async (req, res) => {
     try {
         const { password } = req.body;
@@ -304,9 +293,7 @@ exports.resetPassword = async (req, res) => {
     }
 };
 
-
-////parent
-
+//parent
 
 exports.requestParentOTP = async (req, res) => {
     try {
@@ -321,8 +308,6 @@ exports.requestParentOTP = async (req, res) => {
             otpExpiresAt: Date.now() + 5 * 60 * 1000,
         };
         await student.save();
-
-        // Reusing your existing sendEmail
         await sendEmail({
             to: parentEmail,
             subject: 'Your Tutora OTP',
@@ -365,12 +350,9 @@ exports.verifyParentOTP = async (req, res) => {
         msg: 'Invalid OTP',
       });
     }
-
-    // Clear OTP
     student.parentAuth = undefined;
     await student.save();
 
-    // JWT
     const token = jwt.sign(
       {
         id: student._id,

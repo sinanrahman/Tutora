@@ -12,18 +12,15 @@ exports.dashboard = async (req, res) => {
         const teacherId = req.user.id;
         const teacher = await Teacher.findById(teacherId);
 
-        // 1️⃣ Total Students
         const totalStudents = await Student.countDocuments({
             assignedTeachers: teacherId
         });
 
-        // 2️⃣ Pending Sessions
         const pendingSessions = await Session.countDocuments({
             teacher: teacherId,
             status: 'PENDING'
         });
 
-        // 3️⃣ Total Earnings from approved sessions
         const sessions = await Session.find({
             teacher: teacherId,
             status: 'APPROVED'
@@ -37,11 +34,9 @@ exports.dashboard = async (req, res) => {
             totalDuration += s.durationInHours;
         });
 
-        // 4️⃣ Total Paid Salary
         const allSalaries = await Salary.find({ teacherId: teacherId }).select('amount');
         const totalPaid = allSalaries.reduce((sum, s) => sum + s.amount, 0);
 
-        // 5️⃣ Pending Salary
         const pendingSalary = totalEarnings - totalPaid;
 
         res.render('teacher/dashboard', {
@@ -59,9 +54,6 @@ exports.dashboard = async (req, res) => {
         });
     }
 };
-
-
-
 
 exports.viewStudents = async (req, res) => {
     try {
@@ -87,9 +79,6 @@ exports.viewStudents = async (req, res) => {
     }
 };
 
-
-
-//      RENDER TEACHER SESSIONS LIST
 exports.teacherSessionsPage = async (req, res) => {
     try {
         const teacher = await Teacher.findById(req.user.id);
@@ -110,7 +99,6 @@ exports.teacherSessionsPage = async (req, res) => {
     }
 };
 
-//      RENDER ADD SESSION PAGE
 exports.addSessionPage = async (req, res) => {
     try {
         const teacherId = req.user.id;
@@ -134,7 +122,6 @@ exports.addSessionPage = async (req, res) => {
     }
 };
 
-//      RENDER TEACHER PROFILE
 exports.teacherProfilePage = async (req, res) => {
     try {
         const teacherId = req.user.id
@@ -144,21 +131,16 @@ exports.teacherProfilePage = async (req, res) => {
             return res.render('auth/pageNotFound', { msg: 'Error: Teacher profile not found' });
         }
 
-        //      PENDING SALARY CALCULATIONS
-        // const allApprovedSessionsOfTeacher = await Session.find({teacher:teacherId,status:'APPROVED'}) 
-
         const result = await Session.aggregate([
             {
-                // 1. Filter: Find approved sessions for this teacher
                 $match: {
-                    teacher: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+                    teacher: new mongoose.Types.ObjectId(teacherId),
                     status: 'APPROVED'
                 }
             },
             {
-                // 2. Calculate: Multiply duration * rate for each doc, then sum them all
                 $group: {
-                    _id: null, // We want one single result, not groups
+                    _id: null,
                     totalEarnings: {
                         $sum: { $multiply: ["$durationInHours", teacher.hourlyRate] }
                     },
@@ -170,28 +152,22 @@ exports.teacherProfilePage = async (req, res) => {
         ]);
         let allPaidSalary = await Salary.aggregate([
             {
-                // 1. Filter: Find approved sessions for this teacher
                 $match: {
-                    teacherId: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+                    teacherId: new mongoose.Types.ObjectId(teacherId),
                 }
             },
             {
-                // 2. Calculate: Multiply duration * rate for each doc, then sum them all
                 $group: {
-                    _id: null, // We want one single result, not groups
+                    _id: null,
                     totalPaid: {
                         $sum: '$amount'
                     }
                 }
             }
         ])
-        // result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
         allPaidSalary = allPaidSalary.length > 0 ? allPaidSalary[0].totalPaid : 0;
         let finalAmount = result.length > 0 ? result[0].totalEarnings : 0;
-        // const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
         finalAmount = finalAmount - allPaidSalary
-        // result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
-        // const finalAmount = result.length > 0 ? result[0].totalEarnings : 0;
         const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
         const allSalary = await Salary.find({ teacherId })
 
@@ -211,7 +187,6 @@ exports.teacherProfilePage = async (req, res) => {
     }
 };
 
-//      RENDER SINGLE STUDENT PROFILE FOR TEACHER
 exports.viewStudentProfile = async (req, res) => {
     try {
         const teacherId = req.user.id;
@@ -252,7 +227,6 @@ exports.viewStudentProfile = async (req, res) => {
     }
 };
 
-//      UPDATE PROFILE PICTURE
 exports.updateProfilePic = async (req, res) => {
     try {
         const teacher = await Teacher.findById(req.user.id);
@@ -261,21 +235,14 @@ exports.updateProfilePic = async (req, res) => {
             return res.render('auth/pageNotFound', { msg: 'Error: Teacher not found' });
         }
 
-        // Check if a file was actually uploaded
         if (!req.files || !req.files.profilePic) {
-            // If no file selected, just redirect back to profile
             return res.redirect('/teacher/profile');
         }
-
-        // 1. Delete old image from Cloudinary if it exists
         if (teacher.profilePic && teacher.profilePic.public_id) {
             await cloudinary.uploader.destroy(teacher.profilePic.public_id);
         }
-
-        // 2. Upload new image
         const newImage = await fileUploadToCloudinary(req.files.profilePic);
 
-        // 3. Save new image data to database
         teacher.profilePic = newImage;
         await teacher.save();
 
@@ -287,22 +254,11 @@ exports.updateProfilePic = async (req, res) => {
     }
 };
 
-// exports.pendingSalaryCalculator = async(req,res){
-//     try{
-//         const 
-//     }catch(e){
-//         console.log(e)
-//         return res.render('auth/pageNotFound', { msg: 'Error while calculating teacher salary' })
-//     }
-// }
-
-// RENDER PENDING SALARY PAGE
 exports.viewPendingSalaryPage = async (req, res) => {
     try {
         const teacherId = req.user.id;
         const teacher = await Teacher.findById(teacherId);
 
-        // Total Approved Sessions Earnings
         const result = await Session.aggregate([
             {
                 $match: {
@@ -321,7 +277,6 @@ exports.viewPendingSalaryPage = async (req, res) => {
             }
         ]);
 
-        // Total Paid Salary
         let paid = await Salary.aggregate([
             {
                 $match: {
