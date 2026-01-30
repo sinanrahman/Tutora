@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,16 +10,13 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css">
   <script src="https://cdn.datatables.net/2.3.6/js/dataTables.js"></script>
   <link rel="stylesheet" href="/css/admin/updateTeacher.css">
-
   <style>
-  
-  @media (max-width: 767px) {
-    .btn-mobile{
-     width: 100%;
+    @media (max-width: 767px) {
+      .btn-mobile {
+        width: 100%;
+      }
     }
-  }
-</style>
-
+  </style>
 </head>
 
 <body class="bg-light">
@@ -33,29 +29,24 @@
     </div>
   </div>
 
-
   <%- include('./partials/navbar') %>
-   <%- include('../partials/sidebar') %>
+    <%- include('../partials/sidebar') %>
 
       <div class="main-content p-5">
         <div class="card shadow-sm border-0">
-
-           <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
-          <ol class="breadcrumb p-3">
-            <li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
-            <li class="breadcrumb-item"><a href="/admin/viewinvoice">Invoice</a></li>
-          </ol>
-        </nav>
+          <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+            <ol class="breadcrumb p-3">
+              <li class="breadcrumb-item"><a href="/admin/Dashboard">Home</a></li>
+              <li class="breadcrumb-item"><a href="/admin/viewinvoice">Invoice</a></li>
+            </ol>
+          </nav>
           <div class="card-body">
-
-            <h3 class="fw-bold fs-2 text-center mb-4" style="color:#870216;">
-              INVOICE
-            </h3>
-
-<form action="/admin/addinvoice" method="POST" id="invoiceForm">
+            <h3 class="fw-bold fs-2 text-center mb-4" style="color:#870216;">INVOICE</h3>
+            <form action="/admin/addinvoice" method="POST" id="invoiceForm">
               <div class="row g-3 mb-4">
                 <div class="col-md-6">
-                  <label for="invoiceId" class="form-label fw-semibold">Invoice ID <span class="text-danger">*</span></label>
+                  <label for="invoiceId" class="form-label fw-semibold">Invoice ID <span
+                      class="text-danger">*</span></label>
                   <div class="input-group">
                     <span class="input-group-text bg-light"><i class="bi bi-hash"></i></span>
                     <input type="text" class="form-control" id="invoiceId" name="id" placeholder="INV-001" required>
@@ -95,7 +86,7 @@
 
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="fw-bold mb-0 text-secondary">Billable Items</h5>
-                <button type="button" class="btn btn-sm text-white btn-success"  onclick="addItemRow()">
+                <button type="button" class="btn btn-sm text-white btn-success" onclick="addItemRow()">
                   <i class="bi bi-plus-circle me-1"></i> Add Item
                 </button>
               </div>
@@ -112,13 +103,16 @@
                   <tbody id="itemsContainer">
                     <tr>
                       <td>
-                        <input type="text" class="form-control" name="items[0][type]" placeholder="e.g. Tuition Fee" required>
+                        <input type="text" class="form-control" name="items[0][type]" placeholder="e.g. Tuition Fee"
+                          required>
                       </td>
                       <td>
-                        <input type="number" class="form-control item-amount" name="items[0][amount]" placeholder="0.00" min="0" oninput="calculateTotal()" required>
+                        <input type="number" class="form-control item-amount" name="items[0][amount]" placeholder="0.00"
+                          min="0" oninput="calculateTotal()" required>
                       </td>
                       <td class="text-center">
-                        <button type="button" class="btn btn-outline-danger btn-sm border-0" onclick="removeRow(this)" disabled>
+                        <button type="button" class="btn btn-outline-danger btn-sm border-0" onclick="removeRow(this)"
+                          disabled>
                           <i class="bi bi-trash"></i>
                         </button>
                       </td>
@@ -130,16 +124,19 @@
               <div class="row g-4">
                 <div class="col-md-8">
                   <label for="description" class="form-label fw-semibold">Notes / Description</label>
-                  <textarea class="form-control" id="description" name="description" rows="3" placeholder="Additional details about this invoice..."></textarea>
+                  <textarea class="form-control" id="description" name="description" rows="3"
+                    placeholder="Additional details about this invoice..."></textarea>
                 </div>
-                
+
                 <div class="col-md-4">
                   <div class="card bg-light border-0">
                     <div class="card-body">
-                      <label for="totalAmount" class="form-label fw-bold text-uppercase text-secondary small">Total Amount</label>
+                      <label for="totalAmount" class="form-label fw-bold text-uppercase text-secondary small">Total
+                        Amount</label>
                       <div class="input-group input-group-lg">
                         <span class="input-group-text bg-white border-end-0 fw-bold">₹</span>
-                        <input type="number" class="form-control bg-white border-start-0 fw-bold text-dark" id="totalAmount" name="amount" value="0" readonly>
+                        <input type="number" class="form-control bg-white border-start-0 fw-bold text-dark"
+                          id="totalAmount" name="amount" value="0" readonly>
                       </div>
                     </div>
                   </div>
@@ -152,26 +149,25 @@
                 </button>
               </div>
             </form>
-             <a href="/admin/viewinvoicelist"><button  class="btn btn-success text-white shadow-sm btn-primary btn-mobile mt-2">
-                  View Invoices
-                </button></a>
+            <a href="/admin/viewinvoicelist"><button
+                class="btn btn-success text-white shadow-sm btn-primary btn-mobile mt-2">
+                View Invoices
+              </button></a>
           </div>
         </div>
       </div>
 
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
       <script>
-        // Set default date to today
-  document.getElementById('date').valueAsDate = new Date();
+        document.getElementById('date').valueAsDate = new Date();
 
-  let itemIndex = 1; // Counter for dynamic naming
+        let itemIndex = 1;
 
-  // Function to add a new row
-  function addItemRow() {
-    const container = document.getElementById('itemsContainer');
-    const newRow = document.createElement('tr');
-    
-    newRow.innerHTML = `
+        function addItemRow() {
+          const container = document.getElementById('itemsContainer');
+          const newRow = document.createElement('tr');
+
+          newRow.innerHTML = `
       <td>
         <input type="text" class="form-control" name="items[${itemIndex}][type]" placeholder="Item name" required>
       </td>
@@ -184,36 +180,31 @@
         </button>
       </td>
     `;
-    
-    container.appendChild(newRow);
-    itemIndex++;
-  }
 
-  // Function to remove a row and recalculate
-  function removeRow(button) {
-    const row = button.closest('tr');
-    // Ensure we don't delete the last remaining row
-    const rowCount = document.getElementById('itemsContainer').children.length;
-    if (rowCount > 1) {
-      row.remove();
-      calculateTotal();
-    } else {
-      alert("You need at least one item.");
-    }
-  }
+          container.appendChild(newRow);
+          itemIndex++;
+        }
+        function removeRow(button) {
+          const row = button.closest('tr');
+          const rowCount = document.getElementById('itemsContainer').children.length;
+          if (rowCount > 1) {
+            row.remove();
+            calculateTotal();
+          } else {
+            alert("You need at least one item.");
+          }
+        }
+        function calculateTotal() {
+          const amounts = document.querySelectorAll('.item-amount');
+          let total = 0;
 
-  // Function to sum up all amounts
-  function calculateTotal() {
-    const amounts = document.querySelectorAll('.item-amount');
-    let total = 0;
-    
-    amounts.forEach(input => {
-      const val = parseFloat(input.value) || 0;
-      total += val;
-    });
+          amounts.forEach(input => {
+            const val = parseFloat(input.value) || 0;
+            total += val;
+          });
 
-    document.getElementById('totalAmount').value = total;
-  }
+          document.getElementById('totalAmount').value = total;
+        }
         function toggleSidebar() {
           document.getElementById('sidebar').classList.toggle('active');
         }
@@ -233,4 +224,5 @@
         });
       </script>
 </body>
+
 </html>

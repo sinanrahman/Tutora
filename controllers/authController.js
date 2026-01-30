@@ -4,8 +4,6 @@ const crypto = require('crypto');
 const {sendSms} = require('../utils/sendSms');
 const Student = require('../models/Student');
 const { generateOTP, hashOTP } = require('../utils/otpGenerate');
-
-// IMPORTED MODELS
 const Admin = require('../models/Admin');
 const Teacher = require('../models/Teacher');
 const Coordinator = require('../models/Coordinator');
@@ -13,7 +11,7 @@ const Coordinator = require('../models/Coordinator');
 const MAX_ATTEMPTS = 3;
 const LOCK_TIME = 1 * 60 * 1000;
 
-// RENDER MAIN LOGIN PAGE
+
 exports.loginPage = (req, res) => {
 	return res.render('auth/login');
 };
