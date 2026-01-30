@@ -55,7 +55,6 @@ exports.parentDashboard = async (req, res) => {
 	}
 };
 
-
 exports.viewPayment = async (req, res) => {
 	try {
 		const student = await Student.findById(req.user.id);
@@ -268,9 +267,8 @@ exports.remark = async (req, res) => {
 
     const student = students[0];
 
-    // ✅ CORRECT SORTING
     const reportsRaw = await Report.find({ student: student._id })
-      .sort({ createdAt: -1 }) // 🔥 newest added first
+      .sort({ createdAt: -1 })
       .lean();
 
     const reports = reportsRaw.map(r => ({
@@ -295,11 +293,6 @@ exports.remark = async (req, res) => {
   }
 };
 
-
-
-
-
-
 exports.viewClassHistory = async (req, res) => {
 	try {
 		const student = await Student.findById(req.user.id);
@@ -307,8 +300,6 @@ exports.viewClassHistory = async (req, res) => {
 		if (!student) {
 			return res.render('auth/pageNotFound', { msg: 'Student not found' });
 		}
-
-		// Fetch all sessions for this student and populate teacher info
 		const sessions = await Session.find({ student: student._id })
 			.populate('teacher', 'fullName email')
 			.sort({ date: -1 });

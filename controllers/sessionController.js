@@ -2,7 +2,6 @@ const Session = require('../models/Session');
 const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
 
-//      SUBMIT NEW SESSION
 exports.submitSession = async (req, res) => {
     try {
         const { student, type, date, durationInHours } = req.body;
@@ -22,7 +21,6 @@ exports.submitSession = async (req, res) => {
     }
 };
 
-//      APPROVE SESSION
 exports.approveSession = async (req, res) => {
     try {
         const session = await Session.findById(req.params.id).populate('teacher').populate('student');
@@ -52,7 +50,6 @@ exports.approveSession = async (req, res) => {
 
         const total = hourlyRate * durationInHours;
 
-        // update records
         session.studentCharge = total;
         session.teacherEarning = total;
         session.status = 'APPROVED';

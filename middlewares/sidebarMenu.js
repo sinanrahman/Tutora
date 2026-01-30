@@ -5,7 +5,6 @@ const Student = require('../models/Student');
 const Admin = require('../models/Admin');
 
 exports.setSidebarMenu = async (req, res, next) => {
-	// 1. Ensure res.locals.user exists by copying req.user or creating an empty object
 	res.locals.user = req.user ? { ...req.user } : {};
 
 	if (req.user?.role) {
@@ -16,20 +15,17 @@ exports.setSidebarMenu = async (req, res, next) => {
 		res.locals.dp = false;
 		if (req.user.role == 'TEACHER') {
 			try {
-				// 2. Fetch the teacher document
 				const teacherDoc = await Teacher.findById(req.user.id).select('profilePic fullName');
-
-				// 3. Assign ONLY the profilePic field to 'dp'
 
 				if (teacherDoc && teacherDoc.profilePic) {
 					res.locals.dp = teacherDoc.profilePic.url;
-					// console.log(res.locals.user.dp)
 					res.locals.user.fullName = teacherDoc.fullName;
 				}
 			} catch (err) {
 				console.error('Error fetching teacher profile pic:', err);
 			}
 		}
+		
 		// coordinator
 		if (req.user.role === 'COORDINATOR') {
 			try {

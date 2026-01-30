@@ -13,15 +13,12 @@ exports.protect = async (req, res, next) => {
 
 		req.user = decoded;
 
-		// If admin → fetch admin data
 		if (decoded.role === 'ADMIN') {
 			const admin = await Admin.findById(decoded.id);
 			if (!admin) return res.redirect('/');
-
-			// Make available to all EJS files
 			res.locals.admin = admin;
 		}
-		//added
+
 		if (decoded.role === 'TEACHER') {
 			const teacher = await Teacher.findById(decoded.id);
 			if (!teacher) return res.redirect('/');

@@ -55,7 +55,6 @@ exports.coordinatorDashboard = async (req, res) => {
 	}
 };
 
-//      RENDER COORDINATOR STUDENT LIST
 exports.coordinatorStudentlist = async (req, res) => {
 	try {
 		if (!req.user || !req.user.id) {
@@ -80,8 +79,6 @@ exports.coordinatorStudentlist = async (req, res) => {
 
 		const { start, end } = getTodayRange();
 
-		// Optional: Aggregation logic for teacherUsage can go here
-
 		return res.render('coordinator/students', {
 			coord,
 			students,
@@ -95,7 +92,6 @@ exports.coordinatorStudentlist = async (req, res) => {
 	}
 };
 
-//      GET ASSIGNED STUDENTS
 exports.getAssignedStudents = async (req, res) => {
 	try {
 		if (!req.user || !req.user.id) {
@@ -122,7 +118,6 @@ exports.getAssignedStudents = async (req, res) => {
 	}
 };
 
-//      GET STUDENT PROFILE
 exports.getStudentProfile = async (req, res) => {
 	try {
 		if (!req.user || !req.user.id) {
@@ -169,7 +164,6 @@ exports.getStudentProfile = async (req, res) => {
 	}
 };
 
-//      ASSIGN TEACHERS TO STUDENT
 exports.assignTeachers = async (req, res) => {
 	try {
 		const { studentId } = req.params;
@@ -213,7 +207,6 @@ exports.assignTeachers = async (req, res) => {
 	}
 };
 
-//      RENDER SESSION APPROVAL PAGE
 exports.getSessionApprovalPage = async (req, res) => {
 	try {
 		const coord = await Coordinator.findById(req.user.id);
@@ -243,14 +236,12 @@ exports.getSessionApprovalPage = async (req, res) => {
 	}
 };
 
-//      APPROVE SESSION
 exports.approveSession = async (req, res) => {
 	try {
 		const { durationInHours } = req.body;
 
 		const session = await Session.findById(req.params.id);
 		if (!session) {
-			// Keeping JSON here as this is likely an API/AJAX call
 			return res.status(404).json({ error: 'Session not found' });
 		}
 		const duration = Number(durationInHours);
@@ -274,7 +265,6 @@ exports.approveSession = async (req, res) => {
 	}
 };
 
-//      RENDER UPDATE TEACHER PAGE
 exports.getUpdateTeacher = async (req, res) => {
 	try {
 		const coord = await Coordinator.findById(req.user.id);
@@ -296,7 +286,6 @@ exports.getUpdateTeacher = async (req, res) => {
 	}
 };
 
-//      ADD TEACHER TO STUDENT
 exports.addUpdateTeacher = async (req, res) => {
 	try {
 		await Student.findByIdAndUpdate(req.params.studentId, {
@@ -310,7 +299,6 @@ exports.addUpdateTeacher = async (req, res) => {
 	}
 };
 
-//      REMOVE TEACHER FROM STUDENT
 exports.removeUpdateTeacher = async (req, res) => {
 	try {
 		await Student.findByIdAndUpdate(req.params.studentId, {
@@ -324,15 +312,6 @@ exports.removeUpdateTeacher = async (req, res) => {
 	}
 };
 
-
-
-
-
-
-
-/* ===============================
-   GET ADD REPORT PAGE
-================================ */
 exports.getAddReport = async (req, res) => {
 	const { studentId } = req.params;
 
@@ -345,8 +324,6 @@ exports.getAddReport = async (req, res) => {
 		student,
 	});
 };
-
-
 
 function getWeekSuffix(week) {
 	if (week % 10 === 1 && week !== 11) return 'st';
@@ -377,17 +354,16 @@ exports.postAddReport = async (req, res) => {
 
 		let viewDate = '';
 		if (type === 'weekly') {
-			// Compute week-in-month (1..5) based on date of month
 			const dayOfMonth = selectedDate.getDate();
 			const weekInMonth = Math.ceil(dayOfMonth / 7);
 
-			const monthNum = getMonth(selectedDate) + 1; // 1-based month
-			const monthAbbr = format(selectedDate, 'MMM'); // Jan, Feb, etc.
+			const monthNum = getMonth(selectedDate) + 1; 
+			const monthAbbr = format(selectedDate, 'MMM');
 
 			viewDate = `${weekInMonth}${getWeekSuffix(weekInMonth)} week of ${monthAbbr} ${reportData.year}`;
 
 			reportData.week = weekInMonth;
-			reportData.month = monthNum; // ensure month is saved for weekly reports
+			reportData.month = monthNum;
 		}
 
 		if (type === 'monthly') {
@@ -395,7 +371,6 @@ exports.postAddReport = async (req, res) => {
 			const monthAbbr = format(selectedDate, 'MMM');
 			viewDate = `${monthAbbr} ${reportData.year}`;
 			reportData.month = monthNum;
-			// reportData.week remains undefined for monthly reports
 		}
 
 		reportData.viewDate = viewDate;
@@ -403,10 +378,7 @@ exports.postAddReport = async (req, res) => {
 		reportData.month = getMonth(selectedDate) + 1;
 		reportData.year = getYear(selectedDate);
 
-
 		await Report.create(reportData);
-
-		// Redirect to view page
 		res.redirect(`/coordinator/reports/${studentId}`);
 	} catch (error) {
 		console.error('Add Report Error:', error);
@@ -418,17 +390,12 @@ exports.editReport = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { score, remarks, type, viewDate } = req.body;
-
-		// Find the report first to get the student ID
 		const report = await Report.findById(id);
 		if (!report) {
-			return res.redirect('/coordinator/students'); // fallback
+			return res.redirect('/coordinator/students');
 		}
-
-		// Parse the selected date (expecting ISO date string from the form)
 		const selectedDate = parseISO(viewDate);
 
-		// Prepare updated data
 		const updatedData = {
 			score,
 			remarks,
@@ -439,16 +406,15 @@ exports.editReport = async (req, res) => {
 		let viewdate = '';
 
 		if (type === 'weekly') {
-			// Compute week-in-month (1..5)
 			const dayOfMonth = selectedDate.getDate();
 			const weekInMonth = Math.ceil(dayOfMonth / 7);
 
 			const monthNum = getMonth(selectedDate) + 1;
-			const monthAbbr = format(selectedDate, 'MMM'); // Jan, Feb, etc.
+			const monthAbbr = format(selectedDate, 'MMM');
 
 			viewdate = `${weekInMonth}${getWeekSuffix(weekInMonth)} week of ${monthAbbr} ${updatedData.year}`;
 			updatedData.week = weekInMonth;
-			updatedData.month = monthNum; // ensure monthly field is set for weekly reports
+			updatedData.month = monthNum;
 		}
 
 		if (type === 'monthly') {
@@ -456,24 +422,18 @@ exports.editReport = async (req, res) => {
 			const monthAbbr = format(selectedDate, 'MMM');
 			viewdate = `${monthAbbr} ${updatedData.year}`;
 			updatedData.month = monthNum;
-			updatedData.week = undefined; // clear week if previously weekly
+			updatedData.week = undefined;
 		}
 
 		updatedData.viewDate = viewdate;
-
-		// Update the report
 		await Report.findByIdAndUpdate(id, updatedData);
-
-		// Redirect back to the student's reports page
 		return res.redirect(`/coordinator/reports/${report.student}`);
 	} catch (err) {
 		console.error('Edit Report Error:', err);
 		return res.redirect('back');
 	}
 };
-/* ===============================
-   VIEW REPORTS PAGE
-================================ */
+
 exports.getReports = async (req, res) => {
 	const { studentId } = req.params;
 
@@ -494,22 +454,14 @@ exports.getReports = async (req, res) => {
 	});
 };
 
-/* ===============================
-   DELETE REPORT
-================================ */
 exports.deleteReport = async (req, res) => {
 	try {
 		const { id } = req.params;
-
-		// Find the report first to get the student ID
 		const report = await Report.findById(id);
 		if (!report) {
-			return res.redirect('/coordinator/students'); // fallback
+			return res.redirect('/coordinator/students');
 		}
-
 		await Report.findByIdAndDelete(id);
-
-		// Redirect back to the student's reports page
 		return res.redirect(`/coordinator/reports/${report.student}`);
 	} catch (err) {
 		console.error('Delete Report Error:', err);
