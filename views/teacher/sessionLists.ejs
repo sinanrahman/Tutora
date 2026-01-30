@@ -95,9 +95,16 @@
                         <td>
                           <%= session.date ? new Date(session.date).toLocaleDateString() : 'N/A' %>
                         </td>
+                        <%
+                          const durHours = session?.durationInHours ?? 0;
+                          const totalMins = Math.floor(durHours * 60);
+                          const dh = Math.floor(totalMins / 60);
+                          const dm = totalMins % 60;
+                        %>
                         <td>
-                          <%= session.durationInHours || 0 %>
+                          <%= `${dh}h ${dm.toString().padStart(2, '0')}m` %>
                         </td>
+
                         <td>
                           <% if(session.status==='PENDING' ) { %>
                             <span class="badge bg-warning text-dark">Pending</span>

@@ -88,7 +88,13 @@
                 <h6 class="text-muted mb-2">
                   <i class="bi bi-clock-history me-2"></i>Total Hours
                 </h6>
-                <h3 class="fw-medium"><%= totalDuration %> hrs</h3>
+               <%
+                  const tHours = totalDuration ?? 0;
+                  const tMins = Math.floor(tHours * 60);
+                  const th = Math.floor(tMins / 60);
+                  const tm = tMins % 60;
+                %>
+                <h3 class="fw-medium"><%= `${th}h ${tm.toString().padStart(2, '0')}m` %></h3>
               </div>
             </div>
           </div>
@@ -139,7 +145,7 @@
           <table class="table table-striped align-middle" id="salaryTable">
             <thead class="table-light text-center">
               <tr>
-                <th>#</th>
+                <th>Sl No</th>
                 <th>Description</th>
                 <th>Amount (₹)</th>
                 <th>Paid Date</th>

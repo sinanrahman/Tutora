@@ -54,7 +54,6 @@
                 </span>
               </div>
             </div>
-
             <table class="table table-bordered mb-0">
               <tbody>
                 <tr>
@@ -65,10 +64,21 @@
                   <th class="bg-light">Experience</th>
                   <td><%= teacher.experienceYears %> Years</td>
                 </tr>
+                <%
+                  const totalMinutes = totalHours ? Math.floor(totalHours * 60) : 0;
+                  const th = Math.floor(totalMinutes / 60);
+                  const tm = totalMinutes % 60;
+                %>
+
                 <tr>
                   <th class="bg-light">Total Hours Taken</th>
-                  <td><strong><%= totalHours %></strong> hrs</td>
+                  <td>
+                    <strong>
+                      <%= totalHours ? `${th}h ${tm.toString().padStart(2, '0')}m` : 0 %>
+                    </strong>
+                  </td>
                 </tr>
+
                 <tr>
                   <th class="bg-light">Hourly Rate</th>
                   <td>₹ <%= teacher.hourlyRate %></td>

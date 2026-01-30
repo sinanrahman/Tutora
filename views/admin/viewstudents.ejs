@@ -79,10 +79,19 @@
                           <td>
                             <%= s.standard %>
                           </td>
-                          <td class="<%=s?.remainingHours < 0 ? 'text-danger' : 'text-dark' %>">
-                            <%= s?.remainingHours ? s.remainingHours + ' hrs' : '—' %>
+                          <%
+                            const remHours = s?.remainingHours ?? null;
+                            let display = '—';
+                            if (remHours !== null) {
+                              const totalMin = Math.floor(remHours * 60);
+                              const rh = Math.floor(totalMin / 60);
+                              const rm = totalMin % 60;
+                              display = `${rh}h ${rm.toString().padStart(2, '0')}m`;
+                            }
+                          %>
+                          <td class="<%= remHours < 0 ? 'text-danger' : 'text-dark' %>">
+                            <%= display %>
                           </td>
-
                           <td>
                             <%= s.package?.endDate ? new Date(s.package.endDate).toLocaleDateString('en-US') : '—' %>
                           </td>
