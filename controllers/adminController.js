@@ -53,8 +53,13 @@ exports.addStudents = async (req, res) => {
 
 //      ADDING STUDENT DETAILS
 exports.postAddStudent = async (req, res) => {
-    await Student.create(req.body);
-    return res.redirect('/admin/viewstudents');
+    try {
+        await Student.create(req.body);
+        return res.redirect('/admin/viewstudents');
+    } catch (error) {
+        console.log(err);
+        return res.render('auth/pageNotFound', { msg: 'Error adding Student' })
+    }
 };
 
 //      RENDER VIEW STUDENT PAGE

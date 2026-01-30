@@ -52,12 +52,17 @@ const studentSchema = new mongoose.Schema(
 		},
 		parentEmail: {
 			type: String,
-			required: true,
 			index: true,
 			lowercase: true,
 			trim: true,
 		},
-
+		parentNumber:{
+			type:String,
+			required:true,
+			trim:true,
+			unique:true,
+			match:/^[6-9]\d{9}$/
+		},
 		parentAuth: {
 			otp: String,
 			otpExpiresAt: Date,
