@@ -295,29 +295,29 @@ exports.resetPassword = async (req, res) => {
 };
 
 //parent
-
 exports.requestParentOTP = async (req, res) => {
-	try {
-		const { parentNumber } = req.body; // change from parentEmail to parentNumber
+  try {
+    const { parentNumber } = req.body;
 
-		const student = await Student.findOne({ parentNumber });
-		if (!student) return res.render('auth/parentLogin', { msg: 'Parent phone not found' });
+    const student = await Student.findOne({ parentNumber });
+    if (!student) return res.render('auth/parentLogin', { msg: 'Parent phone not found' });
 
-		const otp = generateOTP();
-		student.parentAuth = {
-			otp: hashOTP(otp),
-			otpExpiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
-		};
-		await student.save();
+    const otp = generateOTP();
 
-		// Send OTP via SMS
-		await sendSms(parentNumber, otp);
+    student.parentAuth = {
+      otp: hashOTP(otp),
+      otpExpiresAt: Date.now() + 5 * 60 * 1000,
+    };
+    await student.save();
 
-		return res.render('auth/parentVerifyOTP', { parentNumber, msg: 'OTP sent to your phone' });
-	} catch (err) {
-		console.error(err);
-		return res.render('auth/pageNotFound', { msg: 'Error sending OTP' });
-	}
+    // ✅ send OTP via Fast2SMS GET
+    await sendSms(parentNumber, otp);
+
+    return res.render('auth/parentVerifyOTP', { parentNumber, msg: 'OTP sent to your phone' });
+  } catch (err) {
+    console.error(err);
+    return res.render('auth/pageNotFound', { msg: 'Error sending OTP' });
+  }
 };
 
 exports.verifyParentOTP = async (req, res) => {
