@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-exports.sendOTP = async (phone, otp) => {
+exports.sendSms = async (phone, otp) => {
 	try {
 		const response = await axios.post(
 			'https://www.fast2sms.com/dev/bulkV2',
