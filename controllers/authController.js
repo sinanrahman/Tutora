@@ -321,7 +321,6 @@ exports.requestParentOTP = async (req, res) => {
 
     // ✅ send OTP via Fast2SMS GET
     await sendSms(parentNumber, otp);
-	console.log(otp)
 
     return res.render('auth/parentVerifyOTP', { parentNumber, msg: 'OTP sent to your phone' });
   } catch (err) {
