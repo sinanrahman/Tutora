@@ -1,11 +1,11 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const sendEmail = require('../utils/sendEmail');
+const sendSms = require('../utils/sendSms');
 const Student = require('../models/Student');
-const {generateOTP,hashOTP} = require('../utils/otpGenerate')
+const { generateOTP, hashOTP } = require('../utils/otpGenerate');
 
-//      IMPORTED MODELS
+// IMPORTED MODELS
 const Admin = require('../models/Admin');
 const Teacher = require('../models/Teacher');
 const Coordinator = require('../models/Coordinator');
@@ -13,381 +13,353 @@ const Coordinator = require('../models/Coordinator');
 const MAX_ATTEMPTS = 3;
 const LOCK_TIME = 1 * 60 * 1000;
 
-//      RENDER MAIN LOGIN PAGE
+// RENDER MAIN LOGIN PAGE
 exports.loginPage = (req, res) => {
-    return res.render('auth/login');
+	return res.render('auth/login');
 };
 
 //      RENDER ADMIN LOGIN PAGE
 exports.adminLoginPage = (req, res) => {
-    try {
-        return res.render('auth/adminLogin', {
-            msg: '',
-            attemptsLeft: null,
-            remainingTime: 0,
-        });
-    } catch (error) {
-        console.log(error);
-        return res.render('auth/pageNotFound', { msg: 'Error loading admin login page' });
-    }
+	try {
+		return res.render('auth/adminLogin', {
+			msg: '',
+			attemptsLeft: null,
+			remainingTime: 0,
+		});
+	} catch (error) {
+		console.log(error);
+		return res.render('auth/pageNotFound', { msg: 'Error loading admin login page' });
+	}
 };
 
 //      RENDER TEACHER LOGIN PAGE
 exports.teacherLoginPage = (req, res) => {
-    try {
-        return res.render('auth/teacherLogin', { msg: '' });
-    } catch (error) {
-        console.log(error);
-        return res.render('auth/pageNotFound', { msg: 'Error loading teacher login page' });
-    }
+	try {
+		return res.render('auth/teacherLogin', { msg: '' });
+	} catch (error) {
+		console.log(error);
+		return res.render('auth/pageNotFound', { msg: 'Error loading teacher login page' });
+	}
 };
 
 //      RENDER COORDINATOR LOGIN PAGE
 exports.coordinatorLoginPage = (req, res) => {
-    try {
-        return res.render('auth/coordinatorLogin', { msg: '' });
-    } catch (error) {
-        console.log(error);
-        return res.render('auth/pageNotFound', { msg: 'Error loading coordinator login page' });
-    }
+	try {
+		return res.render('auth/coordinatorLogin', { msg: '' });
+	} catch (error) {
+		console.log(error);
+		return res.render('auth/pageNotFound', { msg: 'Error loading coordinator login page' });
+	}
 };
 
 //      RENDER Parent LOGIN PAGE
 exports.parentLoginPage = (req, res) => {
-    try {
-        return res.render('auth/parentLogin', { msg: '' });
-    } catch (error) {
-        console.log(error);
-        return res.render('auth/pageNotFound', { msg: 'Error loading parent login page' });
-    }
+	try {
+		return res.render('auth/parentLogin', { msg: '' });
+	} catch (error) {
+		console.log(error);
+		return res.render('auth/pageNotFound', { msg: 'Error loading parent login page' });
+	}
 };
 
 //      HELPER: RENDER LOGIN WITH ERROR MESSAGE
 const renderLoginWithMsg = (res, role, msg, attemptsLeft = MAX_ATTEMPTS, remainingTime = 0) => {
-    if (role === 'admin') {
-        return res.render('auth/adminLogin', {
-            msg,
-            attemptsLeft,
-            remainingTime,
-        });
-    }
+	if (role === 'admin') {
+		return res.render('auth/adminLogin', {
+			msg,
+			attemptsLeft,
+			remainingTime,
+		});
+	}
 
-    if (role === 'teacher') {
-        return res.render('auth/teacherLogin', { msg });
-    }
+	if (role === 'teacher') {
+		return res.render('auth/teacherLogin', { msg });
+	}
 
-    if (role === 'coordinator') {
-        return res.render('auth/coordinatorLogin', { msg });
-    }
+	if (role === 'coordinator') {
+		return res.render('auth/coordinatorLogin', { msg });
+	}
 
-    if (role === 'parent') {
-        return res.render('auth/parentrLogin', { msg });
-    }
+	if (role === 'parent') {
+		return res.render('auth/parentrLogin', { msg });
+	}
 
-    return res.render('auth/login', { msg });
+	return res.render('auth/login', { msg });
 };
 
 exports.login = async (req, res) => {
-    try {
-        const { email, password, role } = req.body;
-        let user;
-        let userRole;
+	try {
+		const { email, password, role } = req.body;
+		let user;
+		let userRole;
 
-        if (role === 'admin') {
-            user = await Admin.findOne({ email }).select('+password');
+		if (role === 'admin') {
+			user = await Admin.findOne({ email }).select('+password');
 
-            if (!user) {
-                return renderLoginWithMsg(res, role, 'Invalid credentials', MAX_ATTEMPTS, 0);
-            }
+			if (!user) {
+				return renderLoginWithMsg(res, role, 'Invalid credentials', MAX_ATTEMPTS, 0);
+			}
 
-            if (user.lockUntil && user.lockUntil > Date.now()) {
-                const remainingTime = Math.ceil((user.lockUntil - Date.now()) / 1000);
-                return renderLoginWithMsg(res, role, 'Too many attempts. Please wait.', 0, remainingTime);
-            }
-            if (user.lockUntil && user.lockUntil <= Date.now()) {
-                user.loginAttempts = 0;
-                user.lockUntil = null;
-                await user.save();
-            }
+			if (user.lockUntil && user.lockUntil > Date.now()) {
+				const remainingTime = Math.ceil((user.lockUntil - Date.now()) / 1000);
+				return renderLoginWithMsg(res, role, 'Too many attempts. Please wait.', 0, remainingTime);
+			}
+			if (user.lockUntil && user.lockUntil <= Date.now()) {
+				user.loginAttempts = 0;
+				user.lockUntil = null;
+				await user.save();
+			}
 
-            const isMatch = await bcrypt.compare(password, user.password);
+			const isMatch = await bcrypt.compare(password, user.password);
 
-            if (!isMatch) {
-                user.loginAttempts += 1;
+			if (!isMatch) {
+				user.loginAttempts += 1;
 
-                if (user.loginAttempts >= MAX_ATTEMPTS) {
-                    user.lockUntil = Date.now() + LOCK_TIME;
-                }
+				if (user.loginAttempts >= MAX_ATTEMPTS) {
+					user.lockUntil = Date.now() + LOCK_TIME;
+				}
 
-                await user.save();
+				await user.save();
 
-                const attemptsLeft = Math.max(MAX_ATTEMPTS - user.loginAttempts, 0);
+				const attemptsLeft = Math.max(MAX_ATTEMPTS - user.loginAttempts, 0);
 
-                return renderLoginWithMsg(
-                    res,
-                    role,
-                    user.lockUntil ? 'Too many attempts. Please wait.' : 'Wrong password',
-                    attemptsLeft,
-                    user.lockUntil ? Math.ceil((user.lockUntil - Date.now()) / 1000) : 0
-                );
-            }
+				return renderLoginWithMsg(
+					res,
+					role,
+					user.lockUntil ? 'Too many attempts. Please wait.' : 'Wrong password',
+					attemptsLeft,
+					user.lockUntil ? Math.ceil((user.lockUntil - Date.now()) / 1000) : 0
+				);
+			}
 
-            user.loginAttempts = 0;
-            user.lockUntil = null;
-            await user.save();
+			user.loginAttempts = 0;
+			user.lockUntil = null;
+			await user.save();
 
-            userRole = 'ADMIN';
-        }
+			userRole = 'ADMIN';
+		}
 
-        if (role === 'teacher') {
-            user = await Teacher.findOne({ email }).select('+password');
+		if (role === 'teacher') {
+			user = await Teacher.findOne({ email }).select('+password');
 
-            if (!user || user.status !== 'teacher') {
-                return renderLoginWithMsg(res, role, 'Invalid credentials');
-            }
+			if (!user || user.status !== 'teacher') {
+				return renderLoginWithMsg(res, role, 'Invalid credentials');
+			}
 
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                return renderLoginWithMsg(res, role, 'Wrong password');
-            }
+			const isMatch = await bcrypt.compare(password, user.password);
+			if (!isMatch) {
+				return renderLoginWithMsg(res, role, 'Wrong password');
+			}
 
-            userRole = 'TEACHER';
-        }
+			userRole = 'TEACHER';
+		}
 
-        if (role === 'coordinator') {
-            user = await Coordinator.findOne({ email }).select('+password');
+		if (role === 'coordinator') {
+			user = await Coordinator.findOne({ email }).select('+password');
 
-            if (!user || user.status !== 'coordinator') {
-                return renderLoginWithMsg(res, role, 'Invalid credentials');
-            }
+			if (!user || user.status !== 'coordinator') {
+				return renderLoginWithMsg(res, role, 'Invalid credentials');
+			}
 
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                return renderLoginWithMsg(res, role, 'Wrong password');
-            }
+			const isMatch = await bcrypt.compare(password, user.password);
+			if (!isMatch) {
+				return renderLoginWithMsg(res, role, 'Wrong password');
+			}
 
-            userRole = 'COORDINATOR';
-        }
+			userRole = 'COORDINATOR';
+		}
 
-        if (!user) {
-            return renderLoginWithMsg(res, role, 'User not found');
-        }
+		if (!user) {
+			return renderLoginWithMsg(res, role, 'User not found');
+		}
 
-        const token = jwt.sign(
-            {
-                id: user._id,
-                role: userRole,
-            },
-            process.env.JWT_SECRET,
-            { expiresIn: '1d' }
-        );
+		const token = jwt.sign(
+			{
+				id: user._id,
+				role: userRole,
+			},
+			process.env.JWT_SECRET,
+			{ expiresIn: '1d' }
+		);
 
-        res.cookie('token', token, {
-            httpOnly: true,
-            sameSite: 'strict',
-        });
+		res.cookie('token', token, {
+			httpOnly: true,
+			sameSite: 'strict',
+		});
 
-        if (userRole === 'ADMIN') return res.redirect('/admin/dashboard');
-        if (userRole === 'TEACHER') return res.redirect('/teacher/dashboard');
-        if (userRole === 'COORDINATOR') return res.redirect('/coordinator/dashboard');
-        
-    } catch (err) {
-        console.error(err);
-        return res.render('auth/pageNotFound', { msg: 'Server error during login' });
-    }
+		if (userRole === 'ADMIN') return res.redirect('/admin/dashboard');
+		if (userRole === 'TEACHER') return res.redirect('/teacher/dashboard');
+		if (userRole === 'COORDINATOR') return res.redirect('/coordinator/dashboard');
+	} catch (err) {
+		console.error(err);
+		return res.render('auth/pageNotFound', { msg: 'Server error during login' });
+	}
 };
 
 //      HANDLE LOGOUT
 exports.logout = (req, res) => {
-    res.clearCookie('token');
-    return res.redirect('/');
+	res.clearCookie('token');
+	return res.redirect('/');
 };
 
 //      HANDLE FORGOT PASSWORD REQUEST
 exports.forgotPassword = async (req, res) => {
-    try {
-        const { email } = req.body;
+	try {
+		const { email } = req.body;
 
-        const admin = await Admin.findOne({ email });
-        if (!admin) {
-            return res.render('auth/forgotPassword', {
-                msg: 'Admin email not found',
-            });
-        }
+		const admin = await Admin.findOne({ email });
+		if (!admin) {
+			return res.render('auth/forgotPassword', {
+				msg: 'Admin email not found',
+			});
+		}
 
-        const resetToken = crypto.randomBytes(32).toString('hex');
-        admin.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+		const resetToken = crypto.randomBytes(32).toString('hex');
+		admin.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
-        admin.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
-        await admin.save();
+		admin.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
+		await admin.save();
 
-        const port = process.env.PORT || 3000;
-        const resetURL = `http://localhost:${port}/reset-password/${resetToken}`;
+		const port = process.env.PORT || 3000;
+		const resetURL = `http://localhost:${port}/reset-password/${resetToken}`;
 
-        await sendEmail({
-            to: admin.email,
-            subject: 'Admin Password Reset',
-            html: `
+		await sendEmail({
+			to: admin.email,
+			subject: 'Admin Password Reset',
+			html: `
             <p>Hello Admin,</p>
             <p>Click the link below to reset your password:</p>
             <a href="${resetURL}">${resetURL}</a>
             <p>This link expires in 15 minutes.</p>
         `,
-        });
+		});
 
-        return res.render('auth/forgotPassword', {
-            msg: 'Password reset link sent to your email',
-        });
-    } catch (err) {
-        console.error(err);
-        return res.render('auth/pageNotFound', { msg: 'Error sending reset email' });
-    }
+		return res.render('auth/forgotPassword', {
+			msg: 'Password reset link sent to your email',
+		});
+	} catch (err) {
+		console.error(err);
+		return res.render('auth/pageNotFound', { msg: 'Error sending reset email' });
+	}
 };
 
 //      RENDER RESET PASSWORD PAGE
 exports.renderResetPasswordPage = async (req, res) => {
-    try {
-        const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+	try {
+		const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
-        const admin = await Admin.findOne({
-            resetPasswordToken: hashedToken,
-            resetPasswordExpires: { $gt: Date.now() },
-        });
+		const admin = await Admin.findOne({
+			resetPasswordToken: hashedToken,
+			resetPasswordExpires: { $gt: Date.now() },
+		});
 
-        if (!admin) {
-            return res.render('auth/pageNotFound', { msg: 'Reset link is invalid or expired' });
-        }
+		if (!admin) {
+			return res.render('auth/pageNotFound', { msg: 'Reset link is invalid or expired' });
+		}
 
-        return res.render('auth/resetPassword', {
-            token: req.params.token,
-            msg: '',
-        });
-    } catch (err) {
-        console.error(err);
-        return res.render('auth/pageNotFound', { msg: 'Error loading reset password page' });
-    }
+		return res.render('auth/resetPassword', {
+			token: req.params.token,
+			msg: '',
+		});
+	} catch (err) {
+		console.error(err);
+		return res.render('auth/pageNotFound', { msg: 'Error loading reset password page' });
+	}
 };
 
 //      HANDLE RESET PASSWORD SUBMISSION
 exports.resetPassword = async (req, res) => {
-    try {
-        const { password } = req.body;
+	try {
+		const { password } = req.body;
 
-        if (password.length < 8) {
-            return res.render('auth/resetPassword', {
-                token: req.params.token,
-                msg: 'Password must be at least 8 characters long',
-            });
-        }
+		if (password.length < 8) {
+			return res.render('auth/resetPassword', {
+				token: req.params.token,
+				msg: 'Password must be at least 8 characters long',
+			});
+		}
 
-        const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+		const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
-        const admin = await Admin.findOne({
-            resetPasswordToken: hashedToken,
-            resetPasswordExpires: { $gt: Date.now() },
-        });
+		const admin = await Admin.findOne({
+			resetPasswordToken: hashedToken,
+			resetPasswordExpires: { $gt: Date.now() },
+		});
 
-        if (!admin) {
-            return res.render('auth/pageNotFound', { msg: 'Reset link is invalid or expired' });
-        }
+		if (!admin) {
+			return res.render('auth/pageNotFound', { msg: 'Reset link is invalid or expired' });
+		}
 
-        admin.password = password;
-        admin.resetPasswordToken = undefined;
-        admin.resetPasswordExpires = undefined;
+		admin.password = password;
+		admin.resetPasswordToken = undefined;
+		admin.resetPasswordExpires = undefined;
 
-        await admin.save();
+		await admin.save();
 
-        return res.redirect('/');
-    } catch (err) {
-        console.error(err);
-        return res.render('auth/pageNotFound', { msg: 'Error processing password reset' });
-    }
+		return res.redirect('/');
+	} catch (err) {
+		console.error(err);
+		return res.render('auth/pageNotFound', { msg: 'Error processing password reset' });
+	}
 };
 
-
-////parent
-
+//parent
 
 exports.requestParentOTP = async (req, res) => {
-    try {
-        const { parentEmail } = req.body;
+	try {
+		const { parentNumber } = req.body; // change from parentEmail to parentNumber
 
-        const student = await Student.findOne({ parentEmail });
-        if (!student) return res.render('auth/parentLogin', { msg: 'Parent email not found' });
+		const student = await Student.findOne({ parentNumber });
+		if (!student) return res.render('auth/parentLogin', { msg: 'Parent phone not found' });
 
-        const otp = generateOTP();
-        student.parentAuth = {
-            otp: hashOTP(otp),
-            otpExpiresAt: Date.now() + 5 * 60 * 1000,
-        };
-        await student.save();
+		const otp = generateOTP();
+		student.parentAuth = {
+			otp: hashOTP(otp),
+			otpExpiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
+		};
+		await student.save();
 
-        // Reusing your existing sendEmail
-        await sendEmail({
-            to: parentEmail,
-            subject: 'Your Tutora OTP',
-            html: `
-                <p>Hello Parent,</p>
-                <p>Your OTP for login is: <strong>${otp}</strong></p>
-                <p>This OTP expires in 5 minutes.</p>
-            `,
-        });
+		// Send OTP via SMS
+		await sendOTP(parentNumber, otp);
 
-        return res.render('auth/parentVerifyOTP', { parentEmail, msg: 'OTP sent to your email' });
-
-    } catch (err) {
-        console.error(err);
-        return res.render('auth/pageNotFound', { msg: 'Error sending OTP' });
-    }
+		return res.render('auth/parentVerifyOTP', { parentNumber, msg: 'OTP sent to your phone' });
+	} catch (err) {
+		console.error(err);
+		return res.render('auth/pageNotFound', { msg: 'Error sending OTP' });
+	}
 };
 
 exports.verifyParentOTP = async (req, res) => {
-  try {
-    const { parentEmail, otp } = req.body;
+	try {
+		const { parentNumber, otp } = req.body;
 
-    const student = await Student.findOne({ parentEmail });
+		const student = await Student.findOne({ parentNumber });
 
-    if (!student || !student.parentAuth?.otp) {
-      return res.render('auth/parentLogin', {
-        msg: 'Invalid request',
-      });
-    }
+		if (!student || !student.parentAuth?.otp) {
+			return res.render('auth/parentLogin', { msg: 'Invalid request' });
+		}
 
-    if (student.parentAuth.otpExpiresAt < Date.now()) {
-      return res.render('auth/parentLogin', {
-        msg: 'OTP expired',
-      });
-    }
+		if (student.parentAuth.otpExpiresAt < Date.now()) {
+			return res.render('auth/parentLogin', { msg: 'OTP expired' });
+		}
 
-    if (hashOTP(otp) !== student.parentAuth.otp) {
-      return res.render('auth/parentVerifyOtp', {
-        parentEmail,
-        msg: 'Invalid OTP',
-      });
-    }
+		if (hashOTP(otp) !== student.parentAuth.otp) {
+			return res.render('auth/parentVerifyOTP', { parentNumber, msg: 'Invalid OTP' });
+		}
 
-    // Clear OTP
-    student.parentAuth = undefined;
-    await student.save();
+		// Clear OTP
+		student.parentAuth = undefined;
+		await student.save();
 
-    // JWT
-    const token = jwt.sign(
-      {
-        id: student._id,
-        role: 'PARENT',
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    );
+		// JWT
+		const token = jwt.sign({ id: student._id, role: 'PARENT' }, process.env.JWT_SECRET, {
+			expiresIn: '1d',
+		});
+		res.cookie('token', token, { httpOnly: true, sameSite: 'strict' });
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      sameSite: 'strict',
-    });
-
-    return res.redirect('/parent/dashboard');
-  } catch (err) {
-    console.error(err);
-    return res.render('auth/pageNotFound', { msg: 'Error verifying OTP' });
-  }
+		return res.redirect('/parent/dashboard');
+	} catch (err) {
+		console.error(err);
+		return res.render('auth/pageNotFound', { msg: 'Error verifying OTP' });
+	}
 };

@@ -36,7 +36,7 @@ exports.parentDashboard = async (req, res) => {
 			avgPerformance = Math.round(totalScore / reports.length);
 		}
 
-		// ✅ FIX: show remaining package hours (not date-based expiry)
+		//  FIX: show remaining package hours (not date-based expiry)
 		const hoursLeft = student?.remainingHours ?? 0;
 
 		res.render('parent/dashboard', {
