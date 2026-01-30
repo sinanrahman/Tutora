@@ -16,12 +16,17 @@
             <div class="login-title">Parent Login</div>
 
             <div class="input-group">
-                <label>Parent Email</label>
+                <label>Parent Number</label>
                 <input
-                    type="email"
-                    name="parentEmail"
-                    placeholder="Enter registered email"
+                    type="tel"
+                    name="parentNumber"
+                    placeholder="Enter registered number"
+                    inputmode="numeric"
+                    maxlength="10"
+                    pattern="[6-9][0-9]{9}"
+                    oninput="allowOnlyNumbers(this)"
                     required
+                    title="Enter a valid 10-digit Indian mobile number starting with 6-9"
                 >
             </div>
 
@@ -35,5 +40,10 @@
         </div>
     </form>
 
+     <script>
+        function allowOnlyNumbers(input) {
+            input.value = input.value.replace(/\D/g, '');
+        }
+    </script>
 </body>
 </html>

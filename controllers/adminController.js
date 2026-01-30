@@ -48,8 +48,13 @@ exports.addStudents = async (req, res) => {
 };
 
 exports.postAddStudent = async (req, res) => {
-    await Student.create(req.body);
-    return res.redirect('/admin/viewstudents');
+    try {
+        await Student.create(req.body);
+        return res.redirect('/admin/viewstudents');
+    } catch (error) {
+        console.log(err);
+        return res.render('auth/pageNotFound', { msg: 'Error adding Student' })
+    }
 };
 
 exports.viewStudents = async (req, res) => {

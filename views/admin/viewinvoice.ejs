@@ -156,7 +156,7 @@
 
       <div class="header">
         <!-- <img src="/image/logo.png" class="logo" /> -->
-<img src="<%= (typeof logoSrc !== 'undefined' && logoSrc) ? logoSrc : '/image/logo.png' %>" class="logo" />
+          <img src="<%= (typeof logoSrc !== 'undefined' && logoSrc) ? logoSrc : '/image/logo.png' %>" class="logo" />
         <h1>Invoice</h1>
         <div class="date">
           <%= new Date(newInvoice?.date).toLocaleDateString('en-IN', {

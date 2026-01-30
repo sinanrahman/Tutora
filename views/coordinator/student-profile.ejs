@@ -167,15 +167,23 @@
 							<tr>
 								<th class="bg-light">Country</th>
 								<td><%= student.country %></td>
-								<th class="bg-light">Parent Email</th>
-								<td><%= student.parentEmail %></td>
+								<th class="bg-light">Parent Number</th>
+								<td><%= student.parentNumber %></td>
 							</tr>
 
 							<tr>
 								<th class="bg-light">Total Attended Hours</th>
+								<%
+								const tHours = totalHours ?? 0;
+								const totalMins = Math.floor(tHours * 60);
+								const th = Math.floor(totalMins / 60);
+								const tm = totalMins % 60;
+								%>
+
 								<td colspan="3" class="fw-semibold text-primary">
-									<%= totalHours %> hours
+								<%= `${th}h ${tm.toString().padStart(2, '0')}m` %>
 								</td>
+
 							</tr>
 						</tbody>
 					</table>

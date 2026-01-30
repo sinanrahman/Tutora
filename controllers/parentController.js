@@ -35,6 +35,8 @@ exports.parentDashboard = async (req, res) => {
 			const totalScore = reports.reduce((sum, r) => sum + r.score, 0);
 			avgPerformance = Math.round(totalScore / reports.length);
 		}
+
+		//  FIX: show remaining package hours (not date-based expiry)
 		const hoursLeft = student?.remainingHours ?? 0;
 
 		res.render('parent/dashboard', {
