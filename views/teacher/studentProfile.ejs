@@ -36,29 +36,30 @@
 		height: 40px;
 		width: auto;
 	}
+
 	@media (max-width: 767.98px) {
-  .profile-table,
-  .profile-table tbody,
-  .profile-table tr,
-  .profile-table th,
-  .profile-table td {
-    display: block;
-    width: 100%;
-  }
 
-  .profile-table tr {
-    margin-bottom: 1rem;
-    border: 1px solid #dee2e6;
-    border-radius: 10px;
-    background: #fff;
-  }
+		.profile-table,
+		.profile-table tbody,
+		.profile-table tr,
+		.profile-table th,
+		.profile-table td {
+			display: block;
+			width: 100%;
+		}
 
-  .profile-table th {
-    background: #f8f9fa;
-    font-weight: 600;
-  }
-}
+		.profile-table tr {
+			margin-bottom: 1rem;
+			border: 1px solid #dee2e6;
+			border-radius: 10px;
+			background: #fff;
+		}
 
+		.profile-table th {
+			background: #f8f9fa;
+			font-weight: 600;
+		}
+	}
 </style>
 
 <body class="bg-light">
@@ -89,56 +90,66 @@
 							<h3 class="fw-bold fs-2 mb-3 heading">STUDENTS</h3>
 						</div>
 						<table class="table table-bordered align-middle mb-4 profile-table">
-  <tbody>
-    <tr>
-      <th class="bg-light">Student ID</th>
-      <td ><%= student.studentId %></td>
-      <th class="bg-light">Full Name</th>
-      <td ><%= student.fullName %></td>
-    </tr>
+							<tbody>
+								<tr>
+									<th class="bg-light">Student ID</th>
+									<td>
+										<%= student.studentId %>
+									</td>
+									<th class="bg-light">Full Name</th>
+									<td>
+										<%= student.fullName %>
+									</td>
+								</tr>
 
-    <tr>
-      <th class="bg-light">Phone</th>
-      <td><%= student.phone %></td>
-      <th class="bg-light">Class</th>
-      <td><%= student.standard %></td>
-    </tr>
+								<tr>
+									<th class="bg-light">Phone</th>
+									<td>
+										<%= student.phone %>
+									</td>
+									<th class="bg-light">Class</th>
+									<td>
+										<%= student.standard %>
+									</td>
+								</tr>
 
-    <tr>
-      <th class="bg-light">Country</th>
-      <td><%= student.country %></td>
-      <th class="bg-light">Parent Email</th>
-      <td><%= student.parentEmail %></td>
-    </tr>
-	 <tr>
-      <th class="bg-light">Total Attended Hours</th>
-      <td class="fw-semibold text-primary">
-        <%= totalHours %> hours
-      </td>
-	   <th class="bg-light">Remaining Hours</th>
-      <%
-		const totalMinutes = Math.floor((student?.remainingHours || 0) * 60);
-		const h = Math.floor(totalMinutes / 60);
-		const m = totalMinutes % 60;
-		%>
+								<tr>
+									<th class="bg-light">Country</th>
+									<td>
+										<%= student.country %>
+									</td>
+									<th class="bg-light">Parent Number</th>
+									<td>
+										<%= student.parentNumber %>
+									</td>
+								</tr>
+								<tr>
+									<th class="bg-light">Total Attended Hours</th>
+									<td class="fw-semibold text-primary">
+										<%= totalHours %> hours
+									</td>
+									<th class="bg-light">Remaining Hours</th>
+									<% const totalMinutes=Math.floor((student?.remainingHours || 0) * 60); const
+										h=Math.floor(totalMinutes / 60); const m=totalMinutes % 60; %>
 
-		<td class="fw-semibold text-success">
-		<%= h %>h <%= m.toString().padStart(2, '0') %>m
-		</td>
-    </tr>
+										<td class="fw-semibold text-success">
+											<%= h %>h <%= m.toString().padStart(2, '0' ) %>m
+										</td>
+								</tr>
 
-    <tr>
-      <th class="bg-light">Status</th>
-      <td colspan="3">
-        <span class="badge <%= student.status === 'active' ? 'bg-success' : 'bg-danger' %>">
-          <%= student.status %>
-        </span>
-      </td>
-    </tr>
+								<tr>
+									<th class="bg-light">Status</th>
+									<td colspan="3">
+										<span
+											class="badge <%= student.status === 'active' ? 'bg-success' : 'bg-danger' %>">
+											<%= student.status %>
+										</span>
+									</td>
+								</tr>
 
-   
-  </tbody>
-</table>
+
+							</tbody>
+						</table>
 
 						<a href="/teacher/sessions/add?studentId=<%= student._id %>" class="btn btn-primary mt-3">
 							Request Session
