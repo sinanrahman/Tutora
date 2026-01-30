@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const sendSms = require('../utils/sendSms');
+const {sendSms} = require('../utils/sendSms');
 const Student = require('../models/Student');
 const { generateOTP, hashOTP } = require('../utils/otpGenerate');
 
@@ -320,7 +320,7 @@ exports.requestParentOTP = async (req, res) => {
 		await student.save();
 
 		// Send OTP via SMS
-		await sendOTP(parentNumber, otp);
+		await sendSms(parentNumber, otp);
 
 		return res.render('auth/parentVerifyOTP', { parentNumber, msg: 'OTP sent to your phone' });
 	} catch (err) {
