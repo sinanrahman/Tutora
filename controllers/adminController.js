@@ -1,8 +1,6 @@
-//      CLOUDINARY CONFIG
 const fileUploadToCloudinary = require('../utils/cloudinaryUpload');
 const cloudinary = require('../config/cloudinary');
 
-//      IMPORTED MODELS
 const Admin = require('../models/Admin');
 const Coordinator = require('../models/Coordinator');
 const Teacher = require('../models/Teacher');
@@ -14,11 +12,10 @@ const Invoice = require('../models/Invoice')
 const puppeteer = require('puppeteer');
 const ejs = require('ejs');
 const path = require('path');
-const fs = require('fs'); // Import File System
+const fs = require('fs');
 const Salary = require('../models/Salary');
 const mongoose = require('mongoose')
 
-//      RENDER ADMIN DASHBOARD
 exports.dashboard = async (req, res) => {
     try {
         const totalStudents = await Student.countDocuments();
@@ -37,7 +34,6 @@ exports.dashboard = async (req, res) => {
     }
 };
 
-//      RENDER ADMIN ADD STUDENTS
 exports.addStudents = async (req, res) => {
     try {
         const coordinators = await Coordinator.find({ status: 'coordinator' }).select('_id fullName');
@@ -51,7 +47,6 @@ exports.addStudents = async (req, res) => {
     }
 };
 
-//      ADDING STUDENT DETAILS
 exports.postAddStudent = async (req, res) => {
     try {
         await Student.create(req.body);
@@ -62,7 +57,6 @@ exports.postAddStudent = async (req, res) => {
     }
 };
 
-//      RENDER VIEW STUDENT PAGE
 exports.viewStudents = async (req, res) => {
     try {
         const Students = await Student.find().populate('coordinator', 'fullName email').lean();
@@ -86,7 +80,6 @@ exports.viewStudents = async (req, res) => {
     }
 };
 
-//      RENDER INDIVIDUAL STUDENT DETAILS PAGE
 exports.viewStudentDetails = async (req, res) => {
     try {
         const studentId = req.params.id;
@@ -109,7 +102,6 @@ exports.viewStudentDetails = async (req, res) => {
     }
 };
 
-//      RENDER EDIT STUDENT PAGE
 exports.editStudentPage = async (req, res) => {
     try {
         const studentId = req.params.id;
@@ -126,7 +118,6 @@ exports.editStudentPage = async (req, res) => {
     }
 };
 
-//      EDITING / UPDATING STUDENT DETAILS
 exports.updateStudent = async (req, res) => {
     try {
         const studentId = req.params.id;
@@ -138,7 +129,6 @@ exports.updateStudent = async (req, res) => {
     }
 };
 
-//      DELETING STUDENT
 exports.deleteStudent = async (req, res) => {
     try {
         const id = req.params.id;
@@ -150,12 +140,10 @@ exports.deleteStudent = async (req, res) => {
     }
 };
 
-//      RENDERING ADD COORDINATORS PAGE
 exports.addCoordinators = (req, res) => {
     return res.render('admin/addCoordinators', { activePage: 'coordinators' });
 };
 
-//      ADDING COORDINATOR 
 exports.postAddCoordinator = async (req, res) => {
     try {
         const { fullName, email, phone, password, status } = req.body;
@@ -178,7 +166,6 @@ exports.postAddCoordinator = async (req, res) => {
     }
 };
 
-//      RENDER VIEW ALL COORDINATORS PAGE
 exports.viewCoordinator = async (req, res) => {
     try {
         const coordinators = await Coordinator.find();
@@ -189,12 +176,11 @@ exports.viewCoordinator = async (req, res) => {
     }
 };
 
-//      RENDER VIEW COORDINATOR DETAILS
 exports.viewCoordinatorDetails = async (req, res) => {
     try {
         const id = req.params.id;
 
-        const coord = await Coordinator // Fixed typo: 'coordinator' -> 'Coordinator'
+        const coord = await Coordinator
             .findById(id)
             .populate({
                 path: 'assignedStudents',
@@ -217,7 +203,6 @@ exports.viewCoordinatorDetails = async (req, res) => {
     }
 };
 
-//      DELETING COORDINATOR
 exports.deleteCoordinator = async (req, res) => {
     try {
         const id = req.params.id;
@@ -229,7 +214,6 @@ exports.deleteCoordinator = async (req, res) => {
     }
 };
 
-//      RENDER EDIT COORDINATOR PAGE
 exports.editCoordinatorPage = async (req, res) => {
     try {
         const id = req.params.id;
@@ -244,7 +228,6 @@ exports.editCoordinatorPage = async (req, res) => {
     }
 };
 
-//      UPDATING COORDINATOR DETAILS
 exports.updateCoordinator = async (req, res) => {
     try {
         const id = req.params.id;
@@ -256,12 +239,10 @@ exports.updateCoordinator = async (req, res) => {
     }
 };
 
-//      RENDER ADD TEACHER PAGE
 exports.addTeacher = (req, res) => {
     return res.render('admin/addTeachers', { activePage: 'teachers' });
 };
 
-//      CREATING NEW TEACHER
 exports.createTeacher = async (req, res) => {
     try {
         const {
@@ -321,7 +302,6 @@ exports.createTeacher = async (req, res) => {
     }
 };
 
-//      RENDER VIEW ALL TEACHERS
 exports.getTeachers = async (req, res) => {
     try {
         const teachers = await Teacher.find().sort({ createdAt: -1 });
@@ -345,7 +325,6 @@ exports.getTeachers = async (req, res) => {
     }
 };
 
-//      RENDER TEACHER PROFILE
 exports.viewTeacherProfile = async (req, res) => {
     try {
         const teacherId = req.params.id;
@@ -373,7 +352,6 @@ exports.viewTeacherProfile = async (req, res) => {
     }
 };
 
-//      RENDER EDIT TEACHER PAGE
 exports.getEditTeacher = async (req, res) => {
     try {
         const teacher = await Teacher.findById(req.params.id);
@@ -390,7 +368,6 @@ exports.getEditTeacher = async (req, res) => {
     }
 };
 
-//      UPDATING TEACHER DETAILS
 exports.updateTeacher = async (req, res) => {
     try {
         const teacher = await Teacher.findById(req.params.id);
@@ -443,7 +420,6 @@ exports.updateTeacher = async (req, res) => {
     }
 };
 
-//      DELETING TEACHER
 exports.deleteTeacher = async (req, res) => {
     try {
         const teacher = await Teacher.findById(req.params.id);
@@ -461,7 +437,6 @@ exports.deleteTeacher = async (req, res) => {
     }
 };
 
-//      CHANGE COORDINATOR PASSWORD
 exports.changeCoordinatorPassword = async (req, res) => {
     try {
         const { id } = req.params;
@@ -488,7 +463,6 @@ exports.changeCoordinatorPassword = async (req, res) => {
     }
 };
 
-//      CHANGE TEACHER PASSWORD
 exports.changeTeacherPassword = async (req, res) => {
     try {
         const { id } = req.params;
@@ -512,7 +486,6 @@ exports.changeTeacherPassword = async (req, res) => {
     }
 };
 
-//      VIEW STUDENT SESSION HISTORY
 exports.studentSessionHistory = async (req, res) => {
     try {
         const studentId = req.params.id;
@@ -536,9 +509,6 @@ exports.studentSessionHistory = async (req, res) => {
     }
 };
 
-// ================= PACKAGE =================
-
- //Add Package Page
 exports.addPackage = async (req, res) => {
 	const student = await Student.findById(req.params.studentId);
 
@@ -581,8 +551,6 @@ exports.postAddPackage = async (req, res) => {
 	}
 };
 
-
-//      VIEW TEACHER SESSION HISTORY
 exports.teacherSessionHistory = async (req, res) => {
     try {
         const teacherId = req.params.id;
@@ -605,7 +573,6 @@ exports.teacherSessionHistory = async (req, res) => {
     }
 };
 
-//      RENDER ASSIGN TEACHER TO STUDENT PAGE
 exports.getUpdateTeacher = async (req, res) => {
     try {
         const coord = await Admin.findById(req.user.id);
@@ -627,7 +594,6 @@ exports.getUpdateTeacher = async (req, res) => {
     }
 };
 
-//      ASSIGN A TEACHER TO STUDENT
 exports.addUpdateTeacher = async (req, res) => {
     try {
         await Student.findByIdAndUpdate(req.params.studentId, {
@@ -641,7 +607,6 @@ exports.addUpdateTeacher = async (req, res) => {
     }
 };
 
-//      REMOVE ASSIGNED TEACHER FROM STUDENT
 exports.removeUpdateTeacher = async (req, res) => {
     try {
         await Student.findByIdAndUpdate(req.params.studentId, {
@@ -655,8 +620,6 @@ exports.removeUpdateTeacher = async (req, res) => {
     }
 };
 
-
-/* VIEW FINANCE */
 exports.viewFinance = async (req, res) => {
   try {
     const transactions = await Transaction.find().sort({ createdAt: -1 });
@@ -671,18 +634,16 @@ exports.viewFinance = async (req, res) => {
   }
 };
 
-/* ADD FINANCE PAGE */
 exports.addFinance = (req, res) => {
   res.render("admin/addFinance", { activePage: "finance" });
 };
 
-/* SAVE FINANCE */
 exports.postAddFinance = async (req, res) => {
   try {
     const { type, amount, description } = req.body;
 
     await Transaction.create({
-      transactionType: type.toUpperCase(), // CREDIT / DEBIT
+      transactionType: type.toUpperCase(),
       amount,
       description
     });
@@ -712,30 +673,25 @@ exports.viewFinanceDetails = async (req, res) => {
   }
 };
 
-
-
 exports.viewSalary = async (req, res) => {
     const teacherId = req.params.id;
     const teacher = await Teacher.findById(teacherId);
     const allSalary = await Salary.find({teacherId})
     let allPaidSalary = await Salary.aggregate([
         {
-            // 1. Filter: Find approved sessions for this teacher
             $match: {
-                teacherId: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+                teacherId: new mongoose.Types.ObjectId(teacherId),
             }
         },
         {
-            // 2. Calculate: Multiply duration * rate for each doc, then sum them all
             $group: {
-                _id: null, // We want one single result, not groups
+                _id: null,
                 totalPaid:{
                     $sum:'$amount'
                 }
             }
         }
     ])
-    // result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
     allPaidSalary = allPaidSalary.length > 0 ? allPaidSalary[0].totalPaid : 0;
 
     return res.render('admin/viewSalary', { activePage: 'teachers', teacher,allSalary,allPaidSalary })
@@ -747,16 +703,14 @@ exports.getAddSalary = async (req, res) => {
 
      const result = await Session.aggregate([
         {
-            // 1. Filter: Find approved sessions for this teacher
             $match: {
-                teacher: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+                teacher: new mongoose.Types.ObjectId(teacherId),
                 status: 'APPROVED'
             }
         },
         {
-            // 2. Calculate: Multiply duration * rate for each doc, then sum them all
             $group: {
-                _id: null, // We want one single result, not groups
+                _id: null,
                 totalEarnings: { 
                     $sum: { $multiply: ["$durationInHours", teacher.hourlyRate] } 
                 },
@@ -768,25 +722,21 @@ exports.getAddSalary = async (req, res) => {
     ]);
     let allPaidSalary = await Salary.aggregate([
         {
-            // 1. Filter: Find approved sessions for this teacher
             $match: {
-                teacherId: new mongoose.Types.ObjectId(teacherId), // IMPORTANT: Cast string ID to ObjectId
+                teacherId: new mongoose.Types.ObjectId(teacherId),
             }
         },
         {
-            // 2. Calculate: Multiply duration * rate for each doc, then sum them all
             $group: {
-                _id: null, // We want one single result, not groups
+                _id: null,
                 totalPaid:{
                     $sum:'$amount'
                 }
             }
         }
     ])
-    // result will be an array like: [ { _id: null, totalEarnings: 5500 } ]
     allPaidSalary = allPaidSalary.length > 0 ? allPaidSalary[0].totalPaid : 0;
     let finalAmount = result.length > 0 ? result[0].totalEarnings : 0;
-    // const totalDuration = result.length > 0 ? result[0].totalDuration : 0;
     finalAmount = finalAmount - allPaidSalary
     return res.render('admin/addSalary', { activePage: 'teachers', teacher,finalAmount,})
 }
@@ -806,13 +756,6 @@ exports.addSalary = async(req,res)=>{
         return res.render('auth/pageNotFound', { msg: 'Server Error: Unable to add salary' });
     }
 }
-
-
-// ==========================================
-//        INVOICE CONTROLLERS
-// ==========================================
-
-//      RENDER INVOICE PAGE
 exports.getInvoicePage = async(req,res) => {
     try{
         return res.render('admin/addinvoice',{activePage:'invoice'})
@@ -821,26 +764,21 @@ exports.getInvoicePage = async(req,res) => {
         return res.send(e)
     }
 }
-// Example Controller Logic
+
 exports.addInvoice = async (req, res) => {
   try {
     const { id, studentId,studentName, amount, date, paid, description, items } = req.body;
-
-    // 'items' might come in as an array or object depending on parser.
-    // Ensure it is an array for the schema
     const itemArray = Array.isArray(items) ? items : Object.values(items);
-
     const newInvoice = new Invoice({
       id,
       studentId,
       studentName,
-      amount, // Calculated by JS, verified here
-      item: itemArray, // Maps to your schema structure
+      amount,
+      item: itemArray,
       description,
       date,
       paid
     });
-
     await newInvoice.save();
     return res.render('admin/viewinvoice',{newInvoice,activePage:'invoice'});
   } catch (err) {
@@ -848,8 +786,6 @@ exports.addInvoice = async (req, res) => {
     res.status(500).send("Error creating invoice");
   }
 };
-
-
 
 exports.downloadInvoicePDF = async (req, res) => {
   try {
@@ -859,22 +795,15 @@ exports.downloadInvoicePDF = async (req, res) => {
     if (!invoice) {
       return res.status(404).send("Invoice not found");
     }
-
-    // --- 1. IMAGE CONVERSION FUNCTION (With Debugging) ---
     const imageToBase64 = (filename) => {
         try {
-            // "process.cwd()" gets the root folder of your project
-            // We assume your images are in: YourProject/public/image/filename
             const filePath = path.join(process.cwd(), 'static', 'image', filename);
-            
-
+        
             if (!fs.existsSync(filePath)) {
                 console.error("File does not exist at path:", filePath);
                 return null;
             }
-
             const bitmap = fs.readFileSync(filePath);
-            // Check extension to set correct mimetype (png or webp)
             const ext = path.extname(filePath).substring(1); 
             return `data:image/${ext};base64,${bitmap.toString('base64')}`;
         } catch (err) {
@@ -882,13 +811,9 @@ exports.downloadInvoicePDF = async (req, res) => {
             return null;
         }
     };
-
-    // --- 2. GET IMAGES ---
-    // Pass only the filename, not the full '/image/...' path
     const logoBase64 = imageToBase64('logo.png'); 
     const paidBase64 = imageToBase64('paid.webp');
 
-    // --- 3. RENDER EJS ---
     const templatePath = path.join(__dirname, '../views/admin/viewinvoice.ejs');
     
     const html = await ejs.renderFile(templatePath, { 
@@ -897,7 +822,6 @@ exports.downloadInvoicePDF = async (req, res) => {
         paidSrc: paidBase64   
     });
 
-    // --- 4. PUPPETEER ---
     const browser = await puppeteer.launch({ 
         headless: 'new',
         args: ['--no-sandbox'] 

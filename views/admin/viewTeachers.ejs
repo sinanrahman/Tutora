@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <title>Teachers</title>
@@ -10,7 +9,6 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.dataTables.css">
   <link rel="stylesheet" href="/css/admin/viewTeachers.css">
 </head>
-
 <body class="bg-light">
   <div class="d-md-none mobile-topbar fixed-top bg-white shadow-sm">
     <div class="d-flex align-items-center justify-content-between px-3" style="height:60px;">
@@ -21,7 +19,7 @@
     </div>
   </div>
 
-  <%- include('./partials/navbar') %>
+    <%- include('./partials/navbar') %>
     <%- include('../partials/sidebar') %>
 
       <div class="main-content">
@@ -76,9 +74,17 @@
                             </span>
                             <% }) %>
                         </td>
+                       <%
+                          const tHours = teacher?.totalHours ?? 0;
+                          const tMinutes = Math.floor(tHours * 60);
+                          const th = Math.floor(tMinutes / 60);
+                          const tm = tMinutes % 60;
+                        %>
+
                         <td class="text-center">
-                          <%= teacher.totalHours || 0 %> hrs
+                            <%= tHours ? `${th}h ${tm.toString().padStart(2, '0')}m` : '0' %>
                         </td>
+
                         <td class="text-center">
                           <span class="badge <%= teacher.status === 'teacher' ? 'bg-success' : 'bg-secondary' %>">
                             <%= teacher.status %>
@@ -108,5 +114,4 @@
         }
       </script>
 </body>
-
 </html>

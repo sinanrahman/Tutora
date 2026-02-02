@@ -6,7 +6,9 @@ const { authorize } = require('../middlewares/roleMiddleware');
 const { setSidebarMenu } = require('../middlewares/sidebarMenu');
 const { submitSession, approveSession } = require('../controllers/sessionController');
 
-router.route('/submit').post(protect, setSidebarMenu, authorize('TEACHER'), submitSession);
+router
+	.route('/submit')
+	.post(protect, setSidebarMenu, authorize('TEACHER'), submitSession);
 
 router
 	.route('/approve/:id')

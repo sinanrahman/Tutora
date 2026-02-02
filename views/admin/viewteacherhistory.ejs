@@ -17,7 +17,8 @@
   </div>
 
   <%- include('./partials/navbar') %>
-<%- include('../partials/sidebar') %>
+  <%- include('../partials/sidebar') %>
+  
   <div class="main-content">
     <div class="container-fluid px-3 px-md-4">
       <div class="content-wrapper bg-white rounded-4 shadow-sm p-4">
@@ -55,9 +56,16 @@
                 <% tsHistory.forEach((s, i) => { %>
                 <tr>
                   <td><%= i + 1 %></td>
-<td><%= s.student?.fullName || 'Student Removed' %></td>
+                  <td><%= s.student?.fullName || 'Student Removed' %></td>
                   <td><%= s.type %></td>
-                  <td><%= s.durationInHours %> hrs</td>
+                  <%
+                    const dHours = s?.durationInHours ?? 0;
+                    const dMinutes = Math.floor(dHours * 60);
+                    const dh = Math.floor(dMinutes / 60);
+                    const dm = dMinutes % 60;
+                  %>
+
+                  <td><%= `${dh}h ${dm.toString().padStart(2, '0')}m` %></td>
                   <td><%= new Date(s.date).toLocaleDateString() %></td>
                 </tr>
                 <% }) %>
